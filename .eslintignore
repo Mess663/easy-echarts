@@ -1,0 +1,12 @@
+node_modules
+bundles
+third_scripts
+raws
+
+/lib
+/resources
+/old
+/dist
+/__mocks__
+
+.eslintrc.cjs
