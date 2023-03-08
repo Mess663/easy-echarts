@@ -1,8 +1,15 @@
 import React from "react";
-import styles from "./app.module.less";
+import css from "./app.module.less";
+import OptionsForm from "./OptionsForm";
 
 const App = () => {
-	return <div className={styles.container}>123</div>;
+	return (
+		<div className={css.page}>
+			<div className={css.left}>
+				<OptionsForm />
+			</div>
+		</div>
+	);
 };
 
 export default App;
