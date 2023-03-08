@@ -1,5 +1,6 @@
 import React from "react";
 import Drawer from "../../components/Drawer";
+import ChartSelector from "../../option_components/ChartSelector";
 import css from "./index.module.less";
 
 /**
@@ -9,7 +10,7 @@ const OptionsForm = () => {
 	return (
 		<div className={css.container}>
 			<Drawer title='图表' defaultExpand> 
-			123
+				<ChartSelector />
 			</Drawer>
 			<Drawer title='标题'>
 			123
