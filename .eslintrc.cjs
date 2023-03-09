@@ -47,6 +47,9 @@ module.exports = {
 				"logical": "parens-new-line",
 				"prop": "parens-new-line"
 			}
-		]
+		],
+		"object-curly-spacing" : [
+			"warn", "always"
+		] 
 	}
 };

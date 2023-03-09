@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import css from "./index.module.less";
 import { Menu } from "@headlessui/react";
 import { ChartEnumify } from "../../types/biz/chart";
 import { uniqueId } from "lodash";
+import { FormChart } from "../../types/biz/option_form";
 
-const ChartSelector = () => {
-	const [selected, setSelected] = useState<{key: string, val: string}[]>([]);
+interface Props {
+	data: FormChart[]
+	onChange: (d: Props["data"]) => void
+}
+
+const ChartSelector = ({ data, onChange }: Props) => {
 	return (
 		<>
 			<Menu>
@@ -17,7 +22,7 @@ const ChartSelector = () => {
 								<div 
 									className={css.menuItem} 
 									onClick={() => {
-										setSelected(old => [...old, {key: uniqueId(), val: o.val}]);
+										onChange([...data, { key: uniqueId(), name: o.val }]);
 									}}
 								>{o.val}</div>
 							</Menu.Item>
@@ -28,15 +33,15 @@ const ChartSelector = () => {
 
 			<div className={css.select}>
 				{
-					selected.map(o => (
+					data.map(o => (
 						<div 
 							key={o.key} 
 							className={css.selectItem}
 							onClick={() => {
-								setSelected(old => old.filter(item => item.key !== o.key));
+								onChange(data.filter(item => item.key !== o.key));
 							}}
 						>
-							{o.val}
+							{o.name}
 						</div>
 					))
 				}
