@@ -22,7 +22,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 								<div 
 									className={css.menuItem} 
 									onClick={() => {
-										onChange([...data, { key: uniqueId(), name: o.val }]);
+										onChange([...data, { key: uniqueId(), name: o.val, type: o.code }]);
 									}}
 								>{o.val}</div>
 							</Menu.Item>
