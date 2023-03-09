@@ -7,7 +7,8 @@ module.exports = {
 		"eslint:recommended",
 		"plugin:react/recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:react-hooks/recommended"
+		"plugin:react-hooks/recommended",
+		"plugin:jsx-a11y/recommended"
 	],
 	"overrides": [],
 	"parser": "@typescript-eslint/parser",
@@ -48,8 +49,10 @@ module.exports = {
 				"prop": "parens-new-line"
 			}
 		],
-		"object-curly-spacing" : [
+		"object-curly-spacing": [
 			"warn", "always"
-		] 
+		], 
+		"react/jsx-max-props-per-line": [1, { "when": "multiline" }],
+		'react/jsx-closing-bracket-location': [1, 'tag-aligned']
 	}
 };
