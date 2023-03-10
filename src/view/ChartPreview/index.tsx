@@ -2,13 +2,13 @@ import React, { useEffect, useRef } from "react";
 import css from "./index.module.less";
 import * as echarts from "echarts";
 import useRefSize from "../../hooks/useRefSize";
-import { useRecoilState } from "recoil";
-import optionForm from "../../recoil/option_form";
+import { useSelector } from "react-redux";
+import { RootState } from "../../models";
 
 const ChartPreview = () => {
 	const [containerRef, size] = useRefSize();
-	const [charts] = useRecoilState(optionForm.charts); 
-	const [title] = useRecoilState(optionForm.title);
+	const charts = useSelector((state: RootState) => state.optionForm.charts); 
+	const title = useSelector((state: RootState) => state.optionForm.title);
 	const echartObjRef = useRef<echarts.ECharts>();
 
 	useEffect(() => {

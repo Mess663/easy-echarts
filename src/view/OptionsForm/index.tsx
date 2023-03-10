@@ -1,16 +1,17 @@
 import React from "react";
-import { useRecoilState } from "recoil";
 import Drawer from "../../components/Drawer";
 import ChartSelector from "../../option_components/ChartSelector";
 import css from "./index.module.less";
-import optionForm from "../../recoil/option_form";
 import TitleForm from "../../option_components/TitleForm";
+import { Dispatch, RootState } from "../../models";
+import { useSelector, useDispatch } from "react-redux";
 
 /**
  * 配置项管理表单
  */
 function OptionsForm() {
-	const [charts, setCharts] = useRecoilState(optionForm.charts);
+	const charts = useSelector((state: RootState) => state.optionForm.charts); 
+	const dispatch = useDispatch<Dispatch>();
 
 	return (
 		<div className={css.container}>
@@ -18,7 +19,10 @@ function OptionsForm() {
 				title="图表"
 				defaultExpand
 			>
-				<ChartSelector data={charts} onChange={setCharts} />
+				<ChartSelector 
+					data={charts}
+					onChange={(c => dispatch.optionForm.updateCharts(c))}
+				/>
 			</Drawer>
 			<Drawer title="标题" defaultExpand>
 				<TitleForm />

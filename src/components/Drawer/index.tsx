@@ -3,12 +3,13 @@ import css from "./index.module.less";
 import { Disclosure } from "@headlessui/react";
 
 interface Props {
-  title: string | React.ReactNode
-  children: React.ReactNode | React.ReactNode
-  defaultExpand?: boolean // 默认展开
+	title: string | React.ReactNode
+	children: React.ReactNode | React.ReactNode
+	defaultExpand?: boolean // 默认展开
+	extra?: React.ReactNode // 与标题同行的额外的组件
 }
 
-const Drawer = ({ title, children, defaultExpand = false }: Props) => {
+const Drawer = ({ title, children, defaultExpand = false, extra }: Props) => {
 	// const [expand, setExpand] = useState(defaultExpand);
 	// const [contentRef, size] =  useRefSize();
 
@@ -16,6 +17,7 @@ const Drawer = ({ title, children, defaultExpand = false }: Props) => {
 		<Disclosure defaultOpen={defaultExpand}>
 			<Disclosure.Button className={css.trigger}>
 				{title}
+				{extra}
 			</Disclosure.Button>
 			<Disclosure.Panel className={css.content}>
 				{children}

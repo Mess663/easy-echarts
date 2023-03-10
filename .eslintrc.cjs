@@ -58,6 +58,6 @@ module.exports = {
 			"component": true,
 			"html": true
 		}],
-		// "jsx-a11y/click-events-have-key-events": "off",
+		"object-shorthand": ["error", "always"],
 	}
 };
