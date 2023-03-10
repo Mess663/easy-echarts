@@ -9,7 +9,7 @@ type RemoveGetEnumVal<T> = {
 
 /** 因为自制的枚举对象不能作为type，所以将其转成联合类型 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Enumify<T extends Record<string|number, any>> = RemoveGetEnumVal<T>[keyof T]["code"];
+export type EnumifyInfer<T extends Record<string|number, any>> = RemoveGetEnumVal<T>[keyof T]["code"];
 
 /**
  * 让枚举能带上额外的值
@@ -30,7 +30,7 @@ export const enumify = <V, T extends EnumCommonPattern<V>>(data: Readonly<T>) =>
      * 获取对应code的值
      * @param code
      */
-	$getEnumVal<U>(code: Enumify<T>): U {
+	$getEnumVal<U>(code: EnumifyInfer<T>): U {
 		return Object.values(data).find((o) => o.code === code)?.val;
 	},
 

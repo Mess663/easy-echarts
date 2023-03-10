@@ -1,4 +1,4 @@
-import { Enumify, enumify } from "../tools/enumify";
+import { EnumifyInfer, enumify } from "../tools/enumify";
 
 /** 图表类型 */
 export const ChartEnumify = enumify({
@@ -8,4 +8,4 @@ export const ChartEnumify = enumify({
 } as const);
 
 /** @see {@link ChartEnumify} */
-export type Chart = Enumify<typeof ChartEnumify>;
+export type Chart = EnumifyInfer<typeof ChartEnumify>;

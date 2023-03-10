@@ -7,13 +7,15 @@ import optionForm from "../../recoil/option_form";
 
 const ChartPreview = () => {
 	const [containerRef, size] = useRefSize();
-	const [charts] = useRecoilState(optionForm.chartsState); 
+	const [charts] = useRecoilState(optionForm.charts); 
+	const [title] = useRecoilState(optionForm.title);
 	const echartObjRef = useRef<echarts.ECharts>();
 
 	useEffect(() => {
 		if (!echartObjRef.current) return;
 		const chart = echartObjRef.current;
 		chart.setOption({
+			title,
 			tooltip: {},
 			xAxis: {
 				type: "category"
@@ -29,9 +31,10 @@ const ChartPreview = () => {
 					["Milk Tea", 86.5, 92.1, 85.7, 83.1],
 					["Cheese Cocoa", 24.1, 67.2, 79.5, 86.4]
 				]
-			}
+			},
+			animation: false
 		} as echarts.EChartsOption, true);
-	}, [charts]);
+	}, [charts, title]);
 
 	useEffect(() => {
 		if (size && echartObjRef.current) {
@@ -52,9 +55,10 @@ const ChartPreview = () => {
 						echartObjRef.current = echarts.init(dom);
 					}
 				}}
-			></div>
+			/>
 		</div>
 	);
 };
 
 export default ChartPreview;
+

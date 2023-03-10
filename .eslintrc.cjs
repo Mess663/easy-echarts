@@ -8,7 +8,7 @@ module.exports = {
 		"plugin:react/recommended",
 		"plugin:@typescript-eslint/recommended",
 		"plugin:react-hooks/recommended",
-		"plugin:jsx-a11y/recommended"
+		// "plugin:jsx-a11y/recommended"
 	],
 	"overrides": [],
 	"parser": "@typescript-eslint/parser",
@@ -53,6 +53,11 @@ module.exports = {
 			"warn", "always"
 		], 
 		"react/jsx-max-props-per-line": [1, { "when": "multiline" }],
-		'react/jsx-closing-bracket-location': [1, 'tag-aligned']
+		'react/jsx-closing-bracket-location': [1, 'tag-aligned'],
+		"react/self-closing-comp": ["error", {
+			"component": true,
+			"html": true
+		}],
+		// "jsx-a11y/click-events-have-key-events": "off",
 	}
 };

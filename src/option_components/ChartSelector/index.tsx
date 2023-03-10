@@ -20,10 +20,11 @@ const ChartSelector = ({ data, onChange }: Props) => {
 						ChartEnumify.$map(o => (
 							<Menu.Item key={o.code}>
 								<div 
-									className={css.menuItem} 
+									className={css.menuItem}
 									onClick={() => {
 										onChange([...data, { key: uniqueId(), name: o.val, type: o.code }]);
 									}}
+									role="button"
 								>{o.val}</div>
 							</Menu.Item>
 						))
