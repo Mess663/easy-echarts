@@ -19,7 +19,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 					{
 						ChartEnumify.$map(o => (
 							<Menu.Item key={o.code}>
-								<div 
+								<div
 									className={css.menuItem}
 									onClick={() => {
 										onChange([...data, { key: uniqueId(), name: o.val, type: o.code }]);
@@ -35,8 +35,8 @@ const ChartSelector = ({ data, onChange }: Props) => {
 			<div className={css.select}>
 				{
 					data.map(o => (
-						<div 
-							key={o.key} 
+						<div
+							key={o.key}
 							className={css.selectItem}
 							onClick={() => {
 								onChange(data.filter(item => item.key !== o.key));
@@ -51,4 +51,4 @@ const ChartSelector = ({ data, onChange }: Props) => {
 	);
 };
 
-export default ChartSelector;
+export default React.memo(ChartSelector);

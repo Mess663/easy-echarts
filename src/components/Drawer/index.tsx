@@ -1,15 +1,16 @@
 import React from "react";
 import css from "./index.module.less";
 import { Disclosure } from "@headlessui/react";
+import { useWhyDidYouUpdate } from "ahooks";
 
 interface Props {
 	title: string | React.ReactNode
 	children: React.ReactNode | React.ReactNode
-	defaultExpand?: boolean // 默认展开
+	defaultOpen?: boolean // 默认展开
 	extra?: React.ReactNode // 与标题同行的额外的组件
 }
 
-const Drawer = ({ title, children, defaultExpand = false, extra }: Props) => {
+const Drawer = ({ title, children, defaultOpen: defaultExpand = false, extra }: Props) => {
 	// const [expand, setExpand] = useState(defaultExpand);
 	// const [contentRef, size] =  useRefSize();
 
@@ -31,8 +32,8 @@ const Drawer = ({ title, children, defaultExpand = false, extra }: Props) => {
 	// 			{title}
 	// 		</div>
 
-	// 		<div 
-	// 			className={css.content} 
+	// 		<div
+	// 			className={css.content}
 	// 			style={{
 	// 				height: expand ? size?.height : 0
 	// 			}}
@@ -46,4 +47,4 @@ const Drawer = ({ title, children, defaultExpand = false, extra }: Props) => {
 	// );
 };
 
-export default Drawer;
+export default React.memo(Drawer);

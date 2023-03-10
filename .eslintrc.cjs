@@ -59,5 +59,11 @@ module.exports = {
 			"html": true
 		}],
 		"object-shorthand": ["error", "always"],
+		"no-trailing-spaces": ["error", { "skipBlankLines": true }],
+		"brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
+
+		// ts解析支持jsx，不需要在jsx中引入react
+		"react/jsx-uses-react": "off",
+		"react/react-in-jsx-scope": "off",
 	}
 };
