@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect } from "react";
 import Drawer from "../../components/Drawer";
 import ChartSelector from "../../option_components/ChartSelector";
 import css from "./index.module.less";
@@ -10,9 +9,25 @@ import { useSelector, useDispatch } from "react-redux";
  * 配置项管理表单
  */
 function OptionsForm() {
-	const charts = useSelector((state: RootState) => state.optionForm.charts);
+	const series = useSelector((state: RootState) => state.optionForm.series);
 	const titleOptions = useSelector((state: RootState) => state.optionForm.title);
+	const selectedTitle = useSelector(
+		(state: RootState) =>
+			state.optionForm.title.find((o) => o._key === state.optionForm.titleSelectedKey
+			));
 	const dispatch = useDispatch<Dispatch>();
+
+	const addTitleBtn = (
+		<span
+			onClick={(e) => {
+				e.stopPropagation();
+				dispatch.optionForm.addTitle({
+					text: "标题",
+				});
+			}}
+			className={css.addTitle}
+		>添加</span>
+	);
 
 	return (
 		<div className={css.container}>
@@ -21,36 +36,29 @@ function OptionsForm() {
 				defaultOpen
 			>
 				<ChartSelector
-					data={charts}
+					data={series}
 					onChange={c => dispatch.optionForm.updateCharts(c)}
 				/>
 			</Drawer>
 			<Drawer title="标题"
 				defaultOpen
-				extra={(
-					<span
-						onClick={(e) => {
-							e.stopPropagation();
-							dispatch.optionForm.addTitle({
-								text: "标题",
-							});
-						}}
-						className={css.addTitle}
-					>添加标题</span>
-				)}
+				extra={addTitleBtn}
 			>
-				<TitleForm
-					data={titleOptions}
-					add={(d) => {
-						dispatch.optionForm.addTitle(d);
-					}}
-					edit={(d) => {
-						dispatch.optionForm.modifyTitle(d);
-					}}
-					remove={(_key) => {
-						dispatch.optionForm.removeTitle(_key);
-					}}
-				/>
+				{
+					titleOptions.length ? (
+						<TitleForm
+							data={selectedTitle || titleOptions[0]}
+							edit={(d) => {
+								dispatch.optionForm.modifyTitle(d);
+							}}
+							remove={(_key) => {
+								dispatch.optionForm.removeTitle(_key);
+							}}
+						/>
+					) : (
+						addTitleBtn
+					)
+				}
 			</Drawer>
 		</div>
 	);

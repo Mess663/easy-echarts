@@ -5,19 +5,21 @@ import { ChartEnumify } from "../types/biz/chart";
 import { FormChart, Title } from "../types/biz/option_form";
 
 export interface State {
-	charts: FormChart[];
+	series: FormChart[];
 	title: Title[]
+	titleSelectedKey: Title["_key"] | null
 }
 
 export const optionForm = createModel<RootModel>()({
 	state: {
-		charts: [{ key: "1", name: ChartEnumify.Line.val, type: ChartEnumify.Line.code }],
-		title: []
-	} as State, 
+		series: [{ _key: uniqueId(), name: ChartEnumify.Line.val, type: ChartEnumify.Line.code }],
+		title: [],
+		titleSelectedKey: null,
+	} as State,
 
 	reducers: {
-		updateCharts(state, payload: State["charts"]) {
-			state.charts = payload;
+		updateCharts(state, payload: State["series"]) {
+			state.series = payload;
 		},
 
 		addTitle(state, payload: Omit<Title, "_key">) {
@@ -35,5 +37,11 @@ export const optionForm = createModel<RootModel>()({
 			const index = state.title.findIndex(item => item._key === _key);
 			state.title[index] = { ...state.title[index], ...rest };
 		},
+
+		/** 选中Title */
+		selectTitle(state, index: number) {
+			console.log(index, state.title[index]);
+			state.titleSelectedKey = state.title[index]._key;
+		}
 	},
 });

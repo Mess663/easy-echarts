@@ -61,6 +61,8 @@ module.exports = {
 		"object-shorthand": ["error", "always"],
 		"no-trailing-spaces": ["error", { "skipBlankLines": true }],
 		"brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
+		"key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
+		"space-infix-ops": ["error", {"int32Hint": false}],
 
 		// ts解析支持jsx，不需要在jsx中引入react
 		"react/jsx-uses-react": "off",

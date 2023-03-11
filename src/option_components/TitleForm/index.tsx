@@ -4,39 +4,30 @@ import css from "./index.module.less";
 import { Title } from "../../types/biz/option_form";
 
 interface Props {
-	add: (d: Omit<Title, "_key">) => void
 	edit: (d: Title) => void
 	remove: (_key: string) => void
-	data: Title[]
+	data: Title
 }
 
-const TitleForm = ({ add, edit, data, remove }: Props) => {
-	if (!data.length) return (
-		<button
-			onClick={() => {
-				add({
-					text: "标题",
-				});
-			}}
-		>添加标题</button>
-	);
-
-	const title = data[0];
+const TitleForm = ({ edit, data, remove }: Props) => {
 	return (
 		<div className={css.container}>
-			<button
-				className={css.removeBtn}
-				onClick={() => {
-					remove(title._key);
-				}}
-			>删除当前标题</button>
+			<div className={css.top}>
+				<button
+					className={css.removeBtn}
+					onClick={() => {
+						remove(data._key);
+					}}
+				>删除当前标题</button>
+			</div>
+
 			<FormItem title="图表标题">
 				<Input
 					placeholder="输入标题"
-					value={title.text}
+					value={data.text}
 					onChange={(e) => {
 						edit({
-							_key: title._key,
+							_key: data._key,
 							text: e.target.value
 						});
 					}}

@@ -2,26 +2,33 @@ import React, { useEffect, useRef } from "react";
 import css from "./index.module.less";
 import * as echarts from "echarts";
 import useRefSize from "../../hooks/useRefSize";
-import { useSelector } from "react-redux";
-import { RootState } from "../../models";
+import { useDispatch, useSelector } from "react-redux";
+import { Dispatch, RootState } from "../../models";
+import { ComponentType } from "../../types/biz/compont";
 
 const ChartPreview = () => {
 	const [containerRef, size] = useRefSize();
-	const charts = useSelector((state: RootState) => state.optionForm.charts); 
+	const series = useSelector((state: RootState) => state.optionForm.series);
 	const title = useSelector((state: RootState) => state.optionForm.title);
 	const echartObjRef = useRef<echarts.ECharts>();
+	const dispatch = useDispatch<Dispatch>();
 
 	useEffect(() => {
 		if (!echartObjRef.current) return;
 		const chart = echartObjRef.current;
 		chart.setOption({
-			title,
+			title: title.map(o => ({
+				...o,
+				left: 5,
+				top: 5,
+				triggerEvent: "click"
+			})),
 			tooltip: {},
 			xAxis: {
 				type: "category"
 			},
 			yAxis: {},
-			series:charts.map(o => ({
+			series: series.map(o => ({
 				type: o.type
 			})),
 			dataset: {
@@ -34,7 +41,7 @@ const ChartPreview = () => {
 			},
 			animation: false
 		} as echarts.EChartsOption, true);
-	}, [charts, title]);
+	}, [series, title]);
 
 	useEffect(() => {
 		if (size && echartObjRef.current) {
@@ -44,15 +51,25 @@ const ChartPreview = () => {
 
 	return (
 		<div className={css.container} ref={containerRef}>
-			<div 
+			<div
 				style={{
 					width: size?.width,
 					height: size?.height
-				}} 
-				className={css.chart} 
+				}}
+				className={css.chart}
 				ref={(dom) => {
-					if (dom && !echartObjRef.current) {
+					if (dom) {
+						if (echartObjRef.current) {
+							echartObjRef.current.dispose();
+						}
+
 						echartObjRef.current = echarts.init(dom);
+						echartObjRef.current.on("mousedown", ComponentType.Title, (params) => {
+							dispatch.optionForm.selectTitle(params.componentIndex);
+						});
+						echartObjRef.current.on("mousemove", ComponentType.Title, (params) => {
+							console.log(params.event?.offsetX, params.event?.offsetY);
+						});
 					}
 				}}
 			/>

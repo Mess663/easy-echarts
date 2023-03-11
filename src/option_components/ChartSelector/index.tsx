@@ -22,7 +22,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 								<div
 									className={css.menuItem}
 									onClick={() => {
-										onChange([...data, { key: uniqueId(), name: o.val, type: o.code }]);
+										onChange([...data, { _key: uniqueId(), name: o.val, type: o.code }]);
 									}}
 									role="button"
 								>{o.val}</div>
@@ -36,10 +36,10 @@ const ChartSelector = ({ data, onChange }: Props) => {
 				{
 					data.map(o => (
 						<div
-							key={o.key}
+							key={o._key}
 							className={css.selectItem}
 							onClick={() => {
-								onChange(data.filter(item => item.key !== o.key));
+								onChange(data.filter(item => item._key !== o._key));
 							}}
 						>
 							{o.name}
