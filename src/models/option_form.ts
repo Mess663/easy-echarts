@@ -10,11 +10,13 @@ export interface State {
 	titleSelectedKey: Title["_key"] | null
 }
 
+const defaultTitleKey = uniqueId();
+
 export const optionForm = createModel<RootModel>()({
 	state: {
 		series: [{ _key: uniqueId(), name: ChartEnumify.Line.val, type: ChartEnumify.Line.code }],
-		title: [],
-		titleSelectedKey: null,
+		title: [{ _key: defaultTitleKey, text: "标题" }],
+		titleSelectedKey: defaultTitleKey,
 	} as State,
 
 	reducers: {
@@ -40,7 +42,7 @@ export const optionForm = createModel<RootModel>()({
 
 		/** 选中Title */
 		selectTitle(state, index: number) {
-			console.log(index, state.title[index]);
+			console.log(state.title, index);
 			state.titleSelectedKey = state.title[index]._key;
 		}
 	},

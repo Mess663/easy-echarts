@@ -7,7 +7,6 @@ export type FormChart = {
     type: Chart // series type
 }
 
-
 export interface Title extends echarts.TitleComponentOption {
     _key: string; // 用于辨别多个title
 }
