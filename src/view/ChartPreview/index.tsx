@@ -5,8 +5,7 @@ import useRefSize from "../../hooks/dom/useRefSize";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
-import useTitleDragEvent from "./hook/useTitleDragEvent";
-import { getBoundaryValidNum } from "../../tools/number";
+import useTitleDragEvent from "./hooks/useTitleDragEvent";
 
 const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void)) =>
 	(e: echarts.ECElementEvent, ) => {
