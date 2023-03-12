@@ -5,9 +5,8 @@ import useRefSize from "../../hooks/dom/useRefSize";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
-import useDragEvent from "./hook/useDragEvent";
+import useTitleDragEvent from "./hook/useTitleDragEvent";
 import { getBoundaryValidNum } from "../../tools/number";
-import { invoke, method } from "lodash";
 
 const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void)) =>
 	(e: echarts.ECElementEvent, ) => {
@@ -24,28 +23,21 @@ const ChartPreview = () => {
 	const echartObjRef = useRef<echarts.ECharts>();
 	const [containerRef, size] = useRefSize();
 	const [
-		, { onMousedown, onMousemove, onMouseup }
-	] = useDragEvent({
-		moveTransform(e: echarts.ElementEvent, offset: [number, number, number]) {
-			const { offsetX, offsetY } = e;
-			const [ firstX, firstY, index] = offset;
-			const currentTitle = title[index];
-			if (currentTitle && size) {
-				dispatch.optionForm.modifyTitle({
-					...currentTitle,
-					left: getBoundaryValidNum(offsetX - firstX, 0, size.width - firstX),
-					top: getBoundaryValidNum(offsetY - firstY, 0, size.height - firstY)
-				});
-			}
-		},
-		downTransform(e: echarts.ECElementEvent):[number, number, number] {
-			const currentTitle = title[e.componentIndex];
-			const x = Number(currentTitle?.left ?? 0);
-			const y = Number(currentTitle?.top ?? 0);
-			const { offsetX = 0, offsetY = 0 } = e.event ?? {};
-			return [offsetX - x, offsetY - y, e.componentIndex];
-		},
-	});
+		output, { onMousedown, onMousemove, onMouseup }
+	] = useTitleDragEvent(size, title);
+
+	useEffect(() => {
+		if (output) {
+			const [left, top, index] = output;
+			dispatch.optionForm.modifyTitleByIndex({
+				index,
+				payload: {
+					left,
+					top
+				}
+			});
+		}
+	}, [dispatch.optionForm, output]);
 
 	useEffect(() => {
 		if (size && echartObjRef.current) {

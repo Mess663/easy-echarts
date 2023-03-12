@@ -40,6 +40,11 @@ export const optionForm = createModel<RootModel>()({
 			state.title[index] = { ...state.title[index], ...rest };
 		},
 
+		/** 通过索引找寻来修改对应的Title */
+		modifyTitleByIndex(state, { index, payload }: { index: number, payload: Omit<Title, "_key"> }) {
+			state.title[index] = { ...state.title[index], ...payload };
+		},
+
 		/** 选中Title */
 		selectTitle(state, index: number) {
 			console.log(state.title, index);
