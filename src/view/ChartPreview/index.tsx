@@ -49,11 +49,11 @@ const ChartPreview = () => {
 			title: title.map(o => ({
 				...o,
 				id: o._key,
-				triggerEvent: "click"
+				triggerEvent: "click",
 			})),
 			tooltip: {},
 			xAxis: {
-				type: "category"
+				type: "category",
 			},
 			yAxis: {},
 			series: series.map(o => ({
