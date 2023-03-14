@@ -7,6 +7,12 @@ export type FormChart = {
     type: Chart // series type
 }
 
+/** ECharts富文本属性 */
+export type RichStyle = NonNullable<NonNullable<echarts.TitleComponentOption["textStyle"]>["rich"]>;
+
+/** ECharts自己的通用样式 */
+export type EChartsStyleProperties = RichStyle[keyof RichStyle];
+
 export interface Title extends echarts.TitleComponentOption {
     _key: string; // 用于辨别多个title
 }
