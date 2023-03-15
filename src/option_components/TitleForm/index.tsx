@@ -1,9 +1,8 @@
 import FormItem from "../../components/FormItem";
 import css from "./index.module.less";
 import { Title } from "../../types/biz/option_form";
-import { useState } from "react";
 import RichTextEditor from "../../components/RichTextEditor";
-import { transformRichToSchema, transformSchemaToRich } from "../../tools/rich_transform";
+import { transformRichToSchema, transformSchemaToRich } from "../../logic/style_tranform";
 
 
 interface Props {
@@ -19,7 +18,7 @@ const initialValue =  transformRichToSchema("{a|这段文本采用样式a}\n{b|�
 	},
 	b: {
 		backgroundColor: {
-			image: "xxx/xxx.jpg"
+			image: "https://echarts.apache.org/zh/images/logo.png?_v_=20200710_1"
 		},
 		height: 40
 	},
@@ -47,6 +46,7 @@ const TitleForm = ({ data, remove, edit }: Props) => {
 					initialValue={initialValue}
 					onChange={(e) => {
 						const op = transformSchemaToRich(e);
+						console.log(op);
 						edit({
 							...data,
 							text: op.text,

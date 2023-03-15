@@ -1,7 +1,39 @@
-import { isEmpty, uniqueId } from "lodash";
-import { CustomElement } from "../components/RichTextEditor/type";
-import { LineBreaker } from "../config/options";
-import { RichStyle } from "../types/biz/option_form";
+import { isEmpty, isNumber, uniqueId } from "lodash";
+import { CSSProperties } from "react";
+import { CustomElement } from "../../components/RichTextEditor/type";
+import { LineBreaker } from "../../config/options";
+import { EChartsStyleProperties, RichStyle } from "../../types/biz/option_form";
+import { cssPaddingToRich, richPaddingToCss } from "./tool";
+
+
+/**
+ * 将ECharts的富文本样式映射成Slate的样式
+ * @param richStyle
+ * @returns
+ */
+export const mapRichStyleToCss = (richStyle: EChartsStyleProperties): CSSProperties => {
+	const {
+		borderRadius, align, textShadowColor, padding,
+		textShadowBlur, textShadowOffsetX, textShadowOffsetY
+	} = richStyle;
+
+	return {
+		...richStyle,
+		textAlign: align,
+		textShadow: `${textShadowOffsetX}px ${textShadowOffsetY}px ${textShadowBlur}px ${textShadowColor}`,
+		borderRadius: isNumber(borderRadius) ? borderRadius + "px" : borderRadius?.map(o => o + "px").join(" "),
+		padding: richPaddingToCss(padding),
+	} as CSSProperties;
+};
+
+export const mapCssToRichStyle = (slateStyle: CSSProperties) => {
+	const { textAlign, padding } = slateStyle;
+	return {
+		...slateStyle,
+		align: textAlign,
+		padding: cssPaddingToRich(padding),
+	};
+};
 
 /**
  * 将Slate Schema转换为ECharts的富文本格式
@@ -73,9 +105,9 @@ function parseRich(rich: string) {
 /**
  * 将ECharts的富文本格式转换为Slate Schema
  * @param richText ECharts的富文本
- * @param richStyleMap 样式表
+ * @param richStyle 样式表
  */
-export const transformRichToSchema = (richText: string, richStyleMap: RichStyle): CustomElement[] => {
+export const transformRichToSchema = (richText: string, richStyle: RichStyle): CustomElement[] => {
 	return richText
 		.split(LineBreaker)
 		.map(t => parseRich(t))
@@ -85,7 +117,7 @@ export const transformRichToSchema = (richText: string, richStyleMap: RichStyle)
 				children: r.map(c => {
 					return {
 						text: c.text,
-						style: c.styleKey ? richStyleMap?.[c.styleKey] : undefined
+						style: c.styleKey ? mapRichStyleToCss(richStyle?.[c.styleKey]) : undefined
 					};
 				})
 			};
