@@ -3,8 +3,9 @@ import { createEditor, Text } from "slate";
 import { Slate, Editable, withReact, RenderLeafProps, RenderElementProps } from "slate-react";
 import { useMemo, useState } from "react";
 import { CustomElement } from "./type";
-import ToolBar from "./ToolBar";
+import ToolBar from "./components/ToolBar";
 import { withHistory } from "slate-history";
+import { transformToRich, transformToSchema } from "./tools/transform";
 
 const Element = ({ children, attributes }: RenderElementProps) => {
 	return (
@@ -57,5 +58,8 @@ const RichTextEditor = ({ onChange, initialValue }: Props) => {
 		</div>
 	);
 };
+
+RichTextEditor.transformToSchema = transformToSchema;
+RichTextEditor.transformToRich = transformToRich;
 
 export default RichTextEditor;

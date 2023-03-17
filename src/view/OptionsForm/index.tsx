@@ -1,7 +1,7 @@
-import Drawer from "../../components/Drawer";
-import ChartSelector from "../../option_components/ChartSelector";
+import Drawer from "../../base/Drawer";
+import ChartSelector from "../../components/ChartSelector";
 import css from "./index.module.less";
-import TitleForm from "../../option_components/TitleForm";
+import TitleForm from "../../components/TitleForm";
 import { Dispatch, RootState } from "../../models";
 import { useSelector, useDispatch } from "react-redux";
 

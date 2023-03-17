@@ -1,10 +1,50 @@
-import { isEmpty, isNumber, uniqueId } from "lodash";
+import { isNumber, isString, isEmpty, uniqueId  } from "lodash";
 import { CSSProperties } from "react";
-import { CustomElement } from "../../components/RichTextEditor/type";
-import { LineBreaker } from "../../config/options";
-import { EChartsStyleProperties, RichStyle } from "../../types/biz/option_form";
-import { cssPaddingToRich, parseRich, richPaddingToCss } from "./tool";
+import { LineBreaker } from "../../../config/options";
+import { EChartsStyleProperties, RichStyle } from "../../../types/biz/option_form";
+import { CustomElement } from "../type";
 
+export const cssPaddingToRich = (padding: CSSProperties["padding"] | number[]) => {
+	if (isString(padding)) {
+		return padding.match(/[0-9]+/g)?.map(o => Number(o));
+	}
+	if (isNumber(padding)) {
+		return padding;
+	}
+	return undefined;
+};
+
+export const richPaddingToCss = (padding: EChartsStyleProperties["padding"]) => {
+	if (isNumber(padding)) return padding + "px";
+	return padding?.map(o => o + "px").join(" ");
+};
+
+/**
+ * 将富文本中的字符和样式id解析出来
+ * @param rich ECharts的富文本
+ * @returns
+ */
+export const parseRich = (rich: string) => {
+	const pattern = /({(\w+)\|([^{}]+)}|([^{}]+))/g;
+	const result = [];
+
+	let match;
+	while ((match = pattern.exec(rich)) !== null) {
+		if (match[2] && match[3]) {
+			result.push({
+				styleKey: match[2],
+				text: match[3]
+			});
+		}
+		else {
+			result.push({
+				text: match[1]
+			});
+		}
+	}
+
+	return result;
+};
 
 /**
  * 将ECharts的富文本样式映射成Slate的样式
@@ -59,7 +99,7 @@ export const transformToRich = (elemetns: CustomElement[]): {text: string, style
 					if (child) {
 						return {
 							...acc,
-							[child.id]: child,
+							[child.id]: mapCssToRichStyle(child),
 						};
 					}
 					return acc;
@@ -69,6 +109,7 @@ export const transformToRich = (elemetns: CustomElement[]): {text: string, style
 		}
 		return acc;
 	}, [[] as string[], {} as RichStyle]);
+
 	return {
 		text: richText.join(LineBreaker),
 		style: richStyleMap,
