@@ -3,7 +3,7 @@ import { CSSProperties } from "react";
 import { CustomElement } from "../../components/RichTextEditor/type";
 import { LineBreaker } from "../../config/options";
 import { EChartsStyleProperties, RichStyle } from "../../types/biz/option_form";
-import { cssPaddingToRich, richPaddingToCss } from "./tool";
+import { cssPaddingToRich, parseRich, richPaddingToCss } from "./tool";
 
 
 /**
@@ -13,8 +13,8 @@ import { cssPaddingToRich, richPaddingToCss } from "./tool";
  */
 export const mapRichStyleToCss = (richStyle: EChartsStyleProperties): CSSProperties => {
 	const {
-		borderRadius, align, textShadowColor, padding,
-		textShadowBlur, textShadowOffsetX, textShadowOffsetY
+		borderRadius, align, padding,
+		textShadowBlur = 0, textShadowOffsetX = 0, textShadowOffsetY = 0, textShadowColor = "transparent"
 	} = richStyle;
 
 	return {
@@ -56,10 +56,10 @@ export const transformSchemaToRich = (elemetns: CustomElement[]): {text: string,
 			const newStyle = {
 				...style,
 				...newChildren.reduce((acc, child) => {
-					if (child.style) {
+					if (child) {
 						return {
 							...acc,
-							[child.id]: child.style,
+							[child.id]: child,
 						};
 					}
 					return acc;
@@ -76,33 +76,6 @@ export const transformSchemaToRich = (elemetns: CustomElement[]): {text: string,
 };
 
 /**
- * 将富文本中的字符和样式id解析出来
- * @param rich ECharts的富文本
- * @returns
- */
-function parseRich(rich: string) {
-	const pattern = /({(\w+)\|([^{}]+)}|([^{}]+))/g;
-	const result = [];
-
-	let match;
-	while ((match = pattern.exec(rich)) !== null) {
-		if (match[2] && match[3]) {
-			result.push({
-				styleKey: match[2],
-				text: match[3]
-			});
-		}
-		else {
-			result.push({
-				text: match[1]
-			});
-		}
-	}
-
-	return result;
-}
-
-/**
  * 将ECharts的富文本格式转换为Slate Schema
  * @param richText ECharts的富文本
  * @param richStyle 样式表
@@ -115,10 +88,14 @@ export const transformRichToSchema = (richText: string, richStyle: RichStyle): C
 			return {
 				type: "paragraph",
 				children: r.map(c => {
-					return {
-						text: c.text,
-						style: c.styleKey ? mapRichStyleToCss(richStyle?.[c.styleKey]) : undefined
-					};
+					const o = { text: c.text };
+					if (c.styleKey) {
+						return {
+							...o,
+							...mapRichStyleToCss(richStyle?.[c.styleKey]),
+						};
+					}
+					return o;
 				})
 			};
 		});

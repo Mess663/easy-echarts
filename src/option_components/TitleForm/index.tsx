@@ -1,8 +1,10 @@
 import FormItem from "../../components/FormItem";
 import css from "./index.module.less";
-import { Title } from "../../types/biz/option_form";
+import { RichStyle, Title } from "../../types/biz/option_form";
 import RichTextEditor from "../../components/RichTextEditor";
 import { transformRichToSchema, transformSchemaToRich } from "../../logic/style_tranform";
+import { useMemo } from "react";
+import { Dictionary } from "lodash";
 
 
 interface Props {
@@ -11,25 +13,25 @@ interface Props {
 	data: Title
 }
 
-const initialValue =  transformRichToSchema("{a|这段文本采用样式a}\n{b|这段文本采用样式b}这段用默认样式{x|这段用样式x}",{
-	a: {
-		color: "red",
-		lineHeight: 10
-	},
-	b: {
-		backgroundColor: {
-			image: "https://echarts.apache.org/zh/images/logo.png?_v_=20200710_1"
-		},
-		height: 40
-	},
-	x: {
-		fontSize: 18,
-		fontFamily: "Microsoft YaHei",
-		borderColor: "#449933",
-		borderRadius: 4
-	} });
+const initConfig: {wrapText: (t: string) => string, rich: RichStyle} = {
+	wrapText: (t: string) => `{default|${t}}`,
+	rich: {
+		default: {
+			color: "#333",
+			fontWeight: "bolder",
+			fontSize: 18,
+		}
+	}
+};
 
 const TitleForm = ({ data, remove, edit }: Props) => {
+	const initialValue = useMemo(() => {
+		if (data.textStyle?.rich) {
+			return transformRichToSchema(data.text ?? "标题", data.textStyle.rich);
+		}
+		return transformRichToSchema(initConfig.wrapText(data.text ?? "标题"), initConfig.rich);
+	}, [data.text, data.textStyle?.rich]);
+
 	return (
 		<div className={css.container}>
 			<div className={css.top}>

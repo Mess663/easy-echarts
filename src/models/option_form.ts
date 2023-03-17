@@ -47,7 +47,6 @@ export const optionForm = createModel<RootModel>()({
 
 		/** 选中Title */
 		selectTitle(state, index: number) {
-			console.log(state.title, index);
 			state.titleSelectedKey = state.title[index]._key;
 		}
 	},

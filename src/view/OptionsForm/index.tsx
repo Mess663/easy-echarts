@@ -49,7 +49,6 @@ function OptionsForm() {
 						<TitleForm
 							data={selectedTitle || titleOptions[0]}
 							edit={(d) => {
-								console.log(d);
 								dispatch.optionForm.modifyTitle(d);
 							}}
 							remove={(_key) => {
