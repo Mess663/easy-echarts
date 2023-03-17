@@ -40,7 +40,7 @@ export const mapCssToRichStyle = (slateStyle: CSSProperties) => {
  * @param elemetns Slate Schema
  * @returns {text: string, style: RichStyle}
  */
-export const transformSchemaToRich = (elemetns: CustomElement[]): {text: string, style: RichStyle} => {
+export const transformToRich = (elemetns: CustomElement[]): {text: string, style: RichStyle} => {
 	const [richText, richStyleMap] = elemetns.reduce((acc, element) => {
 		const [text, style] = acc;
 		if (!isEmpty(element.children)) {
@@ -80,7 +80,7 @@ export const transformSchemaToRich = (elemetns: CustomElement[]): {text: string,
  * @param richText ECharts的富文本
  * @param richStyle 样式表
  */
-export const transformRichToSchema = (richText: string, richStyle: RichStyle): CustomElement[] => {
+export const transformToSchema = (richText: string, richStyle: RichStyle): CustomElement[] => {
 	return richText
 		.split(LineBreaker)
 		.map(t => parseRich(t))

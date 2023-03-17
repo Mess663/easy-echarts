@@ -2,7 +2,7 @@ import FormItem from "../../components/FormItem";
 import css from "./index.module.less";
 import { RichStyle, Title } from "../../types/biz/option_form";
 import RichTextEditor from "../../components/RichTextEditor";
-import { transformRichToSchema, transformSchemaToRich } from "../../logic/style_tranform";
+import { transformToSchema, transformToRich } from "../../logic/style_tranform";
 import { useMemo } from "react";
 import { Dictionary } from "lodash";
 
@@ -27,9 +27,9 @@ const initConfig: {wrapText: (t: string) => string, rich: RichStyle} = {
 const TitleForm = ({ data, remove, edit }: Props) => {
 	const initialValue = useMemo(() => {
 		if (data.textStyle?.rich) {
-			return transformRichToSchema(data.text ?? "标题", data.textStyle.rich);
+			return transformToSchema(data.text ?? "标题", data.textStyle.rich);
 		}
-		return transformRichToSchema(initConfig.wrapText(data.text ?? "标题"), initConfig.rich);
+		return transformToSchema(initConfig.wrapText(data.text ?? "标题"), initConfig.rich);
 	}, [data.text, data.textStyle?.rich]);
 
 	return (
@@ -47,7 +47,7 @@ const TitleForm = ({ data, remove, edit }: Props) => {
 				<RichTextEditor
 					initialValue={initialValue}
 					onChange={(e) => {
-						const op = transformSchemaToRich(e);
+						const op = transformToRich(e);
 						console.log(op);
 						edit({
 							...data,
