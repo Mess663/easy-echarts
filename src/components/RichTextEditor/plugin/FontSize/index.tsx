@@ -6,30 +6,30 @@ import ToolBtn from "../../components/ToolBtn";
 import { Listbox } from "@headlessui/react";
 import IconSvg from "../../../../base/IconSvg";
 
+const normalTextSvg = <IconSvg name="icon-text" />;
+
 const configs = [
 	{
 		name: "H1",
 		value: 32,
-		icon: <IconSvg name="#icon-heading-h4" />
+		icon: <IconSvg name="icon-heading-h1" />
 	},
 	{
 		name: "H2",
 		value: 24,
-		icon: <IconSvg name="#icon-heading-h1" />
+		icon: <IconSvg name="icon-heading-h2" />
 	},
 	{
 		name: "H4",
 		value: 16,
-		icon: <IconSvg name="icon-heading-h1" />
+		icon: <IconSvg name="icon-heading-h4" />
 	},
 	{
 		name: "Normal",
 		value: 0,
-		icon: <IconSvg name="icon-heading-h1" />
+		icon: normalTextSvg
 	}
 ] as const;
-
-const normalTextSvg = <IconSvg name="icon-text" />;
 
 const FontSize = ({ marks, editor }: PluginProps) => {
 	const fontConfig = useMemo(() => {
@@ -40,7 +40,6 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 		}
 		return { value: 0, icon: normalTextSvg };
 	}, [marks?.fontSize]);
-	console.log(fontConfig.icon);
 	return (
 		<div className={css.listbox}>
 			<Listbox
@@ -73,7 +72,7 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 								key={config.name}
 								value={config}
 							>
-								<ToolBtn>{fontConfig.icon}</ToolBtn>
+								<ToolBtn>{config.icon}</ToolBtn>
 							</Listbox.Option>
 						))
 					}

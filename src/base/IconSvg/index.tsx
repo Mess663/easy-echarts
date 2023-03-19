@@ -7,10 +7,15 @@ interface Props extends CSSProperties {
 	className?: string
 }
 
-const IconSvg = ({ name: icon, className, ...style }: Props) => {
+const IconSvg = ({ name, className, color, ...style }: Props) => {
 	return (
-		<svg className={classNames(css.icon, className)} style={style}>
-			<use xlinkHref={"#" + icon} />
+		<svg className={classNames(css.icon, className)}
+			style={{
+				...style,
+				...(color ? { fill: color } : {})
+			}}
+		>
+			<use xlinkHref={"#" + name} />
 		</svg>
 	);
 };
