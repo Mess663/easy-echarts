@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo } from "react";
 import css from "./index.module.less";
 import { Editor } from "slate";
 import { PluginProps } from "../type";
@@ -33,7 +33,6 @@ const configs = [
 ] as const;
 
 const FontSize = ({ marks, editor }: PluginProps) => {
-	console.log(marks?.fontSize);
 	const fontConfig = useMemo(() => {
 		if (marks?.fontSize) {
 			return configs.find(o => o.value === marks.fontSize) || {
