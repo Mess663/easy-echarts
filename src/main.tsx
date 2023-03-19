@@ -6,6 +6,8 @@ import "@total-typescript/ts-reset";
 import { Provider } from "react-redux";
 import { store } from "./models";
 
+import "./style/font/iconfont.js";
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<React.StrictMode>
 		<Provider store={store}>

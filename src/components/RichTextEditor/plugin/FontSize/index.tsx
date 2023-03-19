@@ -4,33 +4,32 @@ import { Editor } from "slate";
 import { PluginProps } from "../type";
 import ToolBtn from "../../components/ToolBtn";
 import { Listbox } from "@headlessui/react";
-import normalTextSvg from "../../icon/text.svg";
-import h1Svg from "../../icon/heading-h1.svg";
-import h2Svg from "../../icon/heading-h2.svg";
-import h4Svg from "../../icon/heading-h4.svg";
+import IconSvg from "../../../../base/IconSvg";
 
 const configs = [
 	{
 		name: "H1",
 		value: 32,
-		icon: h1Svg
+		icon: <IconSvg name="#icon-heading-h4" />
 	},
 	{
 		name: "H2",
 		value: 24,
-		icon: h2Svg
+		icon: <IconSvg name="#icon-heading-h1" />
 	},
 	{
 		name: "H4",
 		value: 16,
-		icon: h4Svg
+		icon: <IconSvg name="icon-heading-h1" />
 	},
 	{
 		name: "Normal",
 		value: 0,
-		icon: normalTextSvg
+		icon: <IconSvg name="icon-heading-h1" />
 	}
 ] as const;
+
+const normalTextSvg = <IconSvg name="icon-text" />;
 
 const FontSize = ({ marks, editor }: PluginProps) => {
 	const fontConfig = useMemo(() => {
@@ -41,6 +40,7 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 		}
 		return { value: 0, icon: normalTextSvg };
 	}, [marks?.fontSize]);
+	console.log(fontConfig.icon);
 	return (
 		<div className={css.listbox}>
 			<Listbox
@@ -56,10 +56,10 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 				<Listbox.Button className={css.btn}>
 					{
 						fontConfig.icon ? (
-							<ToolBtn icon={fontConfig.icon}/>
+							<ToolBtn>{fontConfig.icon}</ToolBtn>
 						) : (
 							<ToolBtn className={css.diyFontSizeIcon}>
-								<img src={normalTextSvg} />
+								{normalTextSvg}
 								{fontConfig.value}
 							</ToolBtn>
 						)
@@ -73,7 +73,7 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 								key={config.name}
 								value={config}
 							>
-								<ToolBtn icon={config.icon} />
+								<ToolBtn>{fontConfig.icon}</ToolBtn>
 							</Listbox.Option>
 						))
 					}
@@ -97,7 +97,6 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 								Editor.addMark(editor, "fontSize", value);
 							}}
 						/>
-						
 					</Listbox.Option>
 				</Listbox.Options>
 			</Listbox>

@@ -1,8 +1,8 @@
 import React from "react";
-import icon from "../../icon/bold.svg";
 import { Editor } from "slate";
 import { PluginProps } from "../type";
 import ToolBtn from "../../components/ToolBtn";
+import IconSvg from "../../../../base/IconSvg";
 
 const FontWeight = ({ marks, editor }: PluginProps) => {
 	const isActive = marks?.fontWeight === "bold";
@@ -17,8 +17,9 @@ const FontWeight = ({ marks, editor }: PluginProps) => {
 					Editor.addMark(editor, "fontWeight", "bold");
 				}
 			}}
-			icon={icon}
-		/>
+		>
+			<IconSvg fontSize={18} name='icon-bold' />
+		</ToolBtn>
 	);
 };
 
