@@ -1,0 +1,52 @@
+@import url(../../../../style/tool.less);
+
+.listbox {
+    position: relative;
+
+    .btn {
+        background: none;
+        border: none;
+    }
+
+    .options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1;
+        display: flex;
+        background-color: #fff;
+        padding: 10px 12px;
+        .dropboxShadow;
+        border-radius: 2px;
+
+        // .option {
+        //     padding: 4px 8px;
+        // }
+    }
+
+    .diyOption {
+        width: 120px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        padding-left: 4px;
+
+        >input {
+            width: 70px;
+            margin-left: 4px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+
+            &:focus {
+                border: 1px solid #949494;
+            }
+        }
+    }
+
+    .diyFontSizeIcon {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+    }
+}

@@ -16,7 +16,7 @@ const initConfig: {wrapText: (t: string) => string, rich: RichStyle} = {
 	rich: {
 		default: {
 			color: "#333",
-			fontWeight: "bolder",
+			fontWeight: "bold",
 			fontSize: 18,
 		}
 	}
@@ -45,8 +45,8 @@ const TitleForm = ({ data, remove, edit }: Props) => {
 				<RichTextEditor
 					initialValue={initialValue}
 					onChange={(e) => {
+						console.log(e);
 						const op = RichTextEditor.transformToRich(e);
-						console.log(op);
 						edit({
 							...data,
 							text: op.text,
