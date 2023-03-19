@@ -6,6 +6,7 @@ import { CustomElement } from "./type";
 import ToolBar from "./components/ToolBar";
 import { withHistory } from "slate-history";
 import { transformToRich, transformToSchema } from "./tools/transform";
+import { pluginList } from "./plugin";
 
 const Element = ({ children, attributes }: RenderElementProps) => {
 	return (
@@ -52,6 +53,7 @@ const RichTextEditor = ({ onChange, initialValue }: Props) => {
 				<ToolBar
 					editor={editor}
 					marks={marks}
+					plugins={pluginList}
 				/>
 				<Editable
 					className={css.editor}

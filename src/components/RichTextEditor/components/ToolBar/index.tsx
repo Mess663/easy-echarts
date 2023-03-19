@@ -1,21 +1,17 @@
 import css from "./index.module.less";
-import FontWeight from "../../plugin/FontWeight";
-import FontSize from "../../plugin/FontSize";
 import { createElement } from "react";
 import { PluginProps } from "../../plugin/type";
-import FontColor from "../../plugin/FontColor";
+import { pluginList } from "../../plugin";
 
-const Tools = [
-	FontWeight,
-	FontSize,
-	FontColor,
-];
+interface Props extends PluginProps {
+	plugins: typeof pluginList
+}
 
-const ToolBar = (props: PluginProps) => {
+const ToolBar = ({ plugins, ...props }: Props) => {
 	return (
 		<div className={css.container}>
 			{
-				Tools.map((Comp, index) => createElement(Comp, { key: index, ...props }))
+				plugins.map((Comp, index) => createElement(Comp, { key: index, ...props }))
 			}
 		</div>
 	);

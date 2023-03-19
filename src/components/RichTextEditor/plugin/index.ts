@@ -1,11 +1,24 @@
 import FontColor from "./FontColor";
 import FontSize from "./FontSize";
-import FontWeight from "./FontWeight";
+import { createTogglePlugin } from "./plugin_creator";
 
-export const pluginList = [
-	FontSize,
+const FontWeight = createTogglePlugin({
+	styleKey: "fontWeight",
+	value: "bold",
+	icon: "icon-bold"
+});
+
+const FontItalic = createTogglePlugin({
+	styleKey: "fontStyle",
+	value: "italic",
+	icon: "icon-italic"
+});
+
+export const pluginList  = [
 	FontWeight,
+	FontSize,
 	FontColor,
+	FontItalic,
 ];
 
  
