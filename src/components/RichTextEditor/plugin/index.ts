@@ -1,6 +1,7 @@
 import FontColor from "./FontColor";
 import FontSize from "./FontSize";
 import { createTogglePlugin } from "./plugin_creator";
+import TextAlign from "./TextAlign";
 
 const FontWeight = createTogglePlugin({
 	styleKey: "fontWeight",
@@ -19,6 +20,7 @@ export const pluginList  = [
 	FontSize,
 	FontColor,
 	FontItalic,
+	TextAlign,
 ];
 
  

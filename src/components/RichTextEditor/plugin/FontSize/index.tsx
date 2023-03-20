@@ -45,10 +45,10 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 			<Listbox
 				onChange={(e: (typeof configs)[number]) => {
 					if (e.name === "Normal") {
-						Editor.removeMark(editor, "fontSize");
+						editor.removeMark("fontSize");
 					}
 					else {
-						Editor.addMark(editor, "fontSize", e.value);
+						editor.addMark("fontSize", e.value);
 					}
 				}}
 			>

@@ -7,10 +7,12 @@ import ToolBar from "./components/ToolBar";
 import { withHistory } from "slate-history";
 import { transformToRich, transformToSchema } from "./tools/transform";
 import { pluginList } from "./plugin";
+import { omit } from "lodash";
 
-const Element = ({ children, attributes }: RenderElementProps) => {
+const Element = (props: RenderElementProps) => {
+	const { children, attributes, element } = props;
 	return (
-		<p {...attributes}>{children}</p>
+		<p {...attributes} style={omit(element, ["children", "type"])}>{children}</p>
 	);
 };
 
