@@ -2,6 +2,7 @@ import { isNumber, isString, isEmpty, uniqueId  } from "lodash";
 import { CSSProperties } from "react";
 import { LineBreaker } from "../../../config/options";
 import { EChartsStyleProperties, RichStyle } from "../../../types/biz/option_form";
+import { pluginList } from "../plugin";
 import { CustomElement } from "../type";
 
 export const cssPaddingToRich = (padding: CSSProperties["padding"] | number[]) => {
@@ -54,22 +55,25 @@ export const parseRich = (rich: string) => {
 export const mapRichStyleToCss = (richStyle: EChartsStyleProperties): CSSProperties => {
 	const {
 		borderRadius, align, padding,
-		textShadowBlur = 0, textShadowOffsetX = 0, textShadowOffsetY = 0, textShadowColor = "transparent"
 	} = richStyle;
 
+	const newRichStyle = pluginList.reduce((acc, plugin) => plugin.toRichStyle ? plugin.toRichStyle(acc) : acc, richStyle);
+
 	return {
-		...richStyle,
+		...newRichStyle,
 		textAlign: align,
-		textShadow: `${textShadowOffsetX}px ${textShadowOffsetY}px ${textShadowBlur}px ${textShadowColor}`,
 		borderRadius: isNumber(borderRadius) ? borderRadius + "px" : borderRadius?.map(o => o + "px").join(" "),
 		padding: richPaddingToCss(padding),
 	} as CSSProperties;
 };
 
-export const mapCssToRichStyle = (slateStyle: CSSProperties) => {
-	const { textAlign, padding } = slateStyle;
+export const mapCssToRichStyle = (cssStyle: CSSProperties) => {
+	const { textAlign, padding } = cssStyle;
+	
+	const newCssStyle = pluginList.reduce((acc, plugin) => plugin.toCssStyle ? plugin.toCssStyle(acc) : acc, cssStyle);
+
 	return {
-		...slateStyle,
+		...newCssStyle,
 		align: textAlign,
 		padding: cssPaddingToRich(padding),
 	};

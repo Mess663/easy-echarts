@@ -10,7 +10,6 @@ export const createTogglePlugin = <T extends keyof CSSProperties>(creatorProps: 
 	value: CSSProperties[T],
 	icon: string,
 }) => {
-	console.log(creatorProps);
 	const Plugin =  (pluginProps: PluginProps) => <ToggleBtn {...creatorProps} {...pluginProps} />;
 	return Plugin;
 };

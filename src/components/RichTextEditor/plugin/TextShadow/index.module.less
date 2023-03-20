@@ -1,0 +1,38 @@
+@import url(../../../../style/tool.less);
+@import url(../../../../style/variable.less);
+
+.panel {
+    .dropbox;
+    display: flex;
+
+    .item {
+        display: inline-flex;
+        align-items: center;
+        word-break: keep-all;
+
+        & + .item {
+            margin-left: 12px;
+        }
+
+        >input {
+            width: 40px;
+            margin-right: 4px;
+        }
+
+        .px {
+            color: @subText;
+        }
+    }
+
+    .color {
+        width: 20px;
+        height: 20px;
+        border: 1px solid lightgrey;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .clear {
+        outline: none;
+    }
+}
