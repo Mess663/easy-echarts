@@ -1,13 +1,14 @@
 import css from "./index.module.less";
 import { createEditor, Editor, Text } from "slate";
 import { Slate, Editable, withReact, RenderLeafProps, RenderElementProps } from "slate-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CustomElement } from "./type";
 import ToolBar from "./components/ToolBar";
-import { withHistory } from "slate-history";
+import { HistoryEditor, withHistory } from "slate-history";
 import { transformToRich, transformToSchema } from "./tools/transform";
 import { pluginList } from "./plugin";
 import { omit } from "lodash";
+import HistoryController from "./components/HistoryController";
 
 const Element = (props: RenderElementProps) => {
 	const { children, attributes, element } = props;
@@ -35,6 +36,7 @@ interface Props {
 const RichTextEditor = ({ onChange, initialValue }: Props) => {
 	const editor = useMemo(() => withReact(withHistory(createEditor())), []);
 	const marks = Editor.marks(editor);
+
 	return (
 		<div className={css.container}>
 			<Slate
@@ -52,11 +54,14 @@ const RichTextEditor = ({ onChange, initialValue }: Props) => {
 					}));
 				}}
 			>
-				<ToolBar
-					editor={editor}
-					marks={marks}
-					plugins={pluginList}
-				/>
+				<div className={css.toolWrap}>
+					<ToolBar
+						editor={editor}
+						marks={marks}
+						plugins={pluginList}
+					/>
+					<HistoryController editor={editor} />
+				</div>
 				<Editable
 					className={css.editor}
 					renderLeaf={Leaf}
