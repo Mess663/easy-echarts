@@ -5,6 +5,7 @@ import { PluginProps } from "../type";
 import ToolBtn from "../../components/ToolBtn";
 import { Listbox } from "@headlessui/react";
 import IconSvg from "../../../../base/IconSvg";
+import Input from "../../../../base/Input";
 
 const normalTextSvg = <IconSvg name="icon-text" />;
 
@@ -83,7 +84,7 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 						disabled
 					>
 						自定义:
-						<input
+						<Input
 							value={fontConfig.value}
 							placeholder={"自定义"}
 							type="number"
