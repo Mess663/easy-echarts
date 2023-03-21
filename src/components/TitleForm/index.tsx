@@ -1,5 +1,5 @@
 import css from "./index.module.less";
-import { RichStyle, Title } from "../../types/biz/option_form";
+import { EchartsRich, Title } from "../../types/biz/option_form";
 import RichTextEditor from "../RichTextEditor";
 import { useMemo } from "react";
 import FormItem from "../../base/FormItem";
@@ -11,7 +11,7 @@ interface Props {
 	data: Title
 }
 
-const initConfig: {wrapText: (t: string) => string, rich: RichStyle} = {
+const initConfig: {wrapText: (t: string) => string, rich: EchartsRich} = {
 	wrapText: (t: string) => `{default|${t}}`,
 	rich: {
 		default: {

@@ -5,6 +5,7 @@ import LineHeight from "./LineHeight";
 import { createTogglePlugin } from "./plugin_creator";
 import TextAlign from "./TextAlign";
 import TextShadow from "./TextShadow";
+import { ToolPlugin } from "./type";
 
 const FontWeight = createTogglePlugin({
 	styleKey: "fontWeight",
@@ -20,7 +21,7 @@ const FontItalic = createTogglePlugin({
 	title: "斜体"
 });
 
-export const pluginList  = [
+export const pluginList: ToolPlugin[] = [
 	FontWeight,
 	FontItalic,
 	FontSize,

@@ -1,6 +1,6 @@
 import { isNumber, isString } from "lodash";
 import { CSSProperties } from "react";
-import { EChartsStyleProperties } from "../../types/biz/option_form";
+import { RichStyle } from "../../types/biz/option_form";
 
 // const mapBackgroundColor = (backgroundColor: EChartsStyleProperties["backgroundColor"]) => {
 // if (isString(backgroundColor)) {
@@ -29,7 +29,7 @@ export const cssPaddingToRich = (padding: CSSProperties["padding"] | number[]) =
 	return undefined;
 };
 
-export const richPaddingToCss = (padding: EChartsStyleProperties["padding"]) => {
+export const richPaddingToCss = (padding: RichStyle["padding"]) => {
 	if (isNumber(padding)) return padding + "px";
 	return padding?.map(o => o + "px").join(" ");
 };

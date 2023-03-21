@@ -5,7 +5,7 @@ import IconSvg from "../../../../base/IconSvg";
 import Input from "../../../../base/Input";
 import Popover from "../../../../base/Popover";
 import ToolBtn from "../../components/ToolBtn";
-import { PluginProps, ToCssStyle, ToRichStyle } from "../type";
+import { PluginProps, ToCssStyle, ToolPlugin, ToRichStyle } from "../type";
 import css from "./index.module.less";
 
 type ShadowRichStyle = ReturnType<typeof toRichStyle>
@@ -26,7 +26,7 @@ const toCssStyle = (richStyle: Partial<ShadowRichStyle>) => {
 	return `${textShadowOffsetX}px ${textShadowOffsetY}px ${textShadowBlur}px ${textShadowColor}`;
 };
 
-const TextShadow = ({ marks, editor }: PluginProps) => {
+const TextShadow: ToolPlugin = ({ marks, editor }: PluginProps) => {
 	const shadow = toRichStyle(marks?.textShadow || "");
 	const onChange = (e: Partial<ShadowRichStyle>) => {
 		const newShadow = { ...shadow, ...e };

@@ -7,6 +7,12 @@ export interface PluginProps {
     editor: Editor
 }
 
+export interface ToolPlugin {
+    (props: PluginProps): JSX.Element;
+    toRichStyle?: ToRichStyle;
+    toCssStyle?: ToCssStyle;
+}
+
 /** 转换样式的通用函数签名 */
-export type ToRichStyle = (css: CSSProperties) => RichStyle;
-export type ToCssStyle = (rich: RichStyle) => CSSProperties;
+export type ToRichStyle = (css: CSSProperties) => RichStyle | CSSProperties;
+export type ToCssStyle = (rich: RichStyle) => CSSProperties | RichStyle;

@@ -1,7 +1,7 @@
-import { isNumber, isString, isEmpty, uniqueId  } from "lodash";
+import { isNumber, isString, isEmpty, uniqueId, reduce  } from "lodash";
 import { CSSProperties } from "react";
 import { LineBreaker } from "../../../config/options";
-import { EChartsStyleProperties, RichStyle } from "../../../types/biz/option_form";
+import { RichStyle, EchartsRich } from "../../../types/biz/option_form";
 import { pluginList } from "../plugin";
 import { CustomElement } from "../type";
 
@@ -15,7 +15,7 @@ export const cssPaddingToRich = (padding: CSSProperties["padding"] | number[]) =
 	return undefined;
 };
 
-export const richPaddingToCss = (padding: EChartsStyleProperties["padding"]) => {
+export const richPaddingToCss = (padding: RichStyle["padding"]) => {
 	if (isNumber(padding)) return padding + "px";
 	return padding?.map(o => o + "px").join(" ");
 };
@@ -52,12 +52,12 @@ export const parseRich = (rich: string) => {
  * @param richStyle
  * @returns
  */
-export const mapRichStyleToCss = (richStyle: EChartsStyleProperties): CSSProperties => {
+export const mapRichStyleToCss = (richStyle: RichStyle): CSSProperties => {
 	const {
 		borderRadius, align, padding,
 	} = richStyle;
 
-	const newRichStyle = pluginList.reduce((acc, plugin) => plugin.toRichStyle ? plugin.toRichStyle(acc) : acc, richStyle);
+	const newRichStyle = reduce(pluginList, (acc, plugin) => plugin.toCssStyle ? plugin.toCssStyle(acc) : acc, richStyle);
 
 	return {
 		...newRichStyle,
@@ -70,7 +70,7 @@ export const mapRichStyleToCss = (richStyle: EChartsStyleProperties): CSSPropert
 export const mapCssToRichStyle = (cssStyle: CSSProperties) => {
 	const { textAlign, padding } = cssStyle;
 	
-	const newCssStyle = pluginList.reduce((acc, plugin) => plugin.toCssStyle ? plugin.toCssStyle(acc) : acc, cssStyle);
+	const newCssStyle = pluginList.reduce((acc, plugin) => plugin.toRichStyle ? plugin.toRichStyle(acc) : acc, cssStyle);
 
 	return {
 		...newCssStyle,
@@ -84,7 +84,7 @@ export const mapCssToRichStyle = (cssStyle: CSSProperties) => {
  * @param elemetns Slate Schema
  * @returns {text: string, style: RichStyle}
  */
-export const transformToRich = (elemetns: CustomElement[]): {text: string, style: RichStyle} => {
+export const transformToRich = (elemetns: CustomElement[]): {text: string, style: EchartsRich} => {
 	const [richText, richStyleMap] = elemetns.reduce((acc, element) => {
 		const [text, style] = acc;
 		if (!isEmpty(element.children)) {
@@ -112,7 +112,7 @@ export const transformToRich = (elemetns: CustomElement[]): {text: string, style
 			return [newText, newStyle];
 		}
 		return acc;
-	}, [[] as string[], {} as RichStyle]);
+	}, [[] as string[], {} as EchartsRich]);
 
 	return {
 		text: richText.join(LineBreaker),
@@ -125,7 +125,7 @@ export const transformToRich = (elemetns: CustomElement[]): {text: string, style
  * @param richText ECharts的富文本
  * @param richStyle 样式表
  */
-export const transformToSchema = (richText: string, richStyle: RichStyle): CustomElement[] => {
+export const transformToSchema = (richText: string, richStyle: EchartsRich): CustomElement[] => {
 	return richText
 		.split(LineBreaker)
 		.map(t => parseRich(t))

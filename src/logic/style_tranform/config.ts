@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { EChartsStyleProperties } from "../../types/biz/option_form";
+import { RichStyle } from "../../types/biz/option_form";
 
 /**
  * 富文本样式映射的状态 @see{@link DiffStylePropMap}
@@ -11,7 +11,7 @@ export enum StylePropMapStatus {
 
 // 将ECharts的富文本样式属性名映射成Slate的样式属性名(只收录属性名有差异的部分)
 export const DiffStylePropMap: Partial<Record<
-	keyof EChartsStyleProperties, keyof CSSProperties | StylePropMapStatus
+	keyof RichStyle, keyof CSSProperties | StylePropMapStatus
 >> = {
 	align: "textAlign",
 	borderDashOffset: StylePropMapStatus.unsupported,
