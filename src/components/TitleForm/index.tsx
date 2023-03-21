@@ -40,7 +40,10 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 						remove(data._key);
 					}}
 				>删除当前标题</button>
-				<div className={css.titleIndex}>{titleIndexStr}</div>
+				<div className={css.titleIndex}>
+					预览区点击标题可编辑：
+					{titleIndexStr}
+				</div>
 			</div>
 
 			<FormItem>
