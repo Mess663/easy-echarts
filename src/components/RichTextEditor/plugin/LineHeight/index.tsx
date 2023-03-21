@@ -25,7 +25,6 @@ const LineHeight: ToolPlugin = ({ marks, editor }: PluginProps) => {
 						className={css.input}
 						onChange={(e) => {
 							const value = Number(e.target.value);
-							console.log(value);
 							if (isNaN(value)) {
 								return;
 							}
