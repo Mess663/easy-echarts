@@ -3,6 +3,7 @@ import { EchartsRich, Title } from "../../types/biz/option_form";
 import RichTextEditor from "../RichTextEditor";
 import { useMemo } from "react";
 import FormItem from "../../base/FormItem";
+import IconSvg from "../../base/IconSvg";
 
 
 interface Props {
@@ -36,10 +37,10 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 			<div className={css.top}>
 				<button
 					className={css.removeBtn}
-					onMouseDown={() => {
-						remove(data._key);
-					}}
-				>删除当前标题</button>
+					onClick={() => remove(data._key)}
+				>
+					<IconSvg className={css.icon} name="icon-shanchu" />
+					删除当前标题</button>
 				<div className={css.titleIndex}>
 					预览区点击标题可编辑：
 					{titleIndexStr}
@@ -49,7 +50,7 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 			<FormItem>
 				<RichTextEditor
 					initialValue={initialValue}
-					key={titleIndexStr}
+					key={data._key}
 					onChange={(e) => {
 						const op = RichTextEditor.transformToRich(e);
 						edit({

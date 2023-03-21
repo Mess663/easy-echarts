@@ -1,4 +1,5 @@
 @import url(../../style/variable.less);
+@import url(../../style/tool.less);
 
 .top {
     margin-bottom: 10px;
@@ -9,5 +10,19 @@
     .titleIndex {
         color: @subText;
         font-size: 14px;
+    }
+}
+
+.removeBtn {
+    .resetBtn;
+    .commonButton;
+    color: @errorText;
+    border-color: @errorText;
+    padding: 4px 8px;
+
+    .icon {
+        font-size: 16px;
+        margin-right: 2px;
+        fill: @errorText;
     }
 }
