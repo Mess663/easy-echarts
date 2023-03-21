@@ -1,7 +1,6 @@
 import React from "react";
 import css from "./index.module.less";
 import { Disclosure } from "@headlessui/react";
-import { useWhyDidYouUpdate } from "ahooks";
 
 interface Props {
 	title: string | React.ReactNode
@@ -16,7 +15,7 @@ const Drawer = ({ title, children, defaultOpen: defaultExpand = false, extra }: 
 
 	return (
 		<Disclosure defaultOpen={defaultExpand}>
-			<Disclosure.Button className={css.trigger}>
+			<Disclosure.Button as="div" className={css.trigger}>
 				{title}
 				{extra}
 			</Disclosure.Button>

@@ -9,6 +9,7 @@ interface Props {
 	edit: (d: Title) => void
 	remove: (_key: string) => void
 	data: Title
+	titleIndexStr: string
 }
 
 const initConfig: {wrapText: (t: string) => string, rich: EchartsRich} = {
@@ -22,7 +23,7 @@ const initConfig: {wrapText: (t: string) => string, rich: EchartsRich} = {
 	}
 };
 
-const TitleForm = ({ data, remove, edit }: Props) => {
+const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 	const initialValue = useMemo(() => {
 		if (data.textStyle?.rich) {
 			return RichTextEditor.transformToSchema(data.text ?? "标题", data.textStyle.rich);
@@ -39,6 +40,7 @@ const TitleForm = ({ data, remove, edit }: Props) => {
 						remove(data._key);
 					}}
 				>删除当前标题</button>
+				<div className={css.titleIndex}>{titleIndexStr}</div>
 			</div>
 
 			<FormItem>

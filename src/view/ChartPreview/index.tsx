@@ -88,7 +88,7 @@ const ChartPreview = () => {
 						});
 						echartObjRef.current.setOption(echartsOption);
 						echartObjRef.current.on("mousedown", (e) => {
-							dispatch.optionForm.selectTitle(e.componentIndex);
+							dispatch.ui.selectTitle(e.componentIndex);
 							onEvent(ComponentType.Title, onMousedown)(e);
 						});
 						echartObjRef.current.getZr().on("mousemove", onMousemove);

@@ -13,20 +13,23 @@ function OptionsForm() {
 	const titleOptions = useSelector((state: RootState) => state.optionForm.title);
 	const selectedTitle = useSelector(
 		(state: RootState) =>
-			state.optionForm.title.find((o) => o._key === state.optionForm.titleSelectedKey
+			state.optionForm.title.find((o) => o._key === state.ui.titleSelectedKey
 			));
 	const dispatch = useDispatch<Dispatch>();
 
 	const addTitleBtn = (
-		<span
+		<button
 			onMouseDown={(e) => {
 				e.stopPropagation();
 				dispatch.optionForm.addTitle({
 					text: "标题",
 				});
 			}}
+			onClickCapture={(e) => {
+				e.stopPropagation();
+			}}
 			className={css.addTitle}
-		>添加</span>
+		>添加</button>
 	);
 
 	return (
@@ -54,6 +57,7 @@ function OptionsForm() {
 							remove={(_key) => {
 								dispatch.optionForm.removeTitle(_key);
 							}}
+							titleIndexStr={`${titleOptions.indexOf(selectedTitle || titleOptions[0]) + 1}/${titleOptions.length}`}
 						/>
 					) : (
 						addTitleBtn
