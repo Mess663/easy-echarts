@@ -16,7 +16,7 @@ const FontColor = ({ marks, editor }: PluginProps) => {
 				/>
 			)}
 		>
-			<ToolBtn>
+			<ToolBtn title="字体颜色">
 				<IconSvg color={marks?.color} fontSize={18} name='icon-font-color' />
 			</ToolBtn>
 		</Popover>

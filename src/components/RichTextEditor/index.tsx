@@ -1,14 +1,14 @@
 import css from "./index.module.less";
-import { createEditor, Editor, Text } from "slate";
+import { createEditor, Editor, Text, Transforms } from "slate";
 import { Slate, Editable, withReact, RenderLeafProps, RenderElementProps } from "slate-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CustomElement } from "./type";
 import ToolBar from "./components/ToolBar";
-import { HistoryEditor, withHistory } from "slate-history";
+import { withHistory } from "slate-history";
 import { transformToRich, transformToSchema } from "./tools/transform";
 import { pluginList } from "./plugin";
 import { omit } from "lodash";
-import HistoryController from "./components/HistoryController";
+import ControlBar from "./components/ControlBar";
 
 const Element = (props: RenderElementProps) => {
 	const { children, attributes, element } = props;
@@ -60,7 +60,9 @@ const RichTextEditor = ({ onChange, initialValue }: Props) => {
 						marks={marks}
 						plugins={pluginList}
 					/>
-					<HistoryController editor={editor} />
+					<ControlBar
+						editor={editor}
+					/>
 				</div>
 				<Editable
 					className={css.editor}

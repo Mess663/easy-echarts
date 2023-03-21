@@ -52,7 +52,7 @@ const TextAlign = ({ marks, editor }: PluginProps) => {
 					}
 				}}
 			>
-				<Listbox.Button className={css.btn}>
+				<Listbox.Button title="文本对齐" className={css.btn}>
 					{
 						textConfig.icon ? (
 							<ToolBtn>{textConfig.icon}</ToolBtn>

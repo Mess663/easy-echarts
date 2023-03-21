@@ -1,4 +1,5 @@
 @import url(../../../../style/tool.less);
+@import url(../../../../style/variable.less);
 
 .listbox {
     position: relative;
@@ -29,7 +30,7 @@
     }
 
     .diyOption {
-        width: 120px;
+        word-break: keep-all;
         font-size: 14px;
         display: flex;
         align-items: center;
@@ -46,6 +47,11 @@
             &:focus {
                 border: 1px solid #949494;
             }
+        }
+
+        .px {
+            color: @subText;
+            margin-left: 4px;
         }
     }
 

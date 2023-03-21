@@ -4,13 +4,16 @@ import classNames from "classnames";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   isActive?: boolean
-  onClick?: () => void
+  onMouseDown?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
   children?: React.ReactNode | React.ReactNode[]
   className?: string
   disabled?: boolean
+  hoverTitle?: string
 }
 
-const ToolBtn = ({ isActive = true, onClick, children, className, disabled, ...props }: Props) => {
+const ToolBtn = ({
+	isActive = true, onMouseDown, children, className, disabled, ...props
+}: Props) => {
 	if (disabled) return (
 		<div className={classNames(css.btn, css.disabled, className)}>
 			{children}
@@ -21,7 +24,11 @@ const ToolBtn = ({ isActive = true, onClick, children, className, disabled, ...p
 			className={classNames(css.btn, className, {
 				[css.active]: isActive
 			})}
-			onClick={onClick}
+			onMouseDown={(e) => {
+				// 防止点击按钮时，编辑器失去焦点，导致选中项目被取消
+				e.preventDefault();
+				if (onMouseDown) onMouseDown(e);
+			}}
 			{...props}
 		>
 			{ children }

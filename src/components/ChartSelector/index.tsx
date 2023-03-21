@@ -21,7 +21,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 							<Menu.Item key={o.code}>
 								<div
 									className={css.menuItem}
-									onClick={() => {
+									onMouseDown={() => {
 										onChange([...data, { _key: uniqueId(), name: o.val, type: o.code }]);
 									}}
 									role="button"
@@ -38,7 +38,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 						<div
 							key={o._key}
 							className={css.selectItem}
-							onClick={() => {
+							onMouseDown={() => {
 								onChange(data.filter(item => item._key !== o._key));
 							}}
 						>

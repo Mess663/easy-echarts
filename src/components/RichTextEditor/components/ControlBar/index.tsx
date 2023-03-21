@@ -5,18 +5,18 @@ import IconSvg from "../../../../base/IconSvg";
 import ToolBtn from "../ToolBtn";
 import css from "./index.module.less";
 
-const HistoryController = ({ editor }: {editor: Editor}) => {
+const ControlBar = ({ editor }: {editor: Editor}) => {
 	return (
 		<div className={css.container}>
 			<ToolBtn
 				disabled={!editor.history.undos.length}
-				onClick={() => HistoryEditor.undo(editor)}
+				onMouseDown={() => HistoryEditor.undo(editor)}
 			>
 				<IconSvg name="icon-undo" />
 			</ToolBtn>
 			<ToolBtn
 				disabled={!editor.history.redos.length}
-				onClick={() => HistoryEditor.redo(editor)}
+				onMouseDown={() => HistoryEditor.redo(editor)}
 			>
 				<IconSvg name="icon-redo" />
 			</ToolBtn>
@@ -24,4 +24,4 @@ const HistoryController = ({ editor }: {editor: Editor}) => {
 	);
 };
 
-export default HistoryController;
+export default ControlBar;

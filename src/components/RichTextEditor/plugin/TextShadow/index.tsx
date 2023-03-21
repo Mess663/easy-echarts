@@ -80,7 +80,7 @@ const TextShadow = ({ marks, editor }: PluginProps) => {
 						</Popover>
 					</div>
 					<div className={css.item}
-						onClick={() => {
+						onMouseDown={() => {
 							editor.removeMark("textShadow");
 						}}
 					>
@@ -89,7 +89,7 @@ const TextShadow = ({ marks, editor }: PluginProps) => {
 				</div>
 			)}
 		>
-			<ToolBtn>
+			<ToolBtn title="字体阴影">
 				<IconSvg name="icon-text-shadow" />
 			</ToolBtn>
 		</Popover>

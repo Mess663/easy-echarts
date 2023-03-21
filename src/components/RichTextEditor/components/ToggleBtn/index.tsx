@@ -10,13 +10,13 @@ interface Props<T extends keyof CSSProperties> extends PluginProps {
 }
 
 const ToggleBtn = <T extends keyof CSSProperties>({
-	marks, editor, styleKey, value, icon,
+	marks, editor, styleKey, value, icon, ...props
 }: Props<T>) => {
 	const isActive = marks?.[styleKey] === value;
 	return (
 		<ToolBtn
 			isActive={isActive}
-			onClick={() => {
+			onMouseDown={() => {
 				if (isActive) {
 					editor.removeMark(styleKey);
 				}
@@ -24,6 +24,7 @@ const ToggleBtn = <T extends keyof CSSProperties>({
 					editor.addMark(styleKey, value);
 				}
 			}}
+			{...props}
 		>
 			<IconSvg fontSize={18} name={icon} />
 		</ToolBtn>

@@ -53,7 +53,7 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 					}
 				}}
 			>
-				<Listbox.Button className={css.btn}>
+				<Listbox.Button title={"字体大小"} className={css.btn}>
 					{
 						fontConfig.icon ? (
 							<ToolBtn>{fontConfig.icon}</ToolBtn>
@@ -83,12 +83,12 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 						value={{ value: 0, icon: null }}
 						disabled
 					>
-						自定义:
+						自定义：
 						<Input
 							value={fontConfig.value}
 							placeholder={"自定义"}
 							type="number"
-							onClick={(e) => { e.stopPropagation(); }}
+							onMouseDown={(e) => { e.stopPropagation(); }}
 							onChange={(e) => {
 								const value = Number(e.target.value);
 								if (isNaN(value)) {
@@ -97,6 +97,7 @@ const FontSize = ({ marks, editor }: PluginProps) => {
 								Editor.addMark(editor, "fontSize", value);
 							}}
 						/>
+						<span className={css.px}>px</span>
 					</Listbox.Option>
 				</Listbox.Options>
 			</Listbox>

@@ -19,7 +19,7 @@ function OptionsForm() {
 
 	const addTitleBtn = (
 		<span
-			onClick={(e) => {
+			onMouseDown={(e) => {
 				e.stopPropagation();
 				dispatch.optionForm.addTitle({
 					text: "标题",

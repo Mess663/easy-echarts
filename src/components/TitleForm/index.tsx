@@ -35,7 +35,7 @@ const TitleForm = ({ data, remove, edit }: Props) => {
 			<div className={css.top}>
 				<button
 					className={css.removeBtn}
-					onClick={() => {
+					onMouseDown={() => {
 						remove(data._key);
 					}}
 				>删除当前标题</button>
