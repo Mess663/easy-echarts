@@ -4,6 +4,8 @@ import RichTextEditor from "../RichTextEditor";
 import { useMemo } from "react";
 import FormItem from "../../base/FormItem";
 import IconSvg from "../../base/IconSvg";
+import Input from "../../base/Input";
+import TitleLink from "./components/TitleLink";
 
 
 interface Props {
@@ -59,6 +61,17 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 							textStyle: {
 								rich: op.style,
 							}
+						});
+					}}
+				/>
+			</FormItem>
+
+			<FormItem title={"超链接"}>
+				<TitleLink data={data}
+					onChange={(d) => {
+						edit({
+							...data,
+							...d,
 						});
 					}}
 				/>
