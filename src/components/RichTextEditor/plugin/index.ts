@@ -1,5 +1,6 @@
 import FontColor from "./FontColor";
 import FontSize from "./FontSize";
+import Formattor from "./Formattor";
 import LineHeight from "./LineHeight";
 import { createTogglePlugin } from "./plugin_creator";
 import TextAlign from "./TextAlign";
@@ -27,6 +28,7 @@ export const pluginList  = [
 	TextShadow,
 	LineHeight,
 	TextAlign,
+	Formattor,
 ];
 
  

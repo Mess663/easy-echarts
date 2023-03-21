@@ -14,7 +14,7 @@ declare module "slate" {
     Text: CustomText
     Editor: Omit<BaseEditor, "addMark" | "removeMark"> & ReactEditor & HistoryEditor & {
       addMark: <T extends keyof CSSProperties>(key: T, value: CSSProperties[T]) => void
-      removeMark: <T extends keyof CSSProperties>(key: T) => void
+      removeMark: <T extends keyof CSSProperties>(key: T | T[]) => void
     }
   }
 }

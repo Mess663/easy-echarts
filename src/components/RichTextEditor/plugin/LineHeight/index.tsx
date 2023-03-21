@@ -7,7 +7,6 @@ import Input from "../../../../base/Input";
 import { isNumber } from "lodash";
 
 const LineHeight = ({ marks, editor }: PluginProps) => {
-	console.log(Number(marks?.lineHeight));
 	const val = isNumber(marks?.lineHeight) ? marks?.lineHeight : marks?.lineHeight?.replace("px", "");
 	return (
 		<Popover
