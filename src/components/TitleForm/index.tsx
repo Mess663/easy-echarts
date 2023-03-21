@@ -49,6 +49,7 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 			<FormItem>
 				<RichTextEditor
 					initialValue={initialValue}
+					key={titleIndexStr}
 					onChange={(e) => {
 						const op = RichTextEditor.transformToRich(e);
 						edit({

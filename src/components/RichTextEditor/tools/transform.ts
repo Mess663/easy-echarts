@@ -136,8 +136,8 @@ export const transformToSchema = (richText: string, richStyle: EchartsRich): Cus
 					const o = { text: c.text };
 					if (c.styleKey) {
 						return {
-							...o,
 							...mapRichStyleToCss(richStyle?.[c.styleKey]),
+							...o,
 						};
 					}
 					return o;
