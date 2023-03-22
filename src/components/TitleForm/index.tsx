@@ -66,7 +66,7 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 				/>
 			</FormItem>
 
-			<FormItem title={"超链接"}>
+			<FormItem title={"标题链接"}>
 				<TitleLink data={data}
 					onChange={(d) => {
 						edit({

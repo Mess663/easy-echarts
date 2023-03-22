@@ -18,7 +18,7 @@ const TitleLink = ({ data, onChange }: {data: Data, onChange: (d: Data) => void}
 		<div className={css.container}>
 			<Input
 				className={css.input}
-				placeholder="请输入"
+				placeholder="请带上http://或https://"
 				value={data.link || ""}
 				onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
 					onChange({
