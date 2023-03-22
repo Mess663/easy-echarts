@@ -9,14 +9,7 @@ import ColorPicker from "../../base/ColorPicker";
 import { isColorString } from "../../tools/color";
 import RichTextEditor from "../../components/RichTextEditor";
 import OptionsBar from "../../components/OptionsBar";
-
-
-interface Props {
-	edit: (d: Title) => void
-	remove: (_key: string) => void
-	data: Title
-	titleIndexStr: string
-}
+import { OptionFormProps } from "../type";
 
 const mainTitleConfig: {wrapText: (t: string) => string, rich: EchartsRich} = {
 	wrapText: (t: string) => `{default|${t}}`,
@@ -40,7 +33,7 @@ const subTitleConfig: {wrapText: (t: string) => string, rich: EchartsRich} = {
 	}
 };
 
-const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
+const TitleForm = ({ data, remove, edit, indexObj }: OptionFormProps<Title>) => {
 	const mainTitle = useMemo(() => {
 		if (data.textStyle?.rich) {
 			return RichTextEditor.transformToSchema(data.text ?? "标题", data.textStyle.rich);
@@ -62,8 +55,7 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 		<div className={css.container}>
 			<OptionsBar
 				remove={() => remove(data._key)}
-				removeTitle='删除当前标题'
-				tips={`预览区点击标题可编辑：${titleIndexStr}`}
+				tips={`预览区点击标题可编辑：${indexObj.index}/${indexObj.length}`}
 			/>
 
 			<FormItem align title={"组件id"} hash="title.id">

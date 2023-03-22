@@ -3,10 +3,10 @@ import css from "./index.module.less";
 import { Menu } from "@headlessui/react";
 import { ChartEnumify } from "../../types/biz/chart";
 import { uniqueId } from "lodash";
-import { FormChart } from "../../types/biz/option_form";
+import { Series } from "../../types/biz/option_form";
 
 interface Props {
-	data: FormChart[]
+	data: Series[]
 	onChange: (d: Props["data"]) => void
 }
 

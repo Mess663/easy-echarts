@@ -1,13 +1,14 @@
 import { createModel } from "@rematch/core";
-import { uniqueId } from "lodash";
+import { isNumber, uniqueId } from "lodash";
 import { RootModel } from ".";
 import { ChartEnumify } from "../types/biz/chart";
-import { FormChart, Title } from "../types/biz/option_form";
+import { Series, Title, XAxis, YAxis } from "../types/biz/option_form";
 
 export interface State {
-	series: FormChart[];
+	series: Series[]
 	title: Title[]
-	titleSelectedKey: Title["_key"] | null
+	xAxis: XAxis[]
+	yAxis: YAxis[]
 }
 
 const defaultTitleKey = uniqueId();
@@ -16,32 +17,45 @@ export const optionForm = createModel<RootModel>()({
 	state: {
 		series: [{ _key: uniqueId(), name: ChartEnumify.Line.val, type: ChartEnumify.Line.code }],
 		title: [{ _key: defaultTitleKey, text: "标题" }],
+		xAxis: [{ type: "category" }],
+		yAxis: [{}]
 	} as State,
 
 	reducers: {
+		/** ==== common ==== */
+
+		add<N extends keyof State>(state: State, payload: { name: N, data: Partial<State[N][number]> }) {
+			payload.data._key = uniqueId();
+			(state[payload.name] as Array<State[N][number]>).push({ ...payload.data, _key: uniqueId() });
+		},
+
+		remove<N extends keyof State>(state: State, payload: { name: N, _key: string }) {
+			state[payload.name] = (
+					state[payload.name] as Array<State[N][number]>
+				).filter(item => item._key !== payload._key) as State[N];
+		},
+
+		modify<N extends keyof State>(state: State, payload: { name: N, data: State[N][number] }) {
+			const { _key, ...rest } = payload.data;
+			const index = state[payload.name].findIndex(item => item._key === _key);
+			if (isNumber(index)) {
+				state[payload.name][index] = { ...state.title[index], ...rest };
+			}
+		},
+
+		modifyByIndex<N extends keyof State>(state: State, payload: { name: N, index: number, data: Partial<State[N][number]> }) {
+			const { name, index, data } = payload;
+			state[name][index] = { ...state[name][index], ...data };
+		},
+
+		/** ================ */
+
+		/** ==== series ==== */
+
 		updateCharts(state, payload: State["series"]) {
 			state.series = payload;
 		},
 
-		addTitle(state, payload: Omit<Title, "_key">) {
-			state.title.push({ _key: uniqueId(), ...payload });
-		},
-
-		/** 删除单独的Title */
-		removeTitle(state, payload: Title["_key"]) {
-			state.title = state.title.filter(item => item._key !== payload);
-		},
-
-		/** 修改单独的Title */
-		modifyTitle(state, payload: Title) {
-			const { _key, ...rest } = payload;
-			const index = state.title.findIndex(item => item._key === _key);
-			state.title[index] = { ...state.title[index], ...rest };
-		},
-
-		/** 通过索引找寻来修改对应的Title */
-		modifyTitleByIndex(state, { index, payload }: { index: number, payload: Omit<Title, "_key"> }) {
-			state.title[index] = { ...state.title[index], ...payload };
-		},
+		/** ================ */
 	},
 });

@@ -25,7 +25,8 @@ const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
  */
 function OptionsForm() {
 	const series = useSelector((state: RootState) => state.optionForm.series);
-	const titleOptions = useSelector((state: RootState) => state.optionForm.title);
+	const title = useSelector((state: RootState) => state.optionForm.title);
+	const xAxis = useSelector((state: RootState) => state.optionForm.xAxis);
 	const selectedTitle = useSelector(
 		(state: RootState) =>
 			state.optionForm.title.find((o) => o._key === state.ui.titleSelectedKey
@@ -35,8 +36,11 @@ function OptionsForm() {
 	const addTitleBtn = (
 		<AddBtn
 			onClick={() => {
-				dispatch.optionForm.addTitle({
-					text: "标题",
+				dispatch.optionForm.add({
+					name: "title",
+					data: {
+						text: "标题",
+					}
 				});
 			}}
 		/>
@@ -58,16 +62,25 @@ function OptionsForm() {
 				extra={addTitleBtn}
 			>
 				{
-					titleOptions.length ? (
+					title.length ? (
 						<TitleForm
-							data={selectedTitle || titleOptions[0]}
-							edit={(d) => {
-								dispatch.optionForm.modifyTitle(d);
+							data={selectedTitle || title[0]}
+							edit={(newData) => {
+								dispatch.optionForm.modify({
+									name: "title",
+									data: newData
+								});
 							}}
 							remove={(_key) => {
-								dispatch.optionForm.removeTitle(_key);
+								dispatch.optionForm.remove({
+									name: "title",
+									_key
+								});
 							}}
-							titleIndexStr={`${titleOptions.indexOf(selectedTitle || titleOptions[0]) + 1}/${titleOptions.length}`}
+							indexObj={{
+								index: title.indexOf(selectedTitle || title[0]) + 1 ,
+								length: title.length,
+							}}
 						/>
 					) : (
 						addTitleBtn
@@ -78,7 +91,15 @@ function OptionsForm() {
 				defaultOpen
 				extra={addTitleBtn}
 			>
-				<XAxisForm />
+				<XAxisForm
+					edit={(newData) => { dispatch.optionForm.modify({ name: "xAxis", data: newData });  }}
+					data={xAxis[0]}
+					remove={(_key) => { dispatch.optionForm.remove({ name: "xAxis", _key }); }}
+					indexObj={{
+						index: 1,
+						length: xAxis.length
+					}}
+				/>
 			</Drawer>
 		</div>
 	);

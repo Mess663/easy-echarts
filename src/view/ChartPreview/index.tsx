@@ -16,8 +16,7 @@ const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void))
 
 
 const ChartPreview = () => {
-	const series = useSelector((state: RootState) => state.optionForm.series);
-	const title = useSelector((state: RootState) => state.optionForm.title);
+	const { title, series, xAxis, yAxis } = useSelector((state: RootState) => state.optionForm);
 	const dispatch = useDispatch<Dispatch>();
 	const echartObjRef = useRef<echarts.ECharts>();
 	const [containerRef, size] = useRefSize();
@@ -28,9 +27,10 @@ const ChartPreview = () => {
 	useEffect(() => {
 		if (output) {
 			const [left, top, index] = output;
-			dispatch.optionForm.modifyTitleByIndex({
+			dispatch.optionForm.modifyByIndex({
 				index,
-				payload: {
+				name: "title",
+				data: {
 					left,
 					top
 				}
@@ -51,11 +51,8 @@ const ChartPreview = () => {
 				id: o._key,
 				triggerEvent: "click",
 			})),
-			tooltip: {},
-			xAxis: {
-				type: "category",
-			},
-			yAxis: {},
+			xAxis,
+			yAxis,
 			series: series.map(o => ({
 				type: o.type
 			})),
