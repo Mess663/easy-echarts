@@ -1,0 +1,28 @@
+@import url(../../style/variable.less);
+@import url(../../style/tool.less);
+
+.container {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .tips {
+        color: @subText;
+        font-size: 14px;
+    }
+
+    .removeBtn {
+        .resetBtn;
+        .commonBtn;
+        color: @errorText;
+        border-color: @errorText;
+        padding: 4px 8px;
+
+        .icon {
+            font-size: 16px;
+            margin-right: 2px;
+            fill: @errorText;
+        }
+    }
+}

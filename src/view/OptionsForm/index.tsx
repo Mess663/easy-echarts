@@ -1,9 +1,24 @@
 import Drawer from "../../base/Drawer";
 import ChartSelector from "../../components/ChartSelector";
 import css from "./index.module.less";
-import TitleForm from "../../components/TitleForm";
 import { Dispatch, RootState } from "../../models";
 import { useSelector, useDispatch } from "react-redux";
+import { HTMLAttributes } from "react";
+import TitleForm from "../../option_forms/Title";
+import XAxisForm from "../../option_forms/XAxis";
+
+const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
+	return (
+		<button
+			className={css.addTitle}
+			onClick={(e) => {
+				e.stopPropagation();
+				if (onClick) onClick(e);
+			}}
+			{...props}
+		>添加</button>
+	);
+};
 
 /**
  * 配置项管理表单
@@ -18,18 +33,13 @@ function OptionsForm() {
 	const dispatch = useDispatch<Dispatch>();
 
 	const addTitleBtn = (
-		<button
-			onMouseDown={(e) => {
-				e.stopPropagation();
+		<AddBtn
+			onClick={() => {
 				dispatch.optionForm.addTitle({
 					text: "标题",
 				});
 			}}
-			onClickCapture={(e) => {
-				e.stopPropagation();
-			}}
-			className={css.addTitle}
-		>添加</button>
+		/>
 	);
 
 	return (
@@ -43,8 +53,8 @@ function OptionsForm() {
 					onChange={c => dispatch.optionForm.updateCharts(c)}
 				/>
 			</Drawer>
-			<Drawer title="标题"
-				defaultOpen
+			<Drawer
+				title="标题"
 				extra={addTitleBtn}
 			>
 				{
@@ -63,6 +73,12 @@ function OptionsForm() {
 						addTitleBtn
 					)
 				}
+			</Drawer>
+			<Drawer title="X轴"
+				defaultOpen
+				extra={addTitleBtn}
+			>
+				<XAxisForm />
 			</Drawer>
 		</div>
 	);

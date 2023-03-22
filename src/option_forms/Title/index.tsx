@@ -1,14 +1,14 @@
 import css from "./index.module.less";
 import { EchartsRich, Title } from "../../types/biz/option_form";
-import RichTextEditor from "../RichTextEditor";
 import { useMemo } from "react";
 import FormItem from "../../base/FormItem";
-import IconSvg from "../../base/IconSvg";
 import TitleLink from "./components/TitleLink";
 import { Switch } from "antd";
 import Input from "../../base/Input";
 import ColorPicker from "../../base/ColorPicker";
 import { isColorString } from "../../tools/color";
+import RichTextEditor from "../../components/RichTextEditor";
+import OptionsBar from "../../components/OptionsBar";
 
 
 interface Props {
@@ -60,18 +60,11 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 
 	return (
 		<div className={css.container}>
-			<div className={css.top}>
-				<button
-					className={css.removeBtn}
-					onClick={() => remove(data._key)}
-				>
-					<IconSvg className={css.icon} name="icon-shanchu" />
-					删除当前标题</button>
-				<div className={css.titleIndex}>
-					预览区点击标题可编辑：
-					{titleIndexStr}
-				</div>
-			</div>
+			<OptionsBar
+				remove={() => remove(data._key)}
+				removeTitle='删除当前标题'
+				tips={`预览区点击标题可编辑：${titleIndexStr}`}
+			/>
 
 			<FormItem align title={"组件id"} hash="title.id">
 				<Input
