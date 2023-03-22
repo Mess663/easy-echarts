@@ -23,7 +23,7 @@ const OptionsBar = ({ remove, removeTitle, tips }: Props) => {
 				onClick={remove}
 			>
 				<IconSvg className={css.icon} name="icon-shanchu" />
-				{removeTitle}</button>
+				删除当前配置</button>
 			<div className={css.tips}>
 				{tips}
 			</div>
