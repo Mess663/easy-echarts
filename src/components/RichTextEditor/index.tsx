@@ -31,9 +31,10 @@ const Leaf = (props: RenderLeafProps) => {
 interface Props {
 	initialValue?: CustomElement[];
 	onChange: (value: CustomElement[]) => void;
+	placeholder?: string
 }
 
-const RichTextEditor = ({ onChange, initialValue }: Props) => {
+const RichTextEditor = ({ placeholder, onChange, initialValue }: Props) => {
 	const editor = useMemo(() => withReact(withHistory(createEditor())), []);
 	const marks = Editor.marks(editor);
 	return (
@@ -67,6 +68,7 @@ const RichTextEditor = ({ onChange, initialValue }: Props) => {
 					className={css.editor}
 					renderLeaf={Leaf}
 					renderElement={Element}
+					placeholder={placeholder ?? "请输入内容"}
 				/>
 			</Slate>
 		</div>

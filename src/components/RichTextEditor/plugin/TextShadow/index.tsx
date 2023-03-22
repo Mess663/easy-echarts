@@ -1,9 +1,10 @@
 import { last, startsWith } from "lodash";
 import React from "react";
-import { SketchPicker } from "react-color";
+import ColorPicker from "../../../../base/ColorPicker";
 import IconSvg from "../../../../base/IconSvg";
 import Input from "../../../../base/Input";
 import Popover from "../../../../base/Popover";
+import { isColorString } from "../../../../tools/color";
 import ToolBtn from "../../components/ToolBtn";
 import { PluginProps, ToCssStyle, ToolPlugin, ToRichStyle } from "../type";
 import css from "./index.module.less";
@@ -18,7 +19,7 @@ const toRichStyle = (cssTextShadow: string) => {
 		textShadowOffsetX: Number(config?.[0]) || 0,
 		textShadowOffsetY: Number(config?.[1]) || 0,
 		textShadowBlur: Number(config?.[2]) || 0,
-		textShadowColor: startsWith(color, "#") ? color : "transparent"
+		textShadowColor: isColorString(color) ? color : "transparent"
 	};
 };
 const toCssStyle = (richStyle: Partial<ShadowRichStyle>) => {
@@ -33,7 +34,7 @@ const TextShadow: ToolPlugin = ({ marks, editor }: PluginProps) => {
 		editor.addMark("textShadow", toCssStyle(newShadow));
 	};
 	const onInput = (key: keyof Omit<ShadowRichStyle, "textShadowColor">) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = Number(e.target.value);
+		const value = Number(e.currentTarget.value);
 		onChange({ [key]: value });
 	};
 	return (
@@ -66,18 +67,12 @@ const TextShadow: ToolPlugin = ({ marks, editor }: PluginProps) => {
 					</div>
 					<div className={css.item}>
 					颜色：
-						<Popover
-							panel={(
-								<SketchPicker
-									color={shadow.textShadowColor}
-									onChange={(e) => {
-										onChange({ textShadowColor: e.hex });
-									}}
-								/>
-							)}
-						>
-							<div className={css.color} style={{ backgroundColor: shadow.textShadowColor }} />
-						</Popover>
+						<ColorPicker
+							color={shadow.textShadowColor}
+							onChange={(e) => {
+								onChange({ textShadowColor: e.hex });
+							}}
+						/>
 					</div>
 					<div className={css.item}
 						onMouseDown={() => {

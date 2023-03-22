@@ -26,10 +26,10 @@ const TitleLink = ({ link, target, onChange }: Props) => {
 				className={css.input}
 				placeholder="请带上http://或https://"
 				value={link || ""}
-				onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+				onInput={(e) => {
 					onChange({
 						target,
-						link: e.target.value
+						link: e.currentTarget.value
 					});
 				}}
 			/>
