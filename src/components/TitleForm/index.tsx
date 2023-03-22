@@ -69,11 +69,11 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 				/>
 			</FormItem>
 
-			<FormItem title={"标题链接"}>
+			<FormItem title={"标题链接"} hash="title.link">
 				<TitleLink link={data.link} target={data.target} onChange={onChange}/>
 			</FormItem>
 
-			<FormItem align title={"可触发事件"}>
+			<FormItem align title={"可触发事件"} hash="title.triggerEvent">
 				<Switch
 					checked={data.triggerEvent ?? false}
 					onChange={(flag) => {

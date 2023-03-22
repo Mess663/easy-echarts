@@ -1,4 +1,5 @@
 @import url(../../style/tool.less);
+@import url(../../style/variable.less);
 
 .container {
     display: flex;
@@ -23,5 +24,12 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        cursor: pointer;
+        color: @mainText;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }

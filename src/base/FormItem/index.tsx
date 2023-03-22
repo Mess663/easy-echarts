@@ -2,18 +2,31 @@ import classNames from "classnames";
 import React from "react";
 import css from "./index.module.less";
 
-interface Props {
-	title?: string | React.ReactNode
+interface Base {
 	children: React.ReactNode | React.ReactNode[]
 	align?: boolean // 是否水平排布
 	className?: string
-	//   hash?: string // ECharts配置项哈希值 https://echarts.apache.org/zh/option.html#title.id
 }
+
+type TitleProps = {
+	title: string | React.ReactNode
+	hash: string // ECharts配置项哈希值 https://echarts.apache.org/zh/option.html#title.id
+}
+
+type Props = (Base & Partial<TitleProps>) | (TitleProps & Base);
+
+interface FormItem extends React.FC<Props> {
+	(props: Base): JSX.Element
+	(props: TitleProps & Base): JSX.Element
+}
+
 
 /**
  * 配置项表单的单项组件
  */
-const FormItem = ({ title, className, children, align = false }: Props) => {
+function FormItem (props: Base): JSX.Element;
+function FormItem (props: TitleProps & Base): JSX.Element;
+function FormItem ({ title, className, children, align = false, hash }: Props) {
 	return (
 		<div
 			className={classNames(css.container, {
@@ -22,9 +35,15 @@ const FormItem = ({ title, className, children, align = false }: Props) => {
 		>
 			{
 				Boolean(title) && (
-					<div className={css.title}>
+					<a
+						className={css.title}
+						title="点击跳转官网文档"
+						href={"https://echarts.apache.org/zh/option.html#" + hash}
+						target="_blank"
+						rel="noreferrer"
+					>
 						{title}
-					</div>
+					</a>
 				)
 			}
 			<div className={css.item}>
@@ -32,6 +51,6 @@ const FormItem = ({ title, className, children, align = false }: Props) => {
 			</div>
 		</div>
 	);
-};
+}
 
 export default FormItem;
