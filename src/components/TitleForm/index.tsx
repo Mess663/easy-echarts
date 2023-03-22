@@ -4,8 +4,8 @@ import RichTextEditor from "../RichTextEditor";
 import { useMemo } from "react";
 import FormItem from "../../base/FormItem";
 import IconSvg from "../../base/IconSvg";
-import Input from "../../base/Input";
 import TitleLink from "./components/TitleLink";
+import { Switch } from "antd";
 
 
 interface Props {
@@ -34,6 +34,10 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 		return RichTextEditor.transformToSchema(initConfig.wrapText(data.text ?? "标题"), initConfig.rich);
 	}, [data.text, data.textStyle?.rich]);
 
+	const onChange = (newData: Partial<Title>) => {
+		edit({ ...data, ...newData });
+	};
+
 	return (
 		<div className={css.container}>
 			<div className={css.top}>
@@ -55,8 +59,7 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 					key={data._key}
 					onChange={(e) => {
 						const op = RichTextEditor.transformToRich(e);
-						edit({
-							...data,
+						onChange ({
 							text: op.text,
 							textStyle: {
 								rich: op.style,
@@ -67,12 +70,14 @@ const TitleForm = ({ data, remove, edit, titleIndexStr }: Props) => {
 			</FormItem>
 
 			<FormItem title={"标题链接"}>
-				<TitleLink data={data}
-					onChange={(d) => {
-						edit({
-							...data,
-							...d,
-						});
+				<TitleLink link={data.link} target={data.target} onChange={onChange}/>
+			</FormItem>
+
+			<FormItem align title={"可触发事件"}>
+				<Switch
+					checked={data.triggerEvent ?? false}
+					onChange={(flag) => {
+						onChange({ triggerEvent: flag });
 					}}
 				/>
 			</FormItem>

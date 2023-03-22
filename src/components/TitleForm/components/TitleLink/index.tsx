@@ -12,17 +12,23 @@ const options = [
 
 type Data = Pick<Title, "link" | "target">
 
-const TitleLink = ({ data, onChange }: {data: Data, onChange: (d: Data) => void}) => {
-	const name = options.find(o => o.value === data.target)?.name || options[0].name;
+interface Props {
+	link?: string,
+	target?: Title["target"],
+	onChange: (d: Data) => void
+}
+
+const TitleLink = ({ link, target, onChange }: Props) => {
+	const name = options.find(o => o.value === target)?.name || options[0].name;
 	return (
 		<div className={css.container}>
 			<Input
 				className={css.input}
 				placeholder="请带上http://或https://"
-				value={data.link || ""}
+				value={link || ""}
 				onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
 					onChange({
-						...data,
+						target,
 						link: e.target.value
 					});
 				}}
@@ -32,8 +38,8 @@ const TitleLink = ({ data, onChange }: {data: Data, onChange: (d: Data) => void}
 				title="点击切换"
 				onClick={() => {
 					onChange({
-						...data,
-						target: data.target === "blank" ? "self" : "blank"
+						link,
+						target: target === "blank" ? "self" : "blank"
 					});
 				}}
 			>
