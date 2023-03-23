@@ -24,14 +24,19 @@ const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
 type OptionForm = RootState["options"]
 type commonViewState = { selectedKey: string }
 
-const useOptionState = <N extends keyof OptionForm>(name: N) => {
+/**
+ * 统一管理配置项，将所有下属组件需要props统一封装
+ * @param name 配置项名称
+ * @returns [当前配置项的选中数据及其增删改查操作，该配置项所有数据]
+ */
+const useOption = <N extends keyof OptionForm>(name: N) => {
 	type Data = OptionForm[N][number]
-	const list: Array<Data > = useSelector((state: RootState) => state.options[name]);
+	const options: Array<Data> = useSelector((state: RootState) => state.options[name]);
 	const selectedKey = useSelector((state: RootState) => (state.optionView[name] as commonViewState).selectedKey);
-	const selected = list.find((o) => o._key === selectedKey);
+	const selected = options.find((o) => o._key === selectedKey);
 	const dispatch = useDispatch<Dispatch>();
 	return [{
-		data: selected || list[0],
+		data: selected || options[0],
 		edit(newData: Data)  {
 			dispatch.options.modify({
 				name,
@@ -45,20 +50,20 @@ const useOptionState = <N extends keyof OptionForm>(name: N) => {
 			});
 		},
 		indexObj: {
-			index: list.indexOf(selected || list[0]) + 1 ,
-			length: list.length,
+			index: options.indexOf(selected || options[0]) + 1 ,
+			length: options.length,
 		}
-	}, list] as const;
+	}, options] as const;
 };
 
 /**
  * 配置项管理表单
  */
 function OptionsForm() {
-	const [titleProps, titleList] = useOptionState("title");
-	const [seriesProps] = useOptionState("series");
-	const [xAxisProps] = useOptionState("xAxis");
-	const [yAxisProps] = useOptionState("yAxis");
+	const [titleProps, titleList] = useOption("title");
+	const [seriesProps] = useOption("series");
+	const [xAxisProps] = useOption("xAxis");
+	const [yAxisProps] = useOption("yAxis");
 	const dispatch = useDispatch<Dispatch>();
 
 	const getAddBtn = <T extends keyof OptionForm>(name: T) => {
