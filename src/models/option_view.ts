@@ -10,7 +10,7 @@ export interface State {
 	xAxis: CommnState
 }
 
-export const ui = createModel<RootModel>()({
+export const optionView = createModel<RootModel>()({
 	state: {
 		title: {
 			selectedKey: null,
@@ -22,7 +22,7 @@ export const ui = createModel<RootModel>()({
 
 	reducers: {
 		selectKey: <N extends keyof State>(state: State, payload: { name: N, key: string }) => {
-			state[payload.name].selectedKey = payload.key;
+			if (payload.name in state) state[payload.name].selectedKey = payload.key;
 		},
 	},
     
@@ -30,7 +30,7 @@ export const ui = createModel<RootModel>()({
 		/** 选中该项 */
 		select<N extends keyof State>(payload: { name: N, index: number }, state: RootState) {
 			const { name, index } = payload;
-			dispatch.ui.selectKey({ name, key: state.optionForm.title[index]._key });
+			dispatch.optionView.selectKey({ name, key: state.options.title[index]._key });
 		}
 	})
 });

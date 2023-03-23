@@ -12,7 +12,7 @@ export interface State {
 	yAxis: YAxis[]
 }
 
-export const optionForm = createModel<RootModel>()({
+export const options = createModel<RootModel>()({
 	state: {
 		series: [{ _key: uniqueId(), name: ChartEnumify.Line.val, type: ChartEnumify.Line.code }],
 		title: [getInitOption("title")],

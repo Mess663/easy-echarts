@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
+import { ValueOf } from "type-fest";
+import { Series, Title, XAxis, YAxis } from "../../types/biz/option_form";
 
 const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void)) =>
 	(e: echarts.ECElementEvent, ) => {
@@ -14,9 +16,15 @@ const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void))
 		}
 	};
 
+const addCommonOption = (options: (Title | Series | XAxis | YAxis)[]) => {
+	return options.map(o => ({
+		...o,
+		trigetrEvent: true,
+	}));
+};
 
 const ChartPreview = () => {
-	const { title, series, xAxis, yAxis } = useSelector((state: RootState) => state.optionForm);
+	const { title, series, xAxis, yAxis } = useSelector((state: RootState) => state.options);
 	const dispatch = useDispatch<Dispatch>();
 	const echartObjRef = useRef<echarts.ECharts>();
 	const [containerRef, size] = useRefSize();
@@ -27,7 +35,7 @@ const ChartPreview = () => {
 	useEffect(() => {
 		if (output) {
 			const [left, top, index] = output;
-			dispatch.optionForm.modifyByIndex({
+			dispatch.options.modifyByIndex({
 				index,
 				name: "title",
 				data: {
@@ -36,7 +44,7 @@ const ChartPreview = () => {
 				}
 			});
 		}
-	}, [dispatch.optionForm, output]);
+	}, [dispatch.options, output]);
 
 	useEffect(() => {
 		if (size && echartObjRef.current) {
@@ -46,16 +54,13 @@ const ChartPreview = () => {
 
 	const echartsOption = useMemo(() => {
 		return {
-			title: title.map(o => ({
-				...o,
-				id: o._key,
-				triggerEvent: "click",
-			})),
-			xAxis,
-			yAxis,
+			title: addCommonOption(title),
+			xAxis: addCommonOption(xAxis),
+			yAxis: addCommonOption(yAxis),
 			series: series.map(o => ({
 				type: o.type
 			})),
+			tooltip: {},
 			dataset: {
 				source: [
 					["product", "2012", "2013", "2014", "2015"],
@@ -85,7 +90,8 @@ const ChartPreview = () => {
 						});
 						echartObjRef.current.setOption(echartsOption);
 						echartObjRef.current.on("mousedown", (e) => {
-							dispatch.ui.select({ name: "title", index: e.componentIndex });
+							const name = e.componentType as keyof RootState["optionView"];
+							dispatch.optionView.select({ name, index: e.componentIndex });
 							onEvent(ComponentType.Title, onMousedown)(e);
 						});
 						echartObjRef.current.getZr().on("mousemove", onMousemove);

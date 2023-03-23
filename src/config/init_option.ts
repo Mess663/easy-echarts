@@ -1,5 +1,5 @@
 import { uniqueId } from "lodash";
-import { State as OptionFormState } from "../models/option_form";
+import { State as OptionFormState } from "../models/options";
 
 // 这里定义ECharts option的初始化配置
 const InitOption: Partial<Record<keyof OptionFormState, Record<string, unknown>>> = {

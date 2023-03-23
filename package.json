@@ -30,7 +30,8 @@
     "rxjs": "^7.8.0",
     "slate": "^0.91.4",
     "slate-history": "^0.86.0",
-    "slate-react": "^0.91.11"
+    "slate-react": "^0.91.11",
+    "type-fest": "^3.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
