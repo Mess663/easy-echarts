@@ -5,7 +5,7 @@ import { Dispatch, RootState } from "../../models";
 import { useSelector, useDispatch } from "react-redux";
 import { HTMLAttributes } from "react";
 import TitleForm from "../../option_forms/Title";
-import XAxisForm from "../../option_forms/XAxis";
+import AxisForm from "../../option_forms/Axis";
 import { getInitOption } from "../../config/init_option";
 
 const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
@@ -30,6 +30,7 @@ function OptionsForm() {
 	const series = useSelector((state: RootState) => state.options.series);
 	const title = useSelector((state: RootState) => state.options.title);
 	const xAxis = useSelector((state: RootState) => state.options.xAxis);
+	const yAxis = useSelector((state: RootState) => state.options.yAxis);
 	const selectedTitle = useSelector(
 		(state: RootState) =>
 			state.options.title.find((o) => o._key === state.optionView.title.selectedKey
@@ -38,9 +39,14 @@ function OptionsForm() {
 		(state: RootState) =>
 			state.options.xAxis.find((o) => o._key === state.optionView.xAxis.selectedKey
 			));
+	const selectedYAxis = useSelector(
+		(state: RootState) =>
+			state.options.yAxis.find((o) => o._key === state.optionView.yAxis.selectedKey
+			));
 	const dispatch = useDispatch<Dispatch>();
 
-	const getAddBtn = <T extends keyof OptionForm>(name: T, data: Omit<OptionForm[T][number], "_key">) => {
+	const getAddBtn = <T extends keyof OptionForm>(name: T) => {
+		const data = getInitOption(name);
 		return (
 			<AddBtn
 				onClick={() => {
@@ -53,7 +59,7 @@ function OptionsForm() {
 		);
 	};
 
-	const addTitleBtn = getAddBtn("title", { text: "标题" });
+	const addTitleBtn = getAddBtn("title");
 
 	return (
 		<div className={css.container}>
@@ -98,16 +104,29 @@ function OptionsForm() {
 			</Drawer>
 			<Drawer
 				title="X轴"
-				defaultOpen
-				extra={getAddBtn("xAxis", getInitOption("xAxis"))}
+				extra={getAddBtn("xAxis")}
 			>
-				<XAxisForm
+				<AxisForm
 					edit={(newData) => { dispatch.options.modify({ name: "xAxis", data: newData });  }}
 					data={selectedXAxis || xAxis[0]}
 					remove={(_key) => { dispatch.options.remove({ name: "xAxis", _key }); }}
 					indexObj={{
 						index: xAxis.indexOf(selectedXAxis || xAxis[0]) + 1,
 						length: xAxis.length
+					}}
+				/>
+			</Drawer>
+			<Drawer
+				title="Y轴"
+				extra={getAddBtn("yAxis")}
+			>
+				<AxisForm
+					edit={(newData) => { dispatch.options.modify({ name: "yAxis", data: newData });  }}
+					data={selectedYAxis || yAxis[0]}
+					remove={(_key) => { dispatch.options.remove({ name: "yAxis", _key }); }}
+					indexObj={{
+						index: yAxis.indexOf(selectedYAxis || yAxis[0]) + 1,
+						length: yAxis.length
 					}}
 				/>
 			</Drawer>

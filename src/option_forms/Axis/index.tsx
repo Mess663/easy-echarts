@@ -2,11 +2,11 @@ import React from "react";
 import css from "./index.module.less";
 import OptionsBar from "../../components/OptionsBar";
 import { OptionFormProps } from "../type";
-import { XAxis } from "../../types/biz/option_form";
+import { XAxis, YAxis } from "../../types/biz/option_form";
 import FormItem from "../../base/FormItem";
 import { Switch } from "antd";
 
-const XAxisForm = ({ indexObj, remove, data, edit }: OptionFormProps<XAxis>) => {
+const AxisForm = <T extends (XAxis | YAxis)>({ indexObj, remove, data, edit }: OptionFormProps<T>) => {
 	const onRemove = () => remove(data._key);
 	const onChange = (newData: Partial<XAxis>) => {
 		edit({ ...data, ...newData });
@@ -30,4 +30,4 @@ const XAxisForm = ({ indexObj, remove, data, edit }: OptionFormProps<XAxis>) => 
 	);
 };
 
-export default XAxisForm;
+export default AxisForm;

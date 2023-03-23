@@ -6,8 +6,9 @@ interface CommnState {
 	selectedKey: string | null;
 }
 export interface State {
-	title: CommnState,
+	title: CommnState
 	xAxis: CommnState
+	yAxis: CommnState
 }
 
 export const optionView = createModel<RootModel>()({
@@ -16,6 +17,9 @@ export const optionView = createModel<RootModel>()({
 			selectedKey: null,
 		},
 		xAxis: {
+			selectedKey: null,
+		},
+		yAxis: {
 			selectedKey: null,
 		}
 	} as State,
