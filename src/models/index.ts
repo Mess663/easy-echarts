@@ -11,8 +11,6 @@ export interface RootModel extends Models<RootModel> {
 
 const models: RootModel = { optionForm, ui };
 
-
-
 export const store = init<RootModel>({
 	models,
 	plugins: [immerPlugin()],

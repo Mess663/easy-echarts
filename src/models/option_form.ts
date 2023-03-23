@@ -1,6 +1,7 @@
 import { createModel } from "@rematch/core";
 import { isNumber, uniqueId } from "lodash";
 import { RootModel } from ".";
+import { getInitOption } from "../config/init_option";
 import { ChartEnumify } from "../types/biz/chart";
 import { Series, Title, XAxis, YAxis } from "../types/biz/option_form";
 
@@ -11,12 +12,10 @@ export interface State {
 	yAxis: YAxis[]
 }
 
-const defaultTitleKey = uniqueId();
-
 export const optionForm = createModel<RootModel>()({
 	state: {
 		series: [{ _key: uniqueId(), name: ChartEnumify.Line.val, type: ChartEnumify.Line.code }],
-		title: [{ _key: defaultTitleKey, text: "标题" }],
+		title: [getInitOption("title")],
 		xAxis: [{ type: "category" }],
 		yAxis: [{}]
 	} as State,

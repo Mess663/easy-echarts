@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { HTMLAttributes } from "react";
 import TitleForm from "../../option_forms/Title";
 import XAxisForm from "../../option_forms/XAxis";
+import { getInitOption } from "../../config/init_option";
 
 const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -20,6 +21,8 @@ const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	);
 };
 
+type OptionForm = RootState["optionForm"]
+
 /**
  * 配置项管理表单
  */
@@ -33,18 +36,20 @@ function OptionsForm() {
 			));
 	const dispatch = useDispatch<Dispatch>();
 
-	const addTitleBtn = (
-		<AddBtn
-			onClick={() => {
-				dispatch.optionForm.add({
-					name: "title",
-					data: {
-						text: "标题",
-					}
-				});
-			}}
-		/>
-	);
+	const getAddBtn = <T extends keyof OptionForm>(name: T, data: Omit<OptionForm[T][number], "_key">) => {
+		return (
+			<AddBtn
+				onClick={() => {
+					dispatch.optionForm.add({
+						name,
+						data
+					});
+				}}
+			/>
+		);
+	};
+
+	const addTitleBtn = getAddBtn("title", { text: "标题" });
 
 	return (
 		<div className={css.container}>
@@ -89,7 +94,7 @@ function OptionsForm() {
 			</Drawer>
 			<Drawer title="X轴"
 				defaultOpen
-				extra={addTitleBtn}
+				extra={getAddBtn("xAxis", getInitOption("xAxis"))}
 			>
 				<XAxisForm
 					edit={(newData) => { dispatch.optionForm.modify({ name: "xAxis", data: newData });  }}

@@ -1,27 +1,36 @@
 
 import { createModel } from "@rematch/core";
-import { RootModel } from ".";
-import { Title } from "../types/biz/option_form";
+import { RootModel, RootState } from ".";
 
+interface CommnState {
+	selectedKey: string | null;
+}
 export interface State {
-	titleSelectedKey: Title["_key"] | null
+	title: CommnState,
+	xAxis: CommnState
 }
 
 export const ui = createModel<RootModel>()({
 	state: {
-		titleSelectedKey: null,
+		title: {
+			selectedKey: null,
+		},
+		xAxis: {
+			selectedKey: null,
+		}
 	} as State,
 
 	reducers: {
-		titleSelectedKey: (state, payload: State["titleSelectedKey"]) => {
-			state.titleSelectedKey = payload;
+		selectKey: <N extends keyof State>(state: State, payload: { name: N, key: string }) => {
+			state[payload.name].selectedKey = payload.key;
 		},
 	},
     
 	effects: (dispatch) => ({
 		/** 选中Title */
-		selectTitle(index: number, state) {
-			dispatch.ui.titleSelectedKey(state.optionForm.title[index]._key);
+		select<N extends keyof State>(payload: { name: N, index: number }, state: RootState) {
+			const { name, index } = payload;
+			dispatch.ui.selectKey({ name, key: state.optionForm.title[index]._key });
 		}
 	})
 });
