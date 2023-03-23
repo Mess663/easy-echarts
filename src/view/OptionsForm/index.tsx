@@ -54,7 +54,7 @@ function OptionsForm() {
 			>
 				<ChartSelector
 					data={series}
-					onChange={c => dispatch.optionForm.updateCharts(c)}
+					onChange={data => dispatch.optionForm.update({ name: "series", data })}
 				/>
 			</Drawer>
 			<Drawer
