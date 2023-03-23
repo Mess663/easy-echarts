@@ -27,7 +27,7 @@ export const ui = createModel<RootModel>()({
 	},
     
 	effects: (dispatch) => ({
-		/** 选中Title */
+		/** 选中该项 */
 		select<N extends keyof State>(payload: { name: N, index: number }, state: RootState) {
 			const { name, index } = payload;
 			dispatch.ui.selectKey({ name, key: state.optionForm.title[index]._key });

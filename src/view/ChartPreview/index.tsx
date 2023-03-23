@@ -66,7 +66,7 @@ const ChartPreview = () => {
 			},
 			animation: false
 		} as echarts.EChartsOption;
-	}, [series, title]);
+	}, [series, title, xAxis, yAxis]);
 
 
 	useEffect(() => {
