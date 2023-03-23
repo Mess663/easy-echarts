@@ -58,7 +58,7 @@ function OptionsForm() {
 	return (
 		<div className={css.container}>
 			<Drawer
-				title="图表"
+				title="图形"
 				defaultOpen
 			>
 				<ChartSelector
