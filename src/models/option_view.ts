@@ -9,6 +9,7 @@ export interface State {
 	title: CommnState
 	xAxis: CommnState
 	yAxis: CommnState
+	series: CommnState
 }
 
 export const optionView = createModel<RootModel>()({
@@ -20,6 +21,9 @@ export const optionView = createModel<RootModel>()({
 			selectedKey: null,
 		},
 		yAxis: {
+			selectedKey: null,
+		},
+		series: {
 			selectedKey: null,
 		}
 	} as State,

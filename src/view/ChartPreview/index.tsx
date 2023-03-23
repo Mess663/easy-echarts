@@ -19,7 +19,7 @@ const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void))
 const addCommonOption = (options: (Title | Series | XAxis | YAxis)[]) => {
 	return options.map(o => ({
 		...o,
-		trigetrEvent: true,
+		triggerEvent: true,
 	}));
 };
 
@@ -72,7 +72,6 @@ const ChartPreview = () => {
 			animation: false
 		} as echarts.EChartsOption;
 	}, [series, title, xAxis, yAxis]);
-
 
 	useEffect(() => {
 		if (!echartObjRef.current) return;

@@ -1,5 +1,4 @@
 import Drawer from "../../base/Drawer";
-import ChartSelector from "../../components/ChartSelector";
 import css from "./index.module.less";
 import { Dispatch, RootState } from "../../models";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,6 +6,7 @@ import { HTMLAttributes } from "react";
 import TitleForm from "../../option_forms/Title";
 import AxisForm from "../../option_forms/Axis";
 import { getInitOption } from "../../config/init_option";
+import SeriesForm from "../../option_forms/Series";
 
 const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -22,27 +22,43 @@ const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
 };
 
 type OptionForm = RootState["options"]
+type commonViewState = { selectedKey: string }
+
+const useOptionState = <N extends keyof OptionForm>(name: N) => {
+	type Data = OptionForm[N][number]
+	const list: Array<Data > = useSelector((state: RootState) => state.options[name]);
+	const selectedKey = useSelector((state: RootState) => (state.optionView[name] as commonViewState).selectedKey);
+	const selected = list.find((o) => o._key === selectedKey);
+	const dispatch = useDispatch<Dispatch>();
+	return [{
+		data: selected || list[0],
+		edit(newData: Data)  {
+			dispatch.options.modify({
+				name,
+				data: newData
+			});
+		},
+		remove(_key: string) {
+			dispatch.options.remove({
+				name: "title",
+				_key
+			});
+		},
+		indexObj: {
+			index: list.indexOf(selected || list[0]) + 1 ,
+			length: list.length,
+		}
+	}, list] as const;
+};
 
 /**
  * 配置项管理表单
  */
 function OptionsForm() {
-	const series = useSelector((state: RootState) => state.options.series);
-	const title = useSelector((state: RootState) => state.options.title);
-	const xAxis = useSelector((state: RootState) => state.options.xAxis);
-	const yAxis = useSelector((state: RootState) => state.options.yAxis);
-	const selectedTitle = useSelector(
-		(state: RootState) =>
-			state.options.title.find((o) => o._key === state.optionView.title.selectedKey
-			));
-	const selectedXAxis = useSelector(
-		(state: RootState) =>
-			state.options.xAxis.find((o) => o._key === state.optionView.xAxis.selectedKey
-			));
-	const selectedYAxis = useSelector(
-		(state: RootState) =>
-			state.options.yAxis.find((o) => o._key === state.optionView.yAxis.selectedKey
-			));
+	const [titleProps, titleList] = useOptionState("title");
+	const [seriesProps] = useOptionState("series");
+	const [xAxisProps] = useOptionState("xAxis");
+	const [yAxisProps] = useOptionState("yAxis");
 	const dispatch = useDispatch<Dispatch>();
 
 	const getAddBtn = <T extends keyof OptionForm>(name: T) => {
@@ -67,36 +83,15 @@ function OptionsForm() {
 				title="图形"
 				defaultOpen
 			>
-				<ChartSelector
-					data={series}
-					onChange={data => dispatch.options.update({ name: "series", data })}
-				/>
+				<SeriesForm {...seriesProps} />
 			</Drawer>
 			<Drawer
 				title="标题"
 				extra={addTitleBtn}
 			>
 				{
-					title.length ? (
-						<TitleForm
-							data={selectedTitle || title[0]}
-							edit={(newData) => {
-								dispatch.options.modify({
-									name: "title",
-									data: newData
-								});
-							}}
-							remove={(_key) => {
-								dispatch.options.remove({
-									name: "title",
-									_key
-								});
-							}}
-							indexObj={{
-								index: title.indexOf(selectedTitle || title[0]) + 1 ,
-								length: title.length,
-							}}
-						/>
+					titleList.length ? (
+						<TitleForm {...titleProps} />
 					) : (
 						addTitleBtn
 					)
@@ -106,29 +101,13 @@ function OptionsForm() {
 				title="X轴"
 				extra={getAddBtn("xAxis")}
 			>
-				<AxisForm
-					edit={(newData) => { dispatch.options.modify({ name: "xAxis", data: newData });  }}
-					data={selectedXAxis || xAxis[0]}
-					remove={(_key) => { dispatch.options.remove({ name: "xAxis", _key }); }}
-					indexObj={{
-						index: xAxis.indexOf(selectedXAxis || xAxis[0]) + 1,
-						length: xAxis.length
-					}}
-				/>
+				<AxisForm {...xAxisProps} />
 			</Drawer>
 			<Drawer
 				title="Y轴"
 				extra={getAddBtn("yAxis")}
 			>
-				<AxisForm
-					edit={(newData) => { dispatch.options.modify({ name: "yAxis", data: newData });  }}
-					data={selectedYAxis || yAxis[0]}
-					remove={(_key) => { dispatch.options.remove({ name: "yAxis", _key }); }}
-					indexObj={{
-						index: yAxis.indexOf(selectedYAxis || yAxis[0]) + 1,
-						length: yAxis.length
-					}}
-				/>
+				<AxisForm {...yAxisProps} />
 			</Drawer>
 		</div>
 	);

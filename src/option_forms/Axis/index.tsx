@@ -15,7 +15,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ indexObj, remove, data, edit }: O
 		<div className={css.container}>
 			<OptionsBar
 				remove={indexObj.length > 1 ? onRemove : undefined}
-				tips={`预览区点击标题可编辑：${indexObj.index}/${indexObj.length}`}
+				tips={`预览区点击维度标签可编辑：${indexObj.index}/${indexObj.length}`}
 			/>
 
 			<FormItem align title={"是否展示"} hash="xAxis.show">
