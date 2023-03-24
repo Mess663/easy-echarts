@@ -1,5 +1,7 @@
 import classNames from "classnames";
 import React from "react";
+import { State } from "../../models/options";
+import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
 import css from "./index.module.less";
 
 interface Base {
@@ -10,7 +12,7 @@ interface Base {
 
 type TitleProps = {
 	title: string | React.ReactNode
-	hash: string // ECharts配置项哈希值 https://echarts.apache.org/zh/option.html#title.id
+	hash: KeyPaths<ObjectValueNotArray<State>> // ECharts配置项哈希值 https://echarts.apache.org/zh/option.html#title.id
 }
 
 type Props = (Base & Partial<TitleProps>) | (TitleProps & Base);
