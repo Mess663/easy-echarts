@@ -3,21 +3,23 @@ import { isNumber, uniqueId } from "lodash";
 import { RootModel } from ".";
 import { getInitOption } from "../config/init_option";
 import { ChartEnumify } from "../types/biz/chart";
-import { Series, Title, XAxis, YAxis } from "../types/biz/option_form";
+import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option_form";
 
 export interface State {
 	series: Series[]
 	title: Title[]
 	xAxis: XAxis[]
 	yAxis: YAxis[]
+	grid: Grid[]
 }
 
 export const options = createModel<RootModel>()({
 	state: {
 		series: [{ _key: uniqueId(), name: ChartEnumify.Line.val.name, type: ChartEnumify.Line.code }],
 		title: [getInitOption("title")],
-		xAxis: [{ type: "category" }],
-		yAxis: [{}]
+		xAxis: [getInitOption("xAxis")],
+		yAxis: [getInitOption("yAxis")],
+		grid: [getInitOption("grid")],
 	} as State,
 
 	reducers: {

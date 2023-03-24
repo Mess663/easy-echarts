@@ -10,6 +10,7 @@ export interface State {
 	xAxis: CommnState
 	yAxis: CommnState
 	series: CommnState
+	grid: CommnState
 }
 
 export const optionView = createModel<RootModel>()({

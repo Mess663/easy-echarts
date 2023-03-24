@@ -7,6 +7,7 @@ import TitleForm from "../../option_forms/Title";
 import AxisForm from "../../option_forms/Axis";
 import { getInitOption } from "../../config/init_option";
 import SeriesForm from "../../option_forms/Series";
+import GridForm from "../../option_forms/Grid";
 
 const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -29,10 +30,9 @@ type OptionForm = RootState["options"]
  * @returns [当前配置项的选中数据及其增删改查操作，该配置项所有数据]
  */
 const useOption = <N extends keyof OptionForm>(name: N) => {
-	type commonViewState = { selectedKey: string }
 	type Data = OptionForm[N][number]
 	const options: Array<Data> = useSelector((state: RootState) => state.options[name]);
-	const selectedKey = useSelector((state: RootState) => (state.optionView[name] as commonViewState).selectedKey);
+	const selectedKey = useSelector((state: RootState) => state.optionView[name].selectedKey);
 	const selected = options.find((o) => o._key === selectedKey);
 	const dispatch = useDispatch<Dispatch>();
 	return [{
@@ -64,6 +64,7 @@ function OptionsForm() {
 	const [seriesProps] = useOption("series");
 	const [xAxisProps] = useOption("xAxis");
 	const [yAxisProps] = useOption("yAxis");
+	const [gridProps] = useOption("grid");
 	const dispatch = useDispatch<Dispatch>();
 
 	const getAddBtn = <T extends keyof OptionForm>(name: T) => {
@@ -113,6 +114,12 @@ function OptionsForm() {
 				extra={getAddBtn("yAxis")}
 			>
 				<AxisForm {...yAxisProps} />
+			</Drawer>
+			<Drawer
+				title="布局"
+				extra={getAddBtn("grid")}
+			>
+				<GridForm  {...gridProps} />
 			</Drawer>
 		</div>
 	);

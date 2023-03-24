@@ -22,3 +22,5 @@ export interface Title extends echarts.TitleComponentOption, OptionForm {}
 export type XAxis = echarts.XAXisComponentOption & OptionForm;
 
 export type YAxis = echarts.YAXisComponentOption & OptionForm;
+
+export type Grid = echarts.GridComponentOption & OptionForm;

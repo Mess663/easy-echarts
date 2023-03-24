@@ -6,6 +6,9 @@ const InitOption: Partial<Record<keyof OptionFormState, Record<string, unknown>>
 	title: {
 		text: "标题",
 	},
+	xAxis: {
+		type: "category",
+	}
 };
 
 export const getInitOption = <T extends keyof OptionFormState>(name: T): OptionFormState[T][number] => {
