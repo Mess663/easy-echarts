@@ -26,6 +26,9 @@ export const optionView = createModel<RootModel>()({
 		},
 		series: {
 			selectedKey: null,
+		},
+		grid: {
+			selectedKey: null,
 		}
 	} as State,
 
