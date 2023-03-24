@@ -8,7 +8,7 @@ import AxisForm from "../../option_forms/Axis";
 import { getInitOption } from "../../config/init_option";
 import SeriesForm from "../../option_forms/Series";
 
-const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
+const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
 		<button
 			className={css.addTitle}
@@ -17,12 +17,11 @@ const AddBtn = ({ onClick, ...props }: HTMLAttributes<HTMLButtonElement>) => {
 				if (onClick) onClick(e);
 			}}
 			{...props}
-		>添加</button>
+		>{children}</button>
 	);
 };
 
 type OptionForm = RootState["options"]
-type commonViewState = { selectedKey: string }
 
 /**
  * 统一管理配置项，将所有下属组件需要props统一封装
@@ -30,6 +29,7 @@ type commonViewState = { selectedKey: string }
  * @returns [当前配置项的选中数据及其增删改查操作，该配置项所有数据]
  */
 const useOption = <N extends keyof OptionForm>(name: N) => {
+	type commonViewState = { selectedKey: string }
 	type Data = OptionForm[N][number]
 	const options: Array<Data> = useSelector((state: RootState) => state.options[name]);
 	const selectedKey = useSelector((state: RootState) => (state.optionView[name] as commonViewState).selectedKey);

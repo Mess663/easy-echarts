@@ -9,7 +9,7 @@ import { ConfigProvider } from "antd";
 import zhCN from "antd/locale/zh_CN";
 
 
-import "./style/font/iconfont.js";
+import "./static/font/iconfont.js";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<React.StrictMode>

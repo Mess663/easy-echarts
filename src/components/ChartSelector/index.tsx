@@ -6,7 +6,7 @@ import { uniqueId } from "lodash";
 import { Series } from "../../types/biz/option_form";
 
 interface Props {
-	data: Series[]
+	data: Series
 	onChange: (d: Props["data"]) => void
 }
 
@@ -14,7 +14,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 	return (
 		<>
 			<Menu>
-				<Menu.Button className={css.btn}>添加图表</Menu.Button>
+				<Menu.Button className={css.btn}>{ChartEnumify.$getEnumVal(data.type || ChartEnumify.Line.code).name}</Menu.Button>
 				<Menu.Items className={css.menuWrap}>
 					{
 						ChartEnumify.$map(o => (
@@ -22,33 +22,17 @@ const ChartSelector = ({ data, onChange }: Props) => {
 								<div
 									className={css.menuItem}
 									onMouseDown={() => {
-										onChange([...data, { _key: uniqueId(), name: o.val, type: o.code }]);
+										onChange({ ...data, name: o.val.name, type: o.code });
 									}}
 									role="button"
-								>{o.val}</div>
+								>{o.val.name}</div>
 							</Menu.Item>
 						))
 					}
 				</Menu.Items>
 			</Menu>
-
-			<div className={css.select}>
-				{
-					data.map(o => (
-						<div
-							key={o._key}
-							className={css.selectItem}
-							onMouseDown={() => {
-								onChange(data.filter(item => item._key !== o._key));
-							}}
-						>
-							{o.name}
-						</div>
-					))
-				}
-			</div>
 		</>
 	);
 };
 
-export default React.memo(ChartSelector);
+export default ChartSelector;
