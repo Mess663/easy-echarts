@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
-import { ValueOf } from "type-fest";
-import { Series, Title, XAxis, YAxis } from "../../types/biz/option_form";
+import { State } from "../../models/options";
+import { isArray, isFunction, isNumber, omit } from "lodash";
 
 const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void)) =>
 	(e: echarts.ECElementEvent, ) => {
@@ -16,11 +16,56 @@ const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void))
 		}
 	};
 
-const addCommonOption = (options: (Title | Series | XAxis | YAxis)[]) => {
-	return options.map(o => ({
+const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
+	return options.map((o, i) => ({
 		...o,
 		triggerEvent: true,
+		...(isFunction(forCallback) ? forCallback(o, i) : {}),
 	}));
+};
+
+const setGraphic = (myEchart: echarts.ECharts, gridIndex: number) => {
+	const { grid } = myEchart.getOption() as echarts.EChartsOption;
+	const g = isArray(grid) ? [...grid] : [grid];
+	const curGrid = g[gridIndex];
+	if (!curGrid) return;
+	const { left = 0, top = 0, right = 0, bottom = 0 } = curGrid;
+	const width = myEchart.getWidth();
+	const height = myEchart.getHeight();
+	const r = isNumber(right) ? right : width * (parseFloat(right) / 100);
+	const b = isNumber(bottom) ? bottom : height * (parseFloat(bottom) / 100);
+	console.log(grid, gridIndex, [width - r, height - b]);
+	myEchart.setOption({
+		graphic: [
+			{
+				type: "bezierCurve",
+				position: [width - r, height - b],
+				shape: {
+					x1: -30,
+					y1: 10,
+					x2: 10,
+					y2: -30,
+					cpx1: 10,
+					cpy1: 10
+				},
+				style: {
+					lineWidth: 10
+				},
+				cursor: "nwse-resize",
+				draggable: true,
+				ondrag (e) {
+					g[gridIndex] = {
+						...g[gridIndex],
+						right: width - e.target.x,
+						bottom: height - e.target.y,
+					};
+					myEchart.setOption({
+						grid: g
+					});
+				},
+			}
+		]
+	} as echarts.EChartsOption);
 };
 
 const ChartPreview = () => {
@@ -57,19 +102,29 @@ const ChartPreview = () => {
 			title: addCommonOption(title),
 			xAxis: addCommonOption(xAxis),
 			yAxis: addCommonOption(yAxis),
-			series: series.map(o => ({
-				type: o.type
+			series: series.map((o) => ({
+				type: o.type,
 			})),
 			tooltip: {},
-			dataset: {
-				source: [
-					["product", "2012", "2013", "2014", "2015"],
-					["Matcha Latte", 41.1, 30.4, 65.1, 53.3],
-					["Milk Tea", 86.5, 92.1, 85.7, 83.1],
-					["Cheese Cocoa", 24.1, 67.2, 79.5, 86.4]
-				]
-			},
-			animation: false
+			dataset: [
+				{
+					source: [
+						["product", "2012", "2013", "2014", "2015"],
+						["Matcha Latte", 41.1, 30.4, 65.1, 53.3],
+						["Milk Tea", 86.5, 92.1, 85.7, 83.1],
+						["Cheese Cocoa", 24.1, 67.2, 79.5, 86.4]
+					]
+				},
+				{
+					source: [
+						["product", "dog", "cat", "mouse"],
+						["Matcha Latte", 241, 30, 65.1],
+						["Milk Tea", 286, 92, 85.7],
+						["Cheese Cocoa", 324, 67, 79.5]
+					]
+				}
+			],
+			animation: false,
 		} as echarts.EChartsOption;
 	}, [series, title, xAxis, yAxis]);
 
@@ -87,14 +142,30 @@ const ChartPreview = () => {
 							renderer: "canvas",
 							useDirtyRect: true,
 						});
-						echartObjRef.current.setOption(echartsOption);
-						echartObjRef.current.on("mousedown", (e) => {
+						const o = echartObjRef.current;
+						o.setOption(echartsOption);
+						o.on("mousedown", (e) => {
 							const name = e.componentType as keyof RootState["optionView"];
+							console.log(name, e.componentIndex);
 							dispatch.optionView.select({ name, index: e.componentIndex });
 							onEvent(ComponentType.Title, onMousedown)(e);
 						});
-						echartObjRef.current.getZr().on("mousemove", onMousemove);
-						echartObjRef.current.getZr().on("mouseup", onMouseup);
+						o.getZr().on("mousemove", onMousemove);
+						o.getZr().on("mouseup", onMouseup);
+						o.getZr().on("mousedown", (e) => {
+							const { offsetX, offsetY } = e;
+							const { grid } = o.getOption() as echarts.EChartsOption;
+							const arrGrid = isArray(grid) ? grid : [grid];
+							let i;
+							arrGrid.forEach((_, gridIndex) => {
+								if (o.containPixel({ gridIndex }, [offsetX, offsetY])) {
+									i = gridIndex;
+								}
+							});
+							if (isNumber(i)) {
+								setGraphic(o, i);
+							}
+						});
 					}
 				}}
 				style={{
