@@ -8,7 +8,6 @@ import Input from "../../base/Input";
 import ColorPicker from "../../base/ColorPicker";
 import { isColorString } from "../../tools/color";
 import RichTextEditor from "../../components/RichTextEditor";
-import OptionsBar from "../../components/OptionsBar";
 import { OptionFormProps } from "../type";
 
 const mainTitleConfig: {wrapText: (t: string) => string, rich: EchartsRich} = {
@@ -33,7 +32,7 @@ const subTitleConfig: {wrapText: (t: string) => string, rich: EchartsRich} = {
 	}
 };
 
-const TitleForm = ({ data, remove, edit, indexObj }: OptionFormProps<Title>) => {
+const TitleForm = ({ data, edit }: OptionFormProps<Title>) => {
 	const mainTitle = useMemo(() => {
 		if (data.textStyle?.rich) {
 			return RichTextEditor.transformToSchema(data.text ?? "标题", data.textStyle.rich);
@@ -53,10 +52,6 @@ const TitleForm = ({ data, remove, edit, indexObj }: OptionFormProps<Title>) => 
 
 	return (
 		<div className={css.container}>
-			<OptionsBar
-				remove={() => remove(data._key)}
-				tips={`预览区点击标题可编辑：${indexObj.index}/${indexObj.length}`}
-			/>
 
 			<FormItem align title={"组件id"} hash="title.id">
 				<Input

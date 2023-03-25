@@ -42,7 +42,7 @@ export const optionView = createModel<RootModel>()({
 		/** 选中该项 */
 		select<N extends keyof State>(payload: { name: N, index: number }, state: RootState) {
 			const { name, index } = payload;
-			dispatch.optionView.selectKey({ name, key: state.options.title[index]._key });
+			dispatch.optionView.selectKey({ name, key: state.options[name][index]._key });
 		}
 	})
 });

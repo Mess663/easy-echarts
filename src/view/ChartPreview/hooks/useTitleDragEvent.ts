@@ -13,6 +13,13 @@ function useTitleDragEvent(size: { width: number, height: number } | undefined, 
 	const [
 		output, onEvent
 	] = useDragEvent({
+		downTransform(e: echarts.ECElementEvent):[number, number, number] {
+			const currentTitle = title[e.componentIndex];
+			const x = Number(currentTitle?.left ?? 0);
+			const y = Number(currentTitle?.top ?? 0);
+			const { offsetX = 0, offsetY = 0 } = e.event ?? {};
+			return [offsetX - x, offsetY - y, e.componentIndex];
+		},
 		moveTransform(e: echarts.ElementEvent, offset: [number, number, number]) {
 			if (!size) return [0, 0, 0];
 			const { offsetX, offsetY } = e;
@@ -22,13 +29,6 @@ function useTitleDragEvent(size: { width: number, height: number } | undefined, 
 				getBoundaryValidNum(offsetY - firstY, 0, size.height - firstY),
 				index
 			] as const;
-		},
-		downTransform(e: echarts.ECElementEvent):[number, number, number] {
-			const currentTitle = title[e.componentIndex];
-			const x = Number(currentTitle?.left ?? 0);
-			const y = Number(currentTitle?.top ?? 0);
-			const { offsetX = 0, offsetY = 0 } = e.event ?? {};
-			return [offsetX - x, offsetY - y, e.componentIndex];
 		},
 	});
 

@@ -2,6 +2,7 @@ import React from "react";
 import css from "./app.module.less";
 import ChartPreview from "./ChartPreview";
 import OptionsForm from "./OptionsForm";
+import { ErrorBoundary } from "react-error-boundary";
 
 const App = () => {
 	return (
@@ -10,7 +11,9 @@ const App = () => {
 				<OptionsForm />
 			</div>
 			<div className={css.middle}>
-				<ChartPreview />
+				<ErrorBoundary fallback={<></>}>
+					<ChartPreview />
+				</ErrorBoundary>
 			</div>
 		</div>
 	);

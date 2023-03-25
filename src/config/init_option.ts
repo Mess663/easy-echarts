@@ -1,5 +1,6 @@
 import { uniqueId } from "lodash";
 import { State as OptionFormState } from "../models/options";
+import { ChartEnumify } from "../types/biz/chart";
 
 // 这里定义ECharts option的初始化配置
 const InitOption: Partial<Record<keyof OptionFormState, Record<string, unknown>>> = {
@@ -8,6 +9,9 @@ const InitOption: Partial<Record<keyof OptionFormState, Record<string, unknown>>
 	},
 	xAxis: {
 		type: "category",
+	},
+	series: {
+		type: ChartEnumify.Line.code
 	}
 };
 
