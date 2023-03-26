@@ -15,7 +15,7 @@ export interface State {
 
 export const options = createModel<RootModel>()({
 	state: {
-		series: [{ _key: uniqueId(), name: ChartEnumify.Line.val.name, type: ChartEnumify.Line.code }],
+		series: [{ id: uniqueId(), name: ChartEnumify.Line.val.name, type: ChartEnumify.Line.code }],
 		title: [getInitOption("title")],
 		xAxis: [getInitOption("xAxis")],
 		yAxis: [getInitOption("yAxis")],
@@ -24,20 +24,20 @@ export const options = createModel<RootModel>()({
 
 	reducers: {
 		add<N extends keyof State>(state: State, payload: { name: N, data: Partial<State[N][number]> }) {
-			payload.data._key = uniqueId();
-			(state[payload.name] as Array<State[N][number]>).push({ ...payload.data, _key: uniqueId() });
+			payload.data.id = uniqueId();
+			(state[payload.name] as Array<State[N][number]>).push({ ...payload.data, id: uniqueId() });
 		},
 
-		remove<N extends keyof State>(state: State, payload: { name: N, _key: string }) {
+		remove<N extends keyof State>(state: State, payload: { name: N, id: string }) {
 			state[payload.name] = (
 					state[payload.name] as Array<State[N][number]>
-				).filter(item => item._key !== payload._key) as State[N];
+				).filter(item => item.id !== payload.id) as State[N];
 		},
 
 		// 编辑option数组中单项配置
 		modify<N extends keyof State>(state: State, payload: { name: N, data: State[N][number] }) {
-			const { _key, ...rest } = payload.data;
-			const index = state[payload.name].findIndex(item => item._key === _key);
+			const { id, ...rest } = payload.data;
+			const index = state[payload.name].findIndex(item => item.id === id);
 			if (isNumber(index)) {
 				state[payload.name][index] = { ...state.title[index], ...rest };
 			}

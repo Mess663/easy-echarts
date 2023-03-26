@@ -3,7 +3,7 @@ import { createModel } from "@rematch/core";
 import { RootModel, RootState } from ".";
 
 interface CommnState {
-	selectedKey: string | null;
+	selectedId: string | null;
 }
 export interface State {
 	title: CommnState
@@ -16,25 +16,25 @@ export interface State {
 export const optionView = createModel<RootModel>()({
 	state: {
 		title: {
-			selectedKey: null,
+			selectedId: null,
 		},
 		xAxis: {
-			selectedKey: null,
+			selectedId: null,
 		},
 		yAxis: {
-			selectedKey: null,
+			selectedId: null,
 		},
 		series: {
-			selectedKey: null,
+			selectedId: null,
 		},
 		grid: {
-			selectedKey: null,
+			selectedId: null,
 		}
 	} as State,
 
 	reducers: {
 		selectKey: <N extends keyof State>(state: State, payload: { name: N, key: string }) => {
-			if (payload.name in state) state[payload.name].selectedKey = payload.key;
+			if (payload.name in state) state[payload.name].selectedId = payload.key;
 		},
 	},
     
@@ -42,7 +42,7 @@ export const optionView = createModel<RootModel>()({
 		/** 选中该项 */
 		select<N extends keyof State>(payload: { name: N, index: number }, state: RootState) {
 			const { name, index } = payload;
-			dispatch.optionView.selectKey({ name, key: state.options[name][index]._key });
+			dispatch.optionView.selectKey({ name, key: state.options[name][index].id });
 		}
 	})
 });

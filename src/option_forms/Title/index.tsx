@@ -67,7 +67,7 @@ const TitleForm = ({ data, edit }: OptionFormProps<Title>) => {
 			<FormItem>
 				<RichTextEditor
 					initialValue={mainTitle}
-					key={data._key}
+					key={data.id}
 					onChange={(e) => {
 						const op = RichTextEditor.transformToRich(e);
 						onChange ({
@@ -133,7 +133,7 @@ const TitleForm = ({ data, edit }: OptionFormProps<Title>) => {
 			<FormItem title="副标题" hash="title.subtext">
 				<RichTextEditor
 					initialValue={subTitle}
-					key={data._key}
+					key={data.id}
 					placeholder="请输入副标题"
 					onChange={(e) => {
 						const op = RichTextEditor.transformToRich(e);

@@ -16,7 +16,7 @@ const InitOption: Partial<Record<keyof OptionFormState, Record<string, unknown>>
 };
 
 export const getInitOption = <T extends keyof OptionFormState>(name: T): OptionFormState[T][number] => {
-	const _key = uniqueId();
-	if (name in InitOption) return { ...InitOption[name], _key };
-	return { _key };
+	const id = uniqueId();
+	if (name in InitOption) return { ...InitOption[name], id };
+	return { id };
 };

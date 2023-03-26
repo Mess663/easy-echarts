@@ -2,8 +2,10 @@ import { Chart } from "./chart";
 
 // 辅助属性，仅用于业务逻辑，不属于ECharts的配置项
 interface OptionForm {
-    _key: string; // 用于辨别多个option
+    id: string; // 用于辨别多个option
 }
+
+type WrapCommonOption<T extends { id?: string | number }> = T & OptionForm;
 
 // 图表选择对象（转换成series）
 export type Series = {
@@ -15,12 +17,12 @@ export type Series = {
 export type EchartsRich = NonNullable<NonNullable<echarts.TitleComponentOption["textStyle"]>["rich"]>;
 
 /** ECharts自己的通用样式 */
-export type RichStyle = EchartsRich[keyof EchartsRich];
+export type RichStyle = EchartsRich[keyof EchartsRich]
 
-export interface Title extends echarts.TitleComponentOption, OptionForm {}
+export type Title = WrapCommonOption<echarts.TitleComponentOption>
 
-export type XAxis = echarts.XAXisComponentOption & OptionForm;
+export type XAxis = WrapCommonOption<echarts.YAXisComponentOption>
 
-export type YAxis = echarts.YAXisComponentOption & OptionForm;
+export type YAxis = WrapCommonOption<echarts.YAXisComponentOption>
 
-export type Grid = echarts.GridComponentOption & OptionForm;
+export type Grid = WrapCommonOption<echarts.GridComponentOption>;

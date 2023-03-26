@@ -34,8 +34,8 @@ type OptionForm = RootState["options"]
 const useOption = <N extends keyof OptionForm>(name: N) => {
 	type Data = OptionForm[N][number]
 	const optionArr: Array<Data> = useSelector((state: RootState) => state.options[name]);
-	const selectedKey = useSelector((state: RootState) => state.optionView[name].selectedKey);
-	const selected = optionArr.find((o) => o._key === selectedKey);
+	const selectedId = useSelector((state: RootState) => state.optionView[name].selectedId);
+	const selected = optionArr.find((o) => o.id === selectedId);
 	const dispatch = useDispatch<Dispatch>();
 	return [{
 		data: selected || optionArr[0],
@@ -46,10 +46,10 @@ const useOption = <N extends keyof OptionForm>(name: N) => {
 			});
 		},
 		remove() {
-			if (selectedKey) {
+			if (selectedId) {
 				dispatch.options.remove({
 					name: "title",
-					_key: selectedKey
+					id: selectedId
 				});
 			}
 			else {
@@ -68,7 +68,7 @@ function OptionsForm() {
 	const [seriesProps, seriesArr] = useOption("series");
 	const [xAxisProps, xAxisArr] = useOption("xAxis");
 	const [yAxisProps, yAxisArr] = useOption("yAxis");
-	const [gridProps, gridArr] = useOption("grid");
+	const [gridProps] = useOption("grid");
 	const dispatch = useDispatch<Dispatch>();
 
 	const getAddBtn = <T extends keyof OptionForm>(name: T) => {
@@ -140,12 +140,7 @@ function OptionsForm() {
 			</Drawer>
 			<Drawer
 				title="布局"
-				extra={getAddBtn("grid")}
 			>
-				<OptionsBar
-					remove={gridArr.length > 1 ? gridProps.remove : undefined}
-					tips={`预览区点击布局可编辑：${gridProps.index}/${gridArr.length}`}
-				/>
 				<GridForm  {...gridProps} />
 			</Drawer>
 		</div>
