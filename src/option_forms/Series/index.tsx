@@ -1,7 +1,7 @@
 import React from "react";
 import FormItem from "../../base/FormItem";
 import ChartSelector from "../../components/ChartSelector";
-import { Series } from "../../types/biz/option_form";
+import { Series } from "../../types/biz/option";
 import { OptionFormProps } from "../type";
 import css from "./index.module.less";
 

@@ -13,36 +13,50 @@ export interface State {
 	grid: CommnState
 }
 
+const initState = {
+	title: {
+		selectedId: null,
+	},
+	xAxis: {
+		selectedId: null,
+	},
+	yAxis: {
+		selectedId: null,
+	},
+	series: {
+		selectedId: null,
+	},
+	grid: {
+		selectedId: null,
+	}
+};
+
 export const optionView = createModel<RootModel>()({
-	state: {
-		title: {
-			selectedId: null,
-		},
-		xAxis: {
-			selectedId: null,
-		},
-		yAxis: {
-			selectedId: null,
-		},
-		series: {
-			selectedId: null,
-		},
-		grid: {
-			selectedId: null,
-		}
-	} as State,
+	state: { ...initState  } as State,
 
 	reducers: {
-		selectKey: <N extends keyof State>(state: State, payload: { name: N, key: string }) => {
-			if (payload.name in state) state[payload.name].selectedId = payload.key;
+		selectId: <N extends keyof State>(state: State, payload: { name: N, id: string }) => {
+			if (payload.name in state) {
+				state[payload.name].selectedId = payload.id;
+			}
 		},
+
+		reset() {
+			return { ...initState };
+		}
 	},
     
 	effects: (dispatch) => ({
 		/** 选中该项 */
 		select<N extends keyof State>(payload: { name: N, index: number }, state: RootState) {
 			const { name, index } = payload;
-			dispatch.optionView.selectKey({ name, key: state.options[name][index].id });
+			dispatch.optionView.selectId({ name, id: state.options[name][index].id });
+		},
+
+		selectGrid(id: string, state) {
+			if (id === state.optionView.grid.selectedId) return;
+			dispatch.optionView.reset();
+			dispatch.optionView.selectId({ name: "grid", id });
 		}
 	})
 });

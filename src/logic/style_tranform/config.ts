@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { RichStyle } from "../../types/biz/option_form";
+import { RichStyle } from "../../types/biz/option";
 
 /**
  * 富文本样式映射的状态 @see{@link DiffStylePropMap}

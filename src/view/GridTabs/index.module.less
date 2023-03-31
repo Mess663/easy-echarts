@@ -1,0 +1,22 @@
+.container {
+    display: flex;
+    flex-direction: column;
+
+    .item {
+        margin-top: 20px;
+        position: relative;
+
+        .delete {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0 8px;
+            transform: translate(50%, -50%);
+            background-color: red;
+        }
+
+        &.selected {
+            background-color: aqua;
+        }
+    }
+}

@@ -2,7 +2,7 @@ import { Listbox } from "@headlessui/react";
 import React from "react";
 import IconSvg from "../../../../base/IconSvg";
 import Input from "../../../../base/Input";
-import { Title } from "../../../../types/biz/option_form";
+import { Title } from "../../../../types/biz/option";
 import css from "./index.module.less";
 
 const options = [

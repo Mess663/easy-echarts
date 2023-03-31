@@ -33,7 +33,14 @@ type OptionForm = RootState["options"]
  */
 const useOption = <N extends keyof OptionForm>(name: N) => {
 	type Data = OptionForm[N][number]
-	const optionArr: Array<Data> = useSelector((state: RootState) => state.options[name]);
+	const o = useSelector((state: RootState) => state.options);
+	const gridId = useSelector((state: RootState) => state.optionView.grid.selectedId ?? state.options.grid[0].id);
+	const optionArr: Array<Data> = useSelector(
+		(state: RootState) =>
+			name === "grid"
+				? state.options[name]
+				: state.options[name].filter(o => o.gridId === gridId)
+	);
 	const selectedId = useSelector((state: RootState) => state.optionView[name].selectedId);
 	const selected = optionArr.find((o) => o.id === selectedId);
 	const dispatch = useDispatch<Dispatch>();
@@ -48,7 +55,7 @@ const useOption = <N extends keyof OptionForm>(name: N) => {
 		remove() {
 			if (selectedId) {
 				dispatch.options.remove({
-					name: "title",
+					name,
 					id: selectedId
 				});
 			}
@@ -72,7 +79,9 @@ function OptionsForm() {
 	const dispatch = useDispatch<Dispatch>();
 
 	const getAddBtn = <T extends keyof OptionForm>(name: T) => {
-		const data = getInitOption(name);
+		const data = getInitOption(name, {
+			gridId: gridProps.data.id
+		});
 		return (
 			<AddBtn
 				onClick={() => {
@@ -99,6 +108,11 @@ function OptionsForm() {
 					tips={`预览区点击图形可编辑：${seriesProps.index}/${seriesArr.length}`}
 				/>
 				<SeriesForm {...seriesProps} />
+			</Drawer>
+			<Drawer
+				title="布局"
+			>
+				<GridForm  {...gridProps} />
 			</Drawer>
 			<Drawer
 				title="标题"
@@ -137,11 +151,6 @@ function OptionsForm() {
 					tips={`预览区点击维度标签可编辑：${yAxisProps.index}/${yAxisArr.length}`}
 				/>
 				<AxisForm {...yAxisProps} />
-			</Drawer>
-			<Drawer
-				title="布局"
-			>
-				<GridForm  {...gridProps} />
 			</Drawer>
 		</div>
 	);

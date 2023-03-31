@@ -1,5 +1,5 @@
 import css from "./index.module.less";
-import { EchartsRich, Title } from "../../types/biz/option_form";
+import { EchartsRich, Title } from "../../types/biz/option";
 import { useMemo } from "react";
 import FormItem from "../../base/FormItem";
 import TitleLink from "./components/TitleLink";
@@ -53,17 +53,6 @@ const TitleForm = ({ data, edit }: OptionFormProps<Title>) => {
 	return (
 		<div className={css.container}>
 
-			<FormItem align title={"组件id"} hash="title.id">
-				<Input
-					value={data.id ?? ""}
-					placeholder="选填，用于option或API中引用组件"
-					style={{ width: 260 }}
-					onInput={(e) => {
-						onChange({ id: e.currentTarget.value });
-					}}
-				/>
-			</FormItem>
-
 			<FormItem>
 				<RichTextEditor
 					initialValue={mainTitle}
@@ -105,20 +94,7 @@ const TitleForm = ({ data, edit }: OptionFormProps<Title>) => {
 				/>
 			</FormItem>
 
-			<FormItem align title={"zlevel（Canvas分层）"} hash="title.zlevel">
-				<Input
-					value={data.zlevel ?? ""}
-					type='number'
-					placeholder="输入数字"
-					style={{ width: 170 }}
-					onInput={(e) => {
-						const n = Number(e.currentTarget.value);
-						onChange({ zlevel: n > 0 ? n : undefined });
-					}}
-				/>
-			</FormItem>
-
-			<FormItem align title={"z（图形层级）"} hash="title.z">
+			<FormItem align title={"图形层级"} hash="title.z">
 				<Input
 					value={data.z ?? ""}
 					type='number'
@@ -126,6 +102,18 @@ const TitleForm = ({ data, edit }: OptionFormProps<Title>) => {
 					onInput={(e) => {
 						const n = Number(e.currentTarget.value);
 						onChange({ z: n > 0 ? n : undefined });
+					}}
+				/>
+			</FormItem>
+
+			<FormItem align title={"Canvas层级"} hash="title.zlevel">
+				<Input
+					value={data.zlevel ?? ""}
+					type='number'
+					placeholder="输入数字"
+					onInput={(e) => {
+						const n = Number(e.currentTarget.value);
+						onChange({ zlevel: n > 0 ? n : undefined });
 					}}
 				/>
 			</FormItem>

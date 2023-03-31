@@ -1,7 +1,7 @@
 import React from "react";
 import css from "./index.module.less";
 import { OptionFormProps } from "../type";
-import { XAxis, YAxis } from "../../types/biz/option_form";
+import { XAxis, YAxis } from "../../types/biz/option";
 import FormItem from "../../base/FormItem";
 import { Switch } from "antd";
 

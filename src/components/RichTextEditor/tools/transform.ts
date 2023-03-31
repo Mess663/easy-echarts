@@ -1,7 +1,7 @@
 import { isNumber, isString, isEmpty, uniqueId, reduce  } from "lodash";
 import { CSSProperties } from "react";
 import { LineBreaker } from "../../../config/options";
-import { RichStyle, EchartsRich } from "../../../types/biz/option_form";
+import { RichStyle, EchartsRich } from "../../../types/biz/option";
 import { pluginList } from "../plugin";
 import { CustomElement } from "../type";
 

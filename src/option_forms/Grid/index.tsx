@@ -1,6 +1,6 @@
 import React from "react";
 import FormItem from "../../base/FormItem";
-import { Grid } from "../../types/biz/option_form";
+import { Grid } from "../../types/biz/option";
 import { OptionFormProps } from "../type";
 import css from "./index.module.less";
 

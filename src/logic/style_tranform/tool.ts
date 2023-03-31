@@ -1,6 +1,6 @@
 import { isNumber, isString } from "lodash";
 import { CSSProperties } from "react";
-import { RichStyle } from "../../types/biz/option_form";
+import { RichStyle } from "../../types/biz/option";
 
 // const mapBackgroundColor = (backgroundColor: EChartsStyleProperties["backgroundColor"]) => {
 // if (isString(backgroundColor)) {

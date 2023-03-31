@@ -12,11 +12,27 @@ const InitOption: Partial<Record<keyof OptionFormState, Record<string, unknown>>
 	},
 	series: {
 		type: ChartEnumify.Line.code
+		
 	}
 };
 
-export const getInitOption = <T extends keyof OptionFormState>(name: T): OptionFormState[T][number] => {
+export function getInitOption<T extends keyof OptionFormState>(name: T, data: {
+	gridId?: string;
+	xAxisId?: string;
+	yAxisId?: string;
+}): OptionFormState[T][number] {
 	const id = uniqueId();
-	if (name in InitOption) return { ...InitOption[name], id };
-	return { id };
-};
+	const ret = (() => {
+		if (name === "grid") {
+			return { id, gridId: id };
+		}
+		else if (data.gridId) {
+			return { id, gridId: data.gridId, ...data };
+		}
+		else {
+			throw new Error("[getInitOption]: gridId is required");
+		}
+	})();
+	if (name in InitOption) return { ...InitOption[name], ...ret };
+	return ret;
+}

@@ -3,7 +3,7 @@ import css from "./index.module.less";
 import { Menu } from "@headlessui/react";
 import { ChartEnumify } from "../../types/biz/chart";
 import { uniqueId } from "lodash";
-import { Series } from "../../types/biz/option_form";
+import { Series } from "../../types/biz/option";
 
 interface Props {
 	data: Series

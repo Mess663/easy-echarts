@@ -1,6 +1,6 @@
 import useDragEvent from "../../../hooks/dom/useDragEvent";
 import { getBoundaryValidNum } from "../../../tools/number";
-import { Title } from "../../../types/biz/option_form";
+import { Title } from "../../../types/biz/option";
 
 /**
  * 拖拽事件

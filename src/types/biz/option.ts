@@ -3,6 +3,7 @@ import { Chart } from "./chart";
 // 辅助属性，仅用于业务逻辑，不属于ECharts的配置项
 interface OptionForm {
     id: string; // 用于辨别多个option
+    gridId: string // 组件属于哪个grid
 }
 
 type WrapCommonOption<T extends { id?: string | number }> = T & OptionForm;

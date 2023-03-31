@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
 import { Editor } from "slate";
-import { RichStyle } from "../../../types/biz/option_form";
+import { RichStyle } from "../../../types/biz/option";
 
 export interface PluginProps {
     marks: CSSProperties | null;
