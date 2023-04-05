@@ -7,7 +7,7 @@ import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
 import { State } from "../../models/options";
-import { isArray, isFunction, isNumber, omit } from "lodash";
+import { isArray, isFunction, isNumber } from "lodash";
 
 const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void)) =>
 	(e: echarts.ECElementEvent, ) => {
@@ -169,8 +169,6 @@ const ChartPreview = () => {
 						o.setOption(echartsOption);
 						o.on("mousedown", (e) => {
 							const name = e.componentType as keyof RootState["optionView"];
-							const gridId = findGridId(o, e.event?.offsetX ?? 0, e.event?.offsetY ?? 0);
-							if (gridId) dispatch.optionView.selectGrid(gridId);
 							dispatch.optionView.select({ name, index: e.componentIndex });
 							onEvent(ComponentType.Title, onMousedown)(e);
 						});
@@ -179,6 +177,7 @@ const ChartPreview = () => {
 						o.getZr().on("mousedown", (e) => {
 							const { offsetX, offsetY } = e;
 							const gridId = findGridId(o, offsetX, offsetY);
+							console.log("zrmouse");
 							if (gridId) {
 								if (!e.target) {
 									dispatch.optionView.selectGrid(gridId);

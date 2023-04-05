@@ -11,28 +11,33 @@ export interface State {
 	yAxis: CommnState
 	series: CommnState
 	grid: CommnState
+	graphic: CommnState
 }
-
-const initState = {
-	title: {
-		selectedId: null,
-	},
-	xAxis: {
-		selectedId: null,
-	},
-	yAxis: {
-		selectedId: null,
-	},
-	series: {
-		selectedId: null,
-	},
-	grid: {
-		selectedId: null,
-	}
-};
+const getInitState = () => (
+	{
+		title: {
+			selectedId: null,
+		},
+		xAxis: {
+			selectedId: null,
+		},
+		yAxis: {
+			selectedId: null,
+		},
+		series: {
+			selectedId: null,
+		},
+		grid: {
+			selectedId: null,
+		},
+		graphic: {
+			selectedId: null,
+		}
+	} as State
+);
 
 export const optionView = createModel<RootModel>()({
-	state: { ...initState  } as State,
+	state: getInitState(),
 
 	reducers: {
 		selectId: <N extends keyof State>(state: State, payload: { name: N, id: string }) => {
@@ -41,8 +46,9 @@ export const optionView = createModel<RootModel>()({
 			}
 		},
 
+		// 切换图表时需要充值所有选中项
 		reset() {
-			return { ...initState };
+			return getInitState();
 		}
 	},
     

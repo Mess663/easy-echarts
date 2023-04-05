@@ -27,3 +27,5 @@ export type XAxis = WrapCommonOption<echarts.YAXisComponentOption>
 export type YAxis = WrapCommonOption<echarts.YAXisComponentOption>
 
 export type Grid = WrapCommonOption<echarts.GridComponentOption>;
+
+export type Graphic = WrapCommonOption<echarts.GraphicComponentOption>;
