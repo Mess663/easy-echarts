@@ -1,6 +1,7 @@
 
 import { createModel } from "@rematch/core";
 import { RootModel, RootState } from ".";
+import { keys } from "../tools/type";
 
 interface CommnState {
 	selectedId: string | null;
@@ -11,7 +12,6 @@ export interface State {
 	yAxis: CommnState
 	series: CommnState
 	grid: CommnState
-	graphic: CommnState
 }
 const getInitState = () => (
 	{
@@ -30,11 +30,13 @@ const getInitState = () => (
 		grid: {
 			selectedId: null,
 		},
-		graphic: {
-			selectedId: null,
-		}
 	} as State
 );
+
+// 判断是否为可以选中的组件名
+export const isOptionViewKey = (key: string): key is (keyof State) => {
+	return keys(getInitState()).includes(key);
+};
 
 export const optionView = createModel<RootModel>()({
 	state: getInitState(),

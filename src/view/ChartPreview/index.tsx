@@ -7,7 +7,8 @@ import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
 import { State } from "../../models/options";
-import { isArray, isFunction, isNumber } from "lodash";
+import { compact, isArray, isFunction, isNumber } from "lodash";
+import { isOptionViewKey } from "../../models/option_view";
 
 const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void)) =>
 	(e: echarts.ECElementEvent, ) => {
@@ -24,9 +25,9 @@ const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?:
 	}));
 };
 
-const setGraphic = (myEchart: echarts.ECharts, gridId?: string) => {
+const setGraphic = (myEchart: echarts.ECharts, gridId: string, onChange: (grid: echarts.GridComponentOption)=>void) => {
 	const { grid } = myEchart.getOption() as echarts.EChartsOption;
-	const g = isArray(grid) ? [...grid] : [grid];
+	const g = compact(isArray(grid) ? [...grid] : [grid]);
 	const curGrid = g.find(o => o?.id === gridId);
 	if (!curGrid) return;
 	const { left = 0, top = 0, right = 0, bottom = 0 } = curGrid;
@@ -54,39 +55,37 @@ const setGraphic = (myEchart: echarts.ECharts, gridId?: string) => {
 				cursor: "nwse-resize",
 				draggable: true,
 				ondrag (e) {
-					myEchart.setOption({
-						grid: g.map(o => {
-							if (o?.id === gridId) return {
-								...o,
-								right: width - e.target.x,
-								bottom: height - e.target.y,
-							};
-							return o;
-						})
-					});
+					const targetGrid = g.find(o => o.id === gridId);
+					onChange(
+						{
+							...targetGrid,
+							right: width - e.target.x,
+							bottom: height - e.target.y,
+						}
+					);
 				},
 			}
 		]
 	} as echarts.EChartsOption);
 };
 
+const findGridId = (e: echarts.ECharts, x: number, y: number) => {
+	const { grid } = e.getOption() as echarts.EChartsOption;
+	const arrGrid = isArray(grid) ? grid : [grid];
+	const findGrid = arrGrid.find((g) => e.containPixel({ gridId: g?.id }, [x, y]));
+	return findGrid?.id ? String(findGrid?.id) : undefined;
+};
+
 const ChartPreview = () => {
 	const { title, series, xAxis, yAxis, grid } = useSelector((state: RootState) => state.options);
-	const o = useSelector((state: RootState) => state.options);
-	console.log("options--", o );
+	// const o = useSelector((state: RootState) => state.options);
+	// console.log("options--", o );
 	const dispatch = useDispatch<Dispatch>();
 	const echartObjRef = useRef<echarts.ECharts>();
 	const [containerRef, size] = useRefSize();
 	const [
 		output, { onMousedown, onMousemove, onMouseup }
 	] = useTitleDragEvent(size, title);
-
-	const findGridId = (e: echarts.ECharts, x: number, y: number) => {
-		const { grid } = e.getOption() as echarts.EChartsOption;
-		const arrGrid = isArray(grid) ? grid : [grid];
-		const findGrid = arrGrid.find((g) => e.containPixel({ gridId: g?.id }, [x, y]));
-		return findGrid?.id ? String(findGrid?.id) : undefined;
-	};
 
 	useEffect(() => {
 		if (output) {
@@ -153,7 +152,7 @@ const ChartPreview = () => {
 
 	useEffect(() => {
 		if (!echartObjRef.current) return;
-		echartObjRef.current.setOption(echartsOption, true);
+		echartObjRef.current.setOption(echartsOption);
 	}, [echartsOption]);
 
 	return (
@@ -168,8 +167,10 @@ const ChartPreview = () => {
 						const o = echartObjRef.current;
 						o.setOption(echartsOption);
 						o.on("mousedown", (e) => {
-							const name = e.componentType as keyof RootState["optionView"];
-							dispatch.optionView.select({ name, index: e.componentIndex });
+							const name = e.componentType;
+							if (isOptionViewKey(name)) {
+								dispatch.optionView.select({ name, index: e.componentIndex });
+							}
 							onEvent(ComponentType.Title, onMousedown)(e);
 						});
 						o.getZr().on("mousemove", onMousemove);
@@ -177,12 +178,17 @@ const ChartPreview = () => {
 						o.getZr().on("mousedown", (e) => {
 							const { offsetX, offsetY } = e;
 							const gridId = findGridId(o, offsetX, offsetY);
-							console.log("zrmouse");
 							if (gridId) {
 								if (!e.target) {
 									dispatch.optionView.selectGrid(gridId);
 								}
-								setGraphic(o, gridId);
+								setGraphic(o, gridId, (grid) => {
+									console.log(grid);
+									dispatch.options.modify({
+										name: "grid",
+										data: grid
+									});
+								});
 							}
 						});
 					}

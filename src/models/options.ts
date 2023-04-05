@@ -3,7 +3,7 @@ import { isNumber } from "lodash";
 import { RootModel } from ".";
 import { getInitOption } from "../config/init_option";
 import { keys } from "../tools/type";
-import { Graphic, Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
+import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
 
 export interface State {
 	series: Series[]
@@ -11,7 +11,6 @@ export interface State {
 	xAxis: XAxis[]
 	yAxis: YAxis[]
 	grid: Grid[]
-	graphic: Graphic[]
 }
 
 const getDefaultOpton = (): State => {
@@ -24,7 +23,6 @@ const getDefaultOpton = (): State => {
 		xAxis: [xAxis],
 		yAxis: [yAxis],
 		grid: [grid],
-		graphic: []
 	};
 };
 
@@ -50,7 +48,7 @@ export const options = createModel<RootModel>()({
 			const { id, ...rest } = payload.data;
 			const index = state[payload.name].findIndex(item => item.id === id);
 			if (isNumber(index)) {
-				state[payload.name][index] = { ...state.title[index], ...rest };
+				state[payload.name][index] = { ...state[payload.name][index], ...rest };
 			}
 		},
 
