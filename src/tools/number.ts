@@ -8,3 +8,14 @@
 export const getBoundaryValidNum = (num: number, min = 0, max = Infinity) => {
 	return Math.max(min, Math.min(num, max));
 };
+
+/**
+ * 生成全局唯一数字
+ */
+export const getUniqueNum = (() => {
+	let num = 0;
+	return () => {
+		num += 1;
+		return num;
+	};
+})();

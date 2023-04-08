@@ -1,9 +1,9 @@
 import { createModel } from "@rematch/core";
 import { isNumber } from "lodash";
 import { RootModel } from ".";
-import { getInitOption } from "../config/init_option";
 import { keys } from "../tools/type";
 import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
+import { getInitOption } from "../config/init_option";
 
 export interface State {
 	series: Series[]
@@ -63,8 +63,17 @@ export const options = createModel<RootModel>()({
 			state[payload.name] = payload.data;
 		},
 
+		// grid是比较特殊的组件，需要单独增删处理
 		addGrid(state: State) {
 			const newOption = getDefaultOpton();
+			newOption.grid = newOption.grid.map(o => {
+				return {
+					...o,
+					left: "50%",
+					top: "25%",
+					bottom: "25%"
+				};
+			});
 			const propKeys = keys(newOption);
 			propKeys.forEach(<N extends keyof State>(k: N) => {
 				const source: OptionArray<N> = newOption[k];

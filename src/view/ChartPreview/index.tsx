@@ -7,7 +7,8 @@ import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
 import { State } from "../../models/options";
-import { compact, isArray, isFunction, isNumber } from "lodash";
+import { compact, filter, flow, isArray, isFunction, isNumber } from "lodash";
+import { filter as fpFilter, maxBy } from "lodash/fp";
 import { isOptionViewKey } from "../../models/option_view";
 
 const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void)) =>
@@ -25,18 +26,18 @@ const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?:
 	}));
 };
 
-const setGraphic = (myEchart: echarts.ECharts, gridId: string, onChange: (grid: echarts.GridComponentOption)=>void) => {
-	const { grid } = myEchart.getOption() as echarts.EChartsOption;
+const resizeGrid = (echartInstance: echarts.ECharts, gridId: string, onChange: (grid: echarts.GridComponentOption)=>void) => {
+	const { grid } = echartInstance.getOption() as echarts.EChartsOption;
 	const g = compact(isArray(grid) ? [...grid] : [grid]);
 	const curGrid = g.find(o => o?.id === gridId);
 	if (!curGrid) return;
 	const { left = 0, top = 0, right = 0, bottom = 0 } = curGrid;
-	const width = myEchart.getWidth();
-	const height = myEchart.getHeight();
+	const width = echartInstance.getWidth();
+	const height = echartInstance.getHeight();
 	const r = isNumber(right) ? right : width * (parseFloat(right) / 100);
 	const b = isNumber(bottom) ? bottom : height * (parseFloat(bottom) / 100);
 	// console.log(grid, gridId, [width - r, height - b]);
-	myEchart.setOption({
+	echartInstance.setOption({
 		graphic: [
 			{
 				type: "bezierCurve",
@@ -72,14 +73,15 @@ const setGraphic = (myEchart: echarts.ECharts, gridId: string, onChange: (grid: 
 const findGridId = (e: echarts.ECharts, x: number, y: number) => {
 	const { grid } = e.getOption() as echarts.EChartsOption;
 	const arrGrid = isArray(grid) ? grid : [grid];
-	const findGrid = arrGrid.find((g) => e.containPixel({ gridId: g?.id }, [x, y]));
+	const findGrid = flow(
+		fpFilter((g: echarts.GridComponentOption) => e.containPixel({ gridId: g?.id }, [x, y])),
+		maxBy("z")
+	)(arrGrid);
 	return findGrid?.id ? String(findGrid?.id) : undefined;
 };
 
 const ChartPreview = () => {
 	const { title, series, xAxis, yAxis, grid } = useSelector((state: RootState) => state.options);
-	// const o = useSelector((state: RootState) => state.options);
-	// console.log("options--", o );
 	const dispatch = useDispatch<Dispatch>();
 	const echartObjRef = useRef<echarts.ECharts>();
 	const [containerRef, size] = useRefSize();
@@ -152,6 +154,7 @@ const ChartPreview = () => {
 
 	useEffect(() => {
 		if (!echartObjRef.current) return;
+		console.log("option", echartsOption);
 		echartObjRef.current.setOption(echartsOption);
 	}, [echartsOption]);
 
@@ -164,29 +167,29 @@ const ChartPreview = () => {
 							renderer: "canvas",
 							useDirtyRect: true,
 						});
-						const o = echartObjRef.current;
-						o.setOption(echartsOption);
-						o.on("mousedown", (e) => {
+						const echart = echartObjRef.current;
+						echart.setOption(echartsOption);
+						echart.on("mousedown", (e) => {
 							const name = e.componentType;
 							if (isOptionViewKey(name)) {
 								dispatch.optionView.select({ name, index: e.componentIndex });
 							}
 							onEvent(ComponentType.Title, onMousedown)(e);
 						});
-						o.getZr().on("mousemove", onMousemove);
-						o.getZr().on("mouseup", onMouseup);
-						o.getZr().on("mousedown", (e) => {
+						echart.getZr().on("mousemove", onMousemove);
+						echart.getZr().on("mouseup", onMouseup);
+						echart.getZr().on("mousedown", (e) => {
 							const { offsetX, offsetY } = e;
-							const gridId = findGridId(o, offsetX, offsetY);
+							const gridId = findGridId(echart, offsetX, offsetY);
 							if (gridId) {
 								if (!e.target) {
 									dispatch.optionView.selectGrid(gridId);
 								}
-								setGraphic(o, gridId, (grid) => {
-									console.log(grid);
+								resizeGrid(echart, gridId, (grid) => {
+									const gridId = String(grid.id) ?? "";
 									dispatch.options.modify({
 										name: "grid",
-										data: grid
+										data: { ...grid, id: gridId, gridId }
 									});
 								});
 							}
