@@ -10,7 +10,6 @@ import SeriesForm from "../../option_forms/Series";
 import GridForm from "../../option_forms/Grid";
 import OptionsBar from "../../components/OptionsBar";
 import { message } from "antd";
-import { filter } from "lodash";
 
 const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (

@@ -8,6 +8,7 @@ interface Base {
 	children: React.ReactNode | React.ReactNode[]
 	align?: boolean // 是否水平排布
 	className?: string
+	desc?: string // 备注信息
 }
 
 type TitleProps = {
@@ -28,29 +29,42 @@ interface FormItem extends React.FC<Props> {
  */
 function FormItem (props: Base): JSX.Element;
 function FormItem (props: TitleProps & Base): JSX.Element;
-function FormItem ({ title, className, children, align = false, hash }: Props) {
+function FormItem ({ title, className, children, align = false, hash, desc }: Props) {
 	return (
 		<div
-			className={classNames(css.container, {
-				[css.align]: align
-			}, className)}
+			className={css.container}
 		>
-			{
-				Boolean(title) && (
-					<a
-						className={css.title}
-						title="点击跳转官网文档"
-						href={"https://echarts.apache.org/zh/option.html#" + hash}
-						target="_blank"
-						rel="noreferrer"
-					>
-						{title}
-					</a>
-				)
-			}
-			<div className={css.item}>
-				{children}
+			<div
+				className={classNames(css.content, {
+					[css.align]: align,
+					[css.haveDesc]: Boolean(desc)
+				}, className)}
+			>
+				{
+					Boolean(title) && (
+						<a
+							className={css.title}
+							title="点击跳转官网文档"
+							href={"https://echarts.apache.org/zh/option.html#" + hash}
+							target="_blank"
+							rel="noreferrer"
+						>
+							{title}
+						</a>
+					)
+				}
+				<div className={css.item}>
+					{children}
+				</div>
 			</div>
+			{
+				desc ? (
+					<div className={css.desc}>
+						{desc}
+					</div>
+				)
+					: null
+			}
 		</div>
 	);
 }

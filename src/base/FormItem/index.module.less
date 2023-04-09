@@ -2,10 +2,13 @@
 @import url(../../style/variable.less);
 
 .container {
-    display: flex;
-    flex-direction: column;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
     // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
     &.align {
@@ -16,6 +19,10 @@
             margin-bottom: 0;
             margin-right: 10px;
         }
+    }
+
+    &.haveDesc {
+        padding-bottom: 6px;
     }
 
     .title {
@@ -34,4 +41,9 @@
             text-decoration: underline;
         }
     }
+}
+
+.desc {
+    font-size: 14px;
+    color: @tipText;
 }
