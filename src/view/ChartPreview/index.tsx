@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import css from "./index.module.less";
 import * as echarts from "echarts";
 import useRefSize from "../../hooks/dom/useRefSize";
@@ -26,48 +26,46 @@ const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?:
 	}));
 };
 
-const resizeGrid = (echartInstance: echarts.ECharts, gridId: string, onChange: (grid: echarts.GridComponentOption)=>void) => {
+const getResizeGraphicOption = (echartInstance: echarts.ECharts, gridId: string, onChange: (grid: echarts.GridComponentOption)=>void) => {
 	const { grid } = echartInstance.getOption() as echarts.EChartsOption;
 	const g = compact(isArray(grid) ? [...grid] : [grid]);
 	const curGrid = g.find(o => o?.id === gridId);
-	if (!curGrid) return;
+	if (!curGrid) return [];
 	const { left = 0, top = 0, right = 0, bottom = 0 } = curGrid;
 	const width = echartInstance.getWidth();
 	const height = echartInstance.getHeight();
 	const r = isNumber(right) ? right : width * (parseFloat(right) / 100);
 	const b = isNumber(bottom) ? bottom : height * (parseFloat(bottom) / 100);
 	// console.log(grid, gridId, [width - r, height - b]);
-	echartInstance.setOption({
-		graphic: [
-			{
-				type: "bezierCurve",
-				position: [width - r, height - b],
-				shape: {
-					x1: -30,
-					y1: 10,
-					x2: 10,
-					y2: -30,
-					cpx1: 10,
-					cpy1: 10
-				},
-				style: {
-					lineWidth: 10
-				},
-				cursor: "nwse-resize",
-				draggable: true,
-				ondrag (e) {
-					const targetGrid = g.find(o => o.id === gridId);
-					onChange(
-						{
-							...targetGrid,
-							right: width - e.target.x,
-							bottom: height - e.target.y,
-						}
-					);
-				},
-			}
-		]
-	} as echarts.EChartsOption);
+	return [
+		{
+			type: "bezierCurve",
+			position: [width - r, height - b],
+			shape: {
+				x1: -30,
+				y1: 10,
+				x2: 10,
+				y2: -30,
+				cpx1: 10,
+				cpy1: 10
+			},
+			style: {
+				lineWidth: 10
+			},
+			cursor: "nwse-resize",
+			draggable: true,
+			ondrag (e) {
+				const targetGrid = g.find(o => o.id === gridId);
+				onChange(
+					{
+						...targetGrid,
+						right: width - e.target.x,
+						bottom: height - e.target.y,
+					}
+				);
+			},
+		}
+	] as echarts.GraphicComponentOption[];
 };
 
 const findGridId = (e: echarts.ECharts, x: number, y: number) => {
@@ -84,6 +82,7 @@ const ChartPreview = () => {
 	const { title, series, xAxis, yAxis, grid } = useSelector((state: RootState) => state.options);
 	const dispatch = useDispatch<Dispatch>();
 	const echartObjRef = useRef<echarts.ECharts>();
+	const [graphic, setGraphic] = useState<echarts.GraphicComponentOption[]>([]);
 	const [containerRef, size] = useRefSize();
 	const [
 		output, { onMousedown, onMousemove, onMouseup }
@@ -155,8 +154,11 @@ const ChartPreview = () => {
 	useEffect(() => {
 		if (!echartObjRef.current) return;
 		console.log("option", echartsOption);
-		echartObjRef.current.setOption(echartsOption);
-	}, [echartsOption]);
+		echartObjRef.current.setOption({
+			graphic,
+			...echartsOption
+		}, true);
+	}, [echartsOption, graphic]);
 
 	return (
 		<div className={css.container} ref={containerRef}>
@@ -185,13 +187,14 @@ const ChartPreview = () => {
 								if (!e.target) {
 									dispatch.optionView.selectGrid(gridId);
 								}
-								resizeGrid(echart, gridId, (grid) => {
+								const graphicOption = getResizeGraphicOption(echart, gridId, (grid) => {
 									const gridId = String(grid.id) ?? "";
 									dispatch.options.modify({
 										name: "grid",
 										data: { ...grid, id: gridId, gridId }
 									});
 								});
+								setGraphic(graphicOption);
 							}
 						});
 					}
