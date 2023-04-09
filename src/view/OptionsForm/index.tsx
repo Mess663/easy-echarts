@@ -10,6 +10,7 @@ import SeriesForm from "../../option_forms/Series";
 import GridForm from "../../option_forms/Grid";
 import OptionsBar from "../../components/OptionsBar";
 import { message } from "antd";
+import { filter } from "lodash";
 
 const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -33,13 +34,15 @@ type OptionForm = RootState["options"]
  */
 const useOption = <N extends keyof OptionForm>(name: N) => {
 	type Data = OptionForm[N][number]
-	const o = useSelector((state: RootState) => state.options);
 	const gridId = useSelector((state: RootState) => state.optionView.grid.selectedId ?? state.options.grid[0].id);
 	const optionArr: Array<Data> = useSelector(
-		(state: RootState) =>
-			name === "grid"
+		(state: RootState) => {
+			return name === "grid"
 				? state.options[name]
-				: state.options[name].filter(o => o.gridId === gridId)
+				: (state.options[name] as Data[]).filter(o => {
+					return o?.gridId === gridId;
+				});
+		}
 	);
 	const selectedId = useSelector((state: RootState) => state.optionView[name].selectedId);
 	const selected = optionArr.find((o) => o.id === selectedId);
