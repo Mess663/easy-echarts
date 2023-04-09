@@ -65,7 +65,7 @@ const getResizeGraphicOption = (echartInstance: echarts.ECharts, gridId: string,
 				);
 			},
 		}
-	] as echarts.GraphicComponentOption[];
+	] as echarts.EChartsOption["graphic"];
 };
 
 const findGridId = (e: echarts.ECharts, x: number, y: number) => {
