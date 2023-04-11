@@ -10,6 +10,7 @@ import zhCN from "antd/locale/zh_CN";
 
 
 import "./static/font/iconfont.js";
+import color from "./config/color";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<React.StrictMode>
@@ -18,7 +19,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 				locale={zhCN}
 				theme={{
 					token: {
-						colorPrimary: "#3a5477",
+						colorPrimary: color.colorPrimary,
 					}
 				}}
 			>
