@@ -3,13 +3,15 @@ import { options } from "./options";
 import immerPlugin from "@rematch/immer";
 import { init, RematchDispatch, RematchRootState } from "@rematch/core";
 import { optionView } from "./option_view";
+import { ui } from "./ui";
 
 export interface RootModel extends Models<RootModel> {
   options: typeof options;
   optionView: typeof optionView;
+  ui: typeof ui;
 }
 
-const models: RootModel = { options, optionView };
+const models: RootModel = { options, optionView, ui };
 
 export const store = init<RootModel>({
 	models,
