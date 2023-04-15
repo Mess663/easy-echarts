@@ -9,7 +9,9 @@ const App = () => {
 	return (
 		<div className={css.page}>
 			<div className={css.left}>
-				<OptionsForm />
+				<ErrorBoundary fallback={<></>}>
+					<OptionsForm />
+				</ErrorBoundary>
 			</div>
 
 			<GridTabs />
