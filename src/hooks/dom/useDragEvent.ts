@@ -1,6 +1,7 @@
 import { useLatest } from "ahooks";
 import { identity } from "lodash";
-import { useObservableCallback, useObservableState } from "observable-hooks";
+import { useObservableCallback, useObservableState, useSubscription } from "observable-hooks";
+import { useMemo } from "react";
 import { map, switchMap, takeUntil } from "rxjs";
 
 interface Param<DownEvent, MoveEvent, DownReturn, MoveReturn> {
@@ -23,26 +24,26 @@ interface Param<DownEvent, MoveEvent, DownReturn, MoveReturn> {
  * @returns [outputState, {onMousedown, onMousemove, onMouseup}]
  */
 function useDragEvent<DownEvent, MoveEvent, DownReturn, MoveReturn>(
-	param: Param<DownEvent, MoveEvent, DownReturn, MoveReturn>
+	param: Param<DownEvent, MoveEvent, DownReturn, MoveReturn>, callback?: (p: MoveReturn) => void
 ) {
 	const paramRef = useLatest(param);
 	const [onMousemove, mousemove$] = useObservableCallback<MoveEvent>(identity);
 	const [onMouseup, mouseup$] = useObservableCallback<MoveEvent>(identity);
-	const [output, onMousedown] = useObservableState<MoveReturn, DownEvent>(
-		(mousedown$) => mousedown$.pipe(
-			map(downEvent => paramRef.current.downTransform(downEvent)),
-			switchMap((downTargetOffset) => mousemove$.pipe(
-				map((moveEvent) => paramRef.current.moveTransform(moveEvent, downTargetOffset)),
-				takeUntil(mouseup$)
-			)),
-		)
-	);
+	const [onMousedown, mousedown$] = useObservableCallback<DownEvent>(identity);
+	const drag$ = useMemo(() => mousedown$.pipe(
+		map(downEvent => paramRef.current.downTransform(downEvent)),
+		switchMap((downTargetOffset) => mousemove$.pipe(
+			map((moveEvent) => paramRef.current.moveTransform(moveEvent, downTargetOffset)),
+			takeUntil(mouseup$)
+		))), [mousedown$, mousemove$, mouseup$, paramRef]);
 
-	return [output , {
+	useSubscription(drag$, callback);
+
+	return {
 		onMousedown,
 		onMousemove,
 		onMouseup,
-	}] as const;
+	} as const;
 }
 
 export default useDragEvent;

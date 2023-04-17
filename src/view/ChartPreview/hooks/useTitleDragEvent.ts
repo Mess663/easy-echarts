@@ -9,10 +9,12 @@ import { Title } from "../../../types/biz/option";
  * @param param.initState
  * @returns [outputState, {onMousedown, onMousemove, onMouseup}]
  */
-function useTitleDragEvent(size: { width: number, height: number } | undefined, title: Title[]) {
-	const [
-		output, onEvent
-	] = useDragEvent({
+function useTitleDragEvent(
+	size: { width: number, height: number } | undefined,
+	title: Title[],
+	callback: (p: readonly [number, number, number]) => void
+) {
+	const onEvent = useDragEvent({
 		downTransform(e: echarts.ECElementEvent):[number, number, number] {
 			const currentTitle = title[e.componentIndex];
 			const x = Number(currentTitle?.left ?? 0);
@@ -21,7 +23,7 @@ function useTitleDragEvent(size: { width: number, height: number } | undefined, 
 			return [offsetX - x, offsetY - y, e.componentIndex];
 		},
 		moveTransform(e: echarts.ElementEvent, offset: [number, number, number]) {
-			if (!size) return [0, 0, 0];
+			if (!size) return [0, 0, 0] as const;
 			const { offsetX, offsetY } = e;
 			const [ firstX, firstY, index] = offset;
 			return [
@@ -30,9 +32,9 @@ function useTitleDragEvent(size: { width: number, height: number } | undefined, 
 				index
 			] as const;
 		},
-	});
+	}, callback);
 
-	return [output, onEvent] as const;
+	return onEvent;
 }
 
 export default useTitleDragEvent;

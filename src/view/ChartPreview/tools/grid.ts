@@ -1,4 +1,27 @@
 import { compact, isArray, isNumber } from "lodash";
+import { Size } from "../../../types/common";
+
+/**
+ * 将ecahrt.grid的边距宽高从百分比转为数字
+ * @param grid echart的单个grid配置
+ * @param size echart容器的宽高
+ */
+export const gridPercent2Num = (grid: echarts.GridComponentOption, size?: Size) => {
+	if (!size) return { top: 0, left: 0, right: 0, bottom: 0 };
+	const { top, left, bottom, right } = grid;
+	const { width, height } = size;
+	const percent2Num = (p: string | number = 0, isWidth: boolean) => {
+		if (isNumber(p)) return p;
+		const percentNumber = parseFloat(p);
+		return percentNumber * (isWidth ? width : height) / 100;
+	};
+	return {
+		top: percent2Num(top, false),
+		left: percent2Num(left, true),
+		bottom: percent2Num(bottom, false),
+		right: percent2Num(right, true)
+	};
+};
 
 export const getResizeGraphicOption = (echartInstance: echarts.ECharts, gridId: string, onChange: (grid: echarts.GridComponentOption)=>void) => {
 	const { grid } = echartInstance.getOption() as echarts.EChartsOption;
@@ -40,8 +63,4 @@ export const getResizeGraphicOption = (echartInstance: echarts.ECharts, gridId: 
 			},
 		}
 	] as echarts.EChartsOption["graphic"];
-};
-
-export const getMovingGridOption = () => {
-
 };

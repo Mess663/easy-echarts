@@ -11,6 +11,11 @@ import { flow, isArray, isFunction } from "lodash";
 import { filter as fpFilter, maxBy } from "lodash/fp";
 import { isOptionViewKey } from "../../models/option_view";
 import { getResizeGraphicOption } from "./tools/grid";
+import useGridDragEvent from "./hooks/useGridDragEvent";
+
+const eachInvoke = <T,>(...fns: ((p: T) => void)[]) => (p: T) => {
+	fns.forEach(fn => fn(p));
+};
 
 const onEvent = (type: ComponentType, cb: ((e: echarts.ECElementEvent) => void)) =>
 	(e: echarts.ECElementEvent, ) => {
@@ -27,14 +32,14 @@ const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?:
 	}));
 };
 
-const findGridId = (e: echarts.ECharts, x: number, y: number) => {
+const findGrid = (e: echarts.ECharts, x: number, y: number) => {
 	const { grid } = e.getOption() as echarts.EChartsOption;
 	const arrGrid = isArray(grid) ? grid : [grid];
-	const findGrid = flow(
+	const findGrid: echarts.GridComponentOption | undefined = flow(
 		fpFilter((g: echarts.GridComponentOption) => e.containPixel({ gridId: g?.id }, [x, y])),
 		maxBy("z")
 	)(arrGrid);
-	return findGrid?.id ? String(findGrid?.id) : undefined;
+	return findGrid;
 };
 
 const ChartPreview = () => {
@@ -43,12 +48,10 @@ const ChartPreview = () => {
 	const echartObjRef = useRef<echarts.ECharts>();
 	const [graphic, setGraphic] = useState<echarts.GraphicComponentOption[]>([]);
 	const [containerRef, size] = useRefSize();
-	const [
-		output, { onMousedown, onMousemove, onMouseup }
-	] = useTitleDragEvent(size, title);
-
-	useEffect(() => {
-		if (output) {
+	const titleDragSubs = useTitleDragEvent(
+		size,
+		title,
+		(output)=> {
 			const [left, top, index] = output;
 			dispatch.options.modifyByIndex({
 				index,
@@ -59,7 +62,13 @@ const ChartPreview = () => {
 				}
 			});
 		}
-	}, [dispatch.options, output]);
+	);
+	const gridDragSubs = useGridDragEvent(size, (output) => {
+		dispatch.options.modify({
+			name: "grid",
+			data: { id: output.gridId, ...output }
+		});
+	});
 
 	useEffect(() => {
 		if (size && echartObjRef.current) {
@@ -99,7 +108,7 @@ const ChartPreview = () => {
 
 	useEffect(() => {
 		if (!echartObjRef.current) return;
-		console.log("option", echartsOption);
+		// console.log("option", echartsOption);
 		echartObjRef.current.setOption({
 			graphic,
 			...echartsOption
@@ -122,18 +131,24 @@ const ChartPreview = () => {
 							if (isOptionViewKey(name)) {
 								dispatch.optionView.select({ name, index: e.componentIndex });
 							}
-							onEvent(ComponentType.Title, onMousedown)(e);
+							onEvent(ComponentType.Title, titleDragSubs.onMousedown)(e);
 						});
-						echart.getZr().on("mousemove", onMousemove);
-						echart.getZr().on("mouseup", onMouseup);
-						echart.getZr().on("mousedown", (e) => {
+						echart.getZr().on(
+							"mousemove",
+							eachInvoke(titleDragSubs.onMousemove, gridDragSubs.onMousemove)
+						);
+						echart.getZr().on(
+							"mouseup",
+							eachInvoke(titleDragSubs.onMouseup, gridDragSubs.onMouseup)
+						);
+						echart.getZr().on("mouseup", (e) => {
 							const { offsetX, offsetY } = e;
-							const gridId = findGridId(echart, offsetX, offsetY);
-							if (gridId) {
+							const grid = findGrid(echart, offsetX, offsetY);
+							if (grid?.id) {
 								if (!e.target) {
-									dispatch.optionView.selectGrid(gridId);
+									dispatch.optionView.selectGrid(String(grid.id));
 								}
-								const graphicOption = getResizeGraphicOption(echart, gridId, (grid) => {
+								const graphicOption = getResizeGraphicOption(echart, String(grid.id), (grid) => {
 									const gridId = String(grid.id) ?? "";
 									dispatch.options.modify({
 										name: "grid",
@@ -141,6 +156,20 @@ const ChartPreview = () => {
 									});
 								});
 								if (isArray(graphicOption)) setGraphic(graphicOption);
+							}
+						});
+						echart.getZr().on("mousedown", (e) => {
+							const { offsetX, offsetY } = e;
+							const grid = findGrid(echart, offsetX, offsetY);
+							if (grid) {
+								echart.setOption({
+									grapic: []
+								});
+								const newEvent = {
+									...e,
+									grid
+								};
+								gridDragSubs.onMousedown(newEvent);
 							}
 						});
 					}
