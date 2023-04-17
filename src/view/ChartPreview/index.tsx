@@ -162,9 +162,7 @@ const ChartPreview = () => {
 							const { offsetX, offsetY } = e;
 							const grid = findGrid(echart, offsetX, offsetY);
 							if (grid) {
-								echart.setOption({
-									grapic: []
-								});
+								setGraphic([]);
 								const newEvent = {
 									...e,
 									grid
