@@ -44,7 +44,7 @@ const findGrid = (e: echarts.ECharts, x: number, y: number) => {
 };
 
 const ChartPreview = () => {
-	const { title, series, xAxis, yAxis, grid } = useSelector((state: RootState) => state.options);
+	const options = useSelector((state: RootState) => state.options);
 	const { grid: gridView } = useSelector((state: RootState) => state.optionView);
 	const { graphic } = useSelector((state: RootState) => state.ui);
 	const dispatch = useDispatch<Dispatch>();
@@ -52,7 +52,7 @@ const ChartPreview = () => {
 	const [containerRef, size] = useRefSize();
 	const titleDragSubs = useTitleDragEvent(
 		size,
-		title,
+		options.title,
 		(output)=> {
 			const [left, top, index] = output;
 			dispatch.options.modifyByIndex({
@@ -100,13 +100,14 @@ const ChartPreview = () => {
 	}, [echartObjRef, size]);
 
 	const echartsOption = useMemo(() => {
+		const { title, series, xAxis, yAxis, grid, tooltip } = options;
 		return {
 			title: addCommonOption(title),
 			xAxis: addCommonOption(xAxis),
 			yAxis: addCommonOption(yAxis),
 			grid: addCommonOption(grid),
 			series: addCommonOption(series),
-			tooltip: {},
+			tooltip,
 			dataset: [
 				{
 					source: [
@@ -127,7 +128,7 @@ const ChartPreview = () => {
 			],
 			animation: false,
 		} as echarts.EChartsOption;
-	}, [grid, series, title, xAxis, yAxis]);
+	}, [options]);
 
 	useEffect(() => {
 		if (!echartObjRef.current) return;

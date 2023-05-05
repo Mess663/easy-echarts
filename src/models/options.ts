@@ -2,7 +2,7 @@ import { createModel } from "@rematch/core";
 import { isNumber } from "lodash";
 import { RootModel } from ".";
 import { keys } from "../tools/type";
-import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
+import { Grid, Series, Title, Tooltip, XAxis, YAxis } from "../types/biz/option";
 import { getInitOption } from "../config/init_option";
 
 export interface State {
@@ -11,18 +11,21 @@ export interface State {
 	xAxis: XAxis[]
 	yAxis: YAxis[]
 	grid: Grid[]
+	tooltip: Tooltip[]
 }
 
 const getDefaultOpton = (): State => {
 	const grid = getInitOption("grid", {});
 	const xAxis = getInitOption("xAxis", { gridId: grid.id });
 	const yAxis = getInitOption("yAxis", { gridId: grid.id });
+	const tooltip = getInitOption("tooltip", { gridId: grid.id });
 	return {
 		series: [getInitOption("series", { gridId: grid.id, xAxisId: xAxis.id, yAxisId: yAxis.id })],
 		title: [],
 		xAxis: [xAxis],
 		yAxis: [yAxis],
 		grid: [grid],
+		tooltip: [tooltip]
 	};
 };
 

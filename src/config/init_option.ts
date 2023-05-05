@@ -17,7 +17,8 @@ const genOption = () => {
 		},
 		grid: {
 			z: getUniqueNum(),
-		}
+		},
+		tooltip: {}
 	};
 	return option;
 };
