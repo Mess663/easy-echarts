@@ -80,10 +80,17 @@ function OptionsForm() {
 	const [gridProps] = useOption("grid");
 	const dispatch = useDispatch<Dispatch>();
 
-	const getAddBtn = <T extends keyof OptionForm>(name: T) => {
-		const data = getInitOption(name, {
-			gridId: gridProps.data.id
-		});
+	const getAddBtn = <T extends keyof Omit<OptionForm, "grid">>(name: T) => {
+		const data = (() => {
+			if (name === "series") return getInitOption(name, {
+				gridId: gridProps.data.id,
+				xAxisId: xAxisProps.data.id,
+				yAxisId: yAxisProps.data.id
+			});
+			return getInitOption(name, {
+				gridId: gridProps.data.id
+			});
+		})();
 		return (
 			<AddBtn
 				onClick={() => {

@@ -93,14 +93,14 @@ const ChartPreview = () => {
 	}, [echartObjRef, size]);
 
 	const echartsOption = useMemo(() => {
-		const { title, series, xAxis, yAxis, grid, tooltip } = options;
+		const { title, series, xAxis, yAxis, grid } = options;
 		return {
 			title: addCommonOption(title),
 			xAxis: addCommonOption(xAxis),
 			yAxis: addCommonOption(yAxis),
 			grid: addCommonOption(grid),
 			series: addCommonOption(series),
-			tooltip,
+			tooltip: {},
 			dataset: [
 				{
 					source: [

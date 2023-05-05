@@ -15,7 +15,7 @@ export interface State {
 }
 
 const getDefaultOpton = (): State => {
-	const grid = getInitOption("grid", {});
+	const grid = getInitOption("grid");
 	const xAxis = getInitOption("xAxis", { gridId: grid.id });
 	const yAxis = getInitOption("yAxis", { gridId: grid.id });
 	const tooltip = getInitOption("tooltip", { gridId: grid.id });
