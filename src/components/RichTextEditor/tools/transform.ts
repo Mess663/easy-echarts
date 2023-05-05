@@ -1,6 +1,6 @@
 import { isNumber, isString, isEmpty, uniqueId, reduce  } from "lodash";
 import { CSSProperties } from "react";
-import { LineBreaker } from "../../../config/options";
+import { LineBreaker } from "../../../config/text";
 import { RichStyle, EchartsRich } from "../../../types/biz/option";
 import { pluginList } from "../plugin";
 import { CustomElement } from "../type";

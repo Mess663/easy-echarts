@@ -3,7 +3,7 @@ import { isNumber } from "lodash";
 import { RootModel } from ".";
 import { keys } from "../tools/type";
 import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
-import { getInitOption } from "../config/init_option";
+import { getInitOption } from "../logic/init_option";
 
 export interface State {
 	series: Series[]

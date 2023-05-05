@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { HTMLAttributes } from "react";
 import TitleForm from "../../option_forms/Title";
 import AxisForm from "../../option_forms/Axis";
-import { getInitOption } from "../../config/init_option";
+import { getInitOption } from "../../logic/init_option";
 import SeriesForm from "../../option_forms/Series";
 import GridForm from "../../option_forms/Grid";
 import OptionsBar from "../../components/OptionsBar";
