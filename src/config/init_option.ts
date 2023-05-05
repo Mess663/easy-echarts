@@ -25,6 +25,7 @@ const genOption = () => {
 
 export function getInitOption(name: "series", data: { gridId: string, xAxisId: string, yAxisId: string }): OptionFormState["series"][number];
 export function getInitOption<T extends keyof Omit<OptionFormState, "series">>(name: T, data: { gridId: string}): OptionFormState[T][number];
+export function getInitOption(name: "grid"): OptionFormState["grid"][number];
 export function getInitOption<T extends keyof OptionFormState>(name: T, data?: {
 	gridId?: string;
 	xAxisId?: string;
