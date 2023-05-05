@@ -1,5 +1,6 @@
 import { compact, isArray, isNumber } from "lodash";
 import { Size } from "../../../types/common";
+import { flow, filter as fpFilter, maxBy } from "lodash/fp";
 
 /**
  * 将ecahrt.grid的边距宽高从百分比转为数字
@@ -23,7 +24,7 @@ export const gridPercent2Num = (grid: echarts.GridComponentOption, size?: Size) 
 	};
 };
 
-export const initGraphicOption = (echartInstance: echarts.ECharts, gridId: string, onChange: (grid: echarts.GridComponentOption)=>void) => {
+export const initGraphicOption = (echartInstance: echarts.ECharts, gridId: string) => {
 	const { grid } = echartInstance.getOption() as echarts.EChartsOption;
 	const g = compact(isArray(grid) ? [...grid] : [grid]);
 	const curGrid = g.find(o => o?.id === gridId);
@@ -50,17 +51,22 @@ export const initGraphicOption = (echartInstance: echarts.ECharts, gridId: strin
 				lineWidth: 10
 			},
 			cursor: "nwse-resize",
-			// draggable: true,
-			// ondrag (e) {
-			// 	const targetGrid = g.find(o => o.id === gridId);
-			// 	onChange(
-			// 		{
-			// 			...targetGrid,
-			// 			right: width - e.target.x,
-			// 			bottom: height - e.target.y,
-			// 		}
-			// 	);
-			// },
 		}
 	] as echarts.EChartsOption["graphic"];
+};
+
+/**
+ * 找到当前鼠标所指向的grid
+ * @param e echarts对象
+ * @param x echart的x坐标
+ * @param y	echart的y坐标
+ */
+export const findGrid = (e: echarts.ECharts, x: number, y: number) => {
+	const { grid } = e.getOption() as echarts.EChartsOption;
+	const arrGrid = isArray(grid) ? grid : [grid];
+	const findGrid: echarts.GridComponentOption | undefined = flow(
+		fpFilter((g: echarts.GridComponentOption) => e.containPixel({ gridId: g?.id }, [x, y])),
+		maxBy("z")
+	)(arrGrid);
+	return findGrid;
 };

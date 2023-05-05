@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import css from "./index.module.less";
 import * as echarts from "echarts";
 import useRefSize from "../../hooks/dom/useRefSize";
@@ -7,23 +7,12 @@ import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
 import { State } from "../../models/options";
-import { flow, isArray, isFunction } from "lodash";
-import { filter as fpFilter, maxBy } from "lodash/fp";
+import { isArray, isFunction, isString } from "lodash";
 import { isOptionViewKey } from "../../models/option_view";
-import { initGraphicOption } from "./tools/grid";
+import { findGrid, initGraphicOption } from "./tools/grid";
 import useGridDragEvent from "./hooks/useGridDragEvent";
 import useGrapicDragEvent from "./hooks/useGrapicDragEvent";
-
-const eachInvoke = <T,>(...fns: ((p: T) => void)[]) => (p: T) => {
-	fns.forEach(fn => fn(p));
-};
-
-const onEvent = <T extends echarts.ECElementEvent>(type: ComponentType, cb: ((e: T) => void)) =>
-	(e: T) => {
-		if (e.componentType === type) {
-			cb(e);
-		}
-	};
+import { eachInvoke, isMousedownValveClose, onEvent } from "./tools/event";
 
 const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
 	return options.map((o, i) => ({
@@ -33,16 +22,6 @@ const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?:
 	}));
 };
 
-const findGrid = (e: echarts.ECharts, x: number, y: number) => {
-	const { grid } = e.getOption() as echarts.EChartsOption;
-	const arrGrid = isArray(grid) ? grid : [grid];
-	const findGrid: echarts.GridComponentOption | undefined = flow(
-		fpFilter((g: echarts.GridComponentOption) => e.containPixel({ gridId: g?.id }, [x, y])),
-		maxBy("z")
-	)(arrGrid);
-	return findGrid;
-};
-
 const ChartPreview = () => {
 	const options = useSelector((state: RootState) => state.options);
 	const { grid: gridView } = useSelector((state: RootState) => state.optionView);
@@ -50,6 +29,18 @@ const ChartPreview = () => {
 	const dispatch = useDispatch<Dispatch>();
 	const echartObjRef = useRef<echarts.ECharts>();
 	const [containerRef, size] = useRefSize();
+
+	const initGraphic = useCallback((echart: echarts.ECharts | undefined, gridId: string) => {
+		if (echart) {
+			const graphicOption = initGraphicOption(
+				echart,
+				String(gridId),
+			);
+
+			if (isArray(graphicOption)) dispatch.ui.setGraphic(graphicOption);
+		}
+	}, [dispatch.ui]);
+
 	const titleDragSubs = useTitleDragEvent(
 		size,
 		options.title,
@@ -91,6 +82,8 @@ const ChartPreview = () => {
 			name: "grid",
 			data: { id: output.gridId, ...output }
 		});
+		
+		initGraphic(echartObjRef.current, output.gridId);
 	});
 
 	useEffect(() => {
@@ -151,6 +144,7 @@ const ChartPreview = () => {
 						});
 						const echart = echartObjRef.current;
 						echart.setOption(echartsOption);
+
 						echart.on("mousedown", (e) => {
 							const name = e.componentType;
 							if (isOptionViewKey(name)) {
@@ -168,27 +162,17 @@ const ChartPreview = () => {
 							eachInvoke(titleDragSubs.onMouseup, gridDragSubs.onMouseup, graphicDragSubs.onMouseup)
 						);
 						echart.getZr().on("mousedown", (e) => {
+							if (e.target) return; // 点击空白处才进行操作
 							const { offsetX, offsetY } = e;
 							const grid = findGrid(echart, offsetX, offsetY);
-							if (grid) {
-								dispatch.optionView.selectGrid(String(grid.id));
+							if (grid && isString(grid.id)) {
 								gridDragSubs.onMousedown({
 									...e,
 									grid
 								});
 
-								// init graphic
-								const graphicOption = initGraphicOption(
-									echart,
-									String(grid.id),
-									(grid) => {
-										const gridId = String(grid.id) ?? "";
-										dispatch.options.modify({
-											name: "grid",
-											data: { ...grid, id: gridId, gridId }
-										});
-									});
-								if (isArray(graphicOption)) dispatch.ui.setGraphic(graphicOption);
+								dispatch.optionView.selectGrid(grid.id);
+								initGraphic(echart, grid.id);
 							}
 						});
 					}
