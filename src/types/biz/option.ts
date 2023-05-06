@@ -22,7 +22,7 @@ export type Series = {
 
 export type Title = WrapCommonOption<echarts.TitleComponentOption>
 
-export type XAxis = WrapCommonOption<echarts.YAXisComponentOption>
+export type XAxis = WrapCommonOption<echarts.XAXisComponentOption>
 
 export type YAxis = WrapCommonOption<echarts.YAXisComponentOption>
 

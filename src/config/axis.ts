@@ -12,6 +12,16 @@ export enum AxisPosition {
 }
 
 /**
+ * 坐标轴名称位置
+ * @see https://echarts.apache.org/zh/option.html#xAxis.nameLocation
+ */
+export enum AxisNameLocation {
+    start = "start",
+    middle = "middle",
+    end = "end",
+}
+
+/**
  * 坐标轴类型
  * @enum {string}
  * @see https://echarts.apache.org/zh/option.html#xAxis.type
