@@ -1,17 +1,12 @@
-import { last, startsWith } from "lodash";
-import React from "react";
-import ColorPicker from "../../../../base/ColorPicker";
+import { last } from "lodash";
 import IconSvg from "../../../../base/IconSvg";
-import Input from "../../../../base/Input";
-import Popover from "../../../../base/Popover";
 import { isColorString } from "../../../../tools/color";
 import ToolBtn from "../../components/ToolBtn";
 import { PluginProps, ToCssStyle, ToolPlugin, ToRichStyle } from "../type";
-import css from "./index.module.less";
+import ShadowPicker from "../../../../base/ShadowPicker";
 
 type ShadowRichStyle = ReturnType<typeof toRichStyle>
 
-const PxElement = () => <span className={css.px}>px</span>;
 const toRichStyle = (cssTextShadow: string) => {
 	const config = cssTextShadow.match(/\d+|#[\da-f]{3,6}/g);
 	const color = last(config);
@@ -33,61 +28,33 @@ const TextShadow: ToolPlugin = ({ marks, editor }: PluginProps) => {
 		const newShadow = { ...shadow, ...e };
 		editor.addMark("textShadow", toCssStyle(newShadow));
 	};
-	const onInput = (key: keyof Omit<ShadowRichStyle, "textShadowColor">) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = Number(e.currentTarget.value);
-		onChange({ [key]: value });
-	};
+	
 	return (
-		<Popover
-			panel={(
-				<div className={css.panel}>
-					<div className={css.item} >
-					X：
-						<Input
-							value={shadow.textShadowOffsetX}
-							onInput={onInput("textShadowOffsetX")}
-						/>
-						<PxElement />
-					</div>
-					<div className={css.item}>
-					Y：
-						<Input
-							value={shadow.textShadowOffsetY}
-							onInput={onInput("textShadowOffsetY")}
-						/>
-						<PxElement />
-					</div>
-					<div className={css.item}>
-					模糊度：
-						<Input
-							value={shadow.textShadowBlur}
-							onInput={onInput("textShadowBlur")}
-						/>
-						<PxElement />
-					</div>
-					<div className={css.item}>
-					颜色：
-						<ColorPicker
-							color={shadow.textShadowColor}
-							onChange={(e) => {
-								onChange({ textShadowColor: e.hex });
-							}}
-						/>
-					</div>
-					<div className={css.item}
-						onMouseDown={() => {
-							editor.removeMark("textShadow");
-						}}
-					>
-						<button className={css.clear}>清除</button>
-					</div>
-				</div>
-			)}
+		<ShadowPicker
+			shadow={{
+				shadowOffsetX: shadow.textShadowOffsetX,
+				shadowOffsetY: shadow.textShadowOffsetY,
+				shadowBlur: shadow.textShadowBlur,
+				shadowColor: shadow.textShadowColor
+			}}
+			onChange={(newShadow) => {
+				if (newShadow) {
+					onChange({
+						textShadowOffsetX: newShadow.shadowOffsetX,
+						textShadowOffsetY: newShadow.shadowOffsetY,
+						textShadowBlur: newShadow.shadowBlur,
+						textShadowColor: newShadow.shadowColor
+					});
+				}
+				else {
+					editor.removeMark("textShadow");
+				}
+			}}
 		>
 			<ToolBtn title="字体阴影">
 				<IconSvg name="icon-text-shadow" />
 			</ToolBtn>
-		</Popover>
+		</ShadowPicker>
 	);
 };
 
