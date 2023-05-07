@@ -3,6 +3,7 @@
  * 1.boundaryGap 通过表单不好配置
  * 2.min/max 功能不完整
  * 3.scale ts没推导出这个属性，很奇怪，暂时不搞
+ * 4.axisLine.symbolSize 有两个属性共同作用，单一配置时，另一个属性由于没默认值会导致显示不达预期
  */
 
 import React, { useMemo } from "react";
@@ -10,11 +11,16 @@ import css from "./index.module.less";
 import { OptionFormProps } from "../type";
 import { EchartsRich, XAxis, YAxis } from "../../types/biz/option";
 import FormItem from "../../base/FormItem";
-import { Select, Switch } from "antd";
+import { Select, Space, Switch } from "antd";
 import { AxisNameLocation, AxisPosition, AxisTypeEnum } from "../../config/axis";
 import Input from "../../base/Input";
 import RichTextEditor from "../../components/RichTextEditor";
 import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
+import { get } from "lodash";
+
+// 通过数组方式配置，索引代表属性在data中的位置
+enum SymbolArrowIndex { left = 0, right = 1 }
+enum SymbolSizeIndex { width = 0, height = 1 }
 
 type FormItemHash = React.ComponentProps<typeof FormItem>["hash"]
 
@@ -59,6 +65,24 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 		}
 		return RichTextEditor.transformToSchema(subTitleConfig.wrapText(data.name ?? "坐标轴名称"), subTitleConfig.rich);
 	}, [data.name, data.nameTextStyle?.rich]);
+	const onChangeSymbol = (index: SymbolArrowIndex) => (flag: boolean) => {
+		const newSymbol = [...data.axisLine?.symbol ?? []];
+		newSymbol[index] = flag ? "arrow" : "none";
+		edit({
+			...data,
+			axisLine: { ...data.axisLine, symbol: newSymbol }
+		});
+	};
+	// 处理axisline内的数字数组配置
+	const onChangeAxisLineNumber = (index: number, prop: keyof NonNullable<XAxis["axisLine"]>) => (e: React.FormEvent<HTMLInputElement>) => {
+		const n = Number(e.currentTarget.value);
+		const newConfigArr = [...get(data, ["axisLine", prop], [0, 0]) as number[]];
+		newConfigArr[index] = n;
+		edit({
+			...data,
+			axisLine: { ...data.axisLine, [prop]: newConfigArr }
+		});
+	};
 
 	return (
 		<div className={css.container}>
@@ -129,7 +153,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 
 			<FormItem align title={"坐标轴刻度最小值"} hash={getHash("min")}>
 				<Input
-					value={Number(data.min) ?? ""}
+					value={data.min ? Number(data.min) : undefined}
 					type='number'
 					placeholder="输入数字"
 					onInput={(e) => {
@@ -141,7 +165,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 
 			<FormItem align title={"坐标轴刻度最大值"} hash={getHash("max")}>
 				<Input
-					value={Number(data.max) ?? ""}
+					value={data.max ? Number(data.max) : undefined}
 					type='number'
 					placeholder="输入数字"
 					onInput={(e) => {
@@ -206,7 +230,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 			<FormItem.Group title="轴线">
 				<FormItem align title={"显示坐标轴轴线"} hash={getHash("axisLine.show")}>
 					<Switch
-						checked={Boolean(data.axisLine?.show ?? true)}
+						checked={Boolean(data.axisLine?.show ?? (isX ? true : false))}
 						onChange={(show) => {
 							edit({
 								...data,
@@ -226,6 +250,63 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 							});
 						}}
 					/>
+				</FormItem>
+
+				<FormItem title={"轴线两边显示箭头"} hash={getHash("axisLine.symbol")}>
+					<Space>
+						{(isX ? "左侧" : "下侧") + "箭头："}
+						<Switch
+							checked={get(data, ["axisLine", "symbol", SymbolArrowIndex.left]) === "arrow"}
+							onChange={onChangeSymbol(SymbolArrowIndex.left)}
+						/>
+						{(isX ? "右侧" : "上侧") + "箭头："}
+						<Switch
+							checked={get(data, ["axisLine", "symbol", SymbolArrowIndex.right]) === "arrow"}
+							onChange={onChangeSymbol(SymbolArrowIndex.right)}
+						/>
+					</Space>
+				</FormItem>
+
+				<FormItem title={"轴线箭头的大小"} hash={getHash("axisLine.symbolSize")}>
+					<Space>
+						宽度：
+						<Input
+							value={get(data, ["axisLine", "symbolSize", SymbolSizeIndex.width]) ?? 10}
+							type='number'
+							placeholder="输入数字"
+							onInput={onChangeAxisLineNumber(SymbolSizeIndex.width, "symbolSize")}
+						/>
+					</Space>
+					<Space style={{ marginTop: 4 }}>
+						高度：
+						<Input
+							value={get(data, ["axisLine", "symbolSize", SymbolSizeIndex.height]) ?? 15}
+							type='number'
+							placeholder="输入数字"
+							onInput={onChangeAxisLineNumber(SymbolSizeIndex.height, "symbolSize")}
+						/>
+					</Space>
+				</FormItem>
+
+				<FormItem title={"轴线箭头的位置偏移"} hash={getHash("axisLine.symbolOffset")}>
+					<Space>
+						{(isX ? "左侧" : "下侧") + "箭头："}
+						<Input
+							value={get(data, ["axisLine", "symbolOffset", SymbolArrowIndex.left]) ?? 0}
+							type='number'
+							placeholder="输入数字"
+							onInput={onChangeAxisLineNumber(SymbolArrowIndex.left, "symbolOffset")}
+						/>
+					</Space>
+					<Space style={{ marginTop: 4 }}>
+						{(isX ? "右侧" : "上侧") + "箭头："}
+						<Input
+							value={get(data, ["axisLine", "symbolOffset", SymbolArrowIndex.right]) ?? 0}
+							type='number'
+							placeholder="输入数字"
+							onInput={onChangeAxisLineNumber(SymbolArrowIndex.right, "symbolOffset")}
+						/>
+					</Space>
 				</FormItem>
 			</FormItem.Group>
 		</div>

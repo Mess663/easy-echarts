@@ -149,7 +149,7 @@ function OptionsForm() {
 					remove={xAxisArr.length > 1 ? xAxisProps.remove : undefined}
 					tips={`预览区点击维度标签可编辑：${xAxisProps.index}/${xAxisArr.length}`}
 				/>
-				<AxisForm {...xAxisProps} />
+				<AxisForm isX {...xAxisProps} />
 			</Drawer>
 			<Drawer
 				title="Y轴"
