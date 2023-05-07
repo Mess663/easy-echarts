@@ -14,6 +14,7 @@ import { Select, Switch } from "antd";
 import { AxisNameLocation, AxisPosition, AxisTypeEnum } from "../../config/axis";
 import Input from "../../base/Input";
 import RichTextEditor from "../../components/RichTextEditor";
+import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
 
 type FormItemHash = React.ComponentProps<typeof FormItem>["hash"]
 
@@ -46,7 +47,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 	const onChange = (newData: Partial<XAxis>) => {
 		edit({ ...data, ...newData });
 	};
-	const getHash = (name: keyof XAxis | keyof YAxis) => {
+	const getHash = (name: keyof XAxis | keyof YAxis | KeyPaths<ObjectValueNotArray<XAxis>>) => {
 		const axisName = isX ? "xAxis" : "yAxis";
 		return `${axisName}.${name}` as FormItemHash;
 	};
@@ -67,47 +68,6 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					onChange={(show) => {
 						onChange({ show });
 					}}
-				/>
-			</FormItem>
-
-			<FormItem title={"坐标轴名称"} hash={getHash("name")}>
-				<RichTextEditor
-					initialValue={name}
-					key={data.id}
-					placeholder="请输入"
-					onChange={(e) => {
-						const op = RichTextEditor.transformToRich(e);
-						onChange ({
-							name: op.text,
-							nameTextStyle: {
-								rich: op.style,
-							}
-						});
-					}}
-				/>
-			</FormItem>
-
-			<FormItem title={"坐标轴名字旋转的角度值"} hash={getHash("nameRotate")}>
-				<Input
-					value={data.nameRotate ?? ""}
-					type='number'
-					placeholder="输入数字"
-					onInput={(e) => {
-						const n = Number(e.currentTarget.value);
-						onChange({ nameRotate: n > 0 ? n : undefined });
-					}}
-				/>
-			</FormItem>
-
-			<FormItem align title={"坐标轴名称显示位置"} hash={getHash("nameLocation")}>
-				<Select
-					defaultValue={defaultPosition}
-					value={data.position ?? defaultPosition}
-					options={isX ? xPositionMenu : yPositionMenu}
-					onChange={(position) => {
-						onChange({ position });
-					}}
-					style={{ width: 90 }}
 				/>
 			</FormItem>
 
@@ -200,17 +160,74 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 				/>
 			</FormItem> */}
 
-			<FormItem align title={"坐标轴的分割段数"} hash={getHash("splitNumber")}>
-				<Input
-					value={Number(data.splitNumber) ?? ""}
-					type='number'
-					placeholder="输入数字"
-					onInput={(e) => {
-						const n = Number(e.currentTarget.value);
-						onChange({ splitNumber: n > 0 ? n : undefined });
-					}}
-				/>
-			</FormItem>
+			<FormItem.Group title="坐标轴名称">
+				<FormItem title={"坐标轴名称"} hash={getHash("name")}>
+					<RichTextEditor
+						initialValue={name}
+						key={data.id}
+						placeholder="请输入"
+						onChange={(e) => {
+							const op = RichTextEditor.transformToRich(e);
+							onChange ({
+								name: op.text,
+								nameTextStyle: {
+									rich: op.style,
+								}
+							});
+						}}
+					/>
+				</FormItem>
+
+				<FormItem title={"坐标轴名字旋转的角度值"} hash={getHash("nameRotate")}>
+					<Input
+						value={data.nameRotate ?? ""}
+						type='number'
+						placeholder="输入数字"
+						onInput={(e) => {
+							const n = Number(e.currentTarget.value);
+							onChange({ nameRotate: n > 0 ? n : undefined });
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"坐标轴名称显示位置"} hash={getHash("nameLocation")}>
+					<Select
+						defaultValue={defaultPosition}
+						value={data.position ?? defaultPosition}
+						options={isX ? xPositionMenu : yPositionMenu}
+						onChange={(position) => {
+							onChange({ position });
+						}}
+						style={{ width: 90 }}
+					/>
+				</FormItem>
+			</FormItem.Group>
+
+			<FormItem.Group title="轴线">
+				<FormItem align title={"显示坐标轴轴线"} hash={getHash("axisLine.show")}>
+					<Switch
+						checked={Boolean(data.axisLine?.show ?? true)}
+						onChange={(show) => {
+							edit({
+								...data,
+								axisLine: { ...data.axisLine, show }
+							});
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"是否在另一个轴的 0 刻度上"} hash={getHash("axisLine.onZero")}>
+					<Switch
+						checked={Boolean(data.axisLine?.onZero ?? true)}
+						onChange={(onZero) => {
+							edit({
+								...data,
+								axisLine: { ...data.axisLine,  onZero  }
+							});
+						}}
+					/>
+				</FormItem>
+			</FormItem.Group>
 		</div>
 	);
 };
