@@ -13,7 +13,7 @@ interface Base {
 
 type TitleProps = {
 	title: string | React.ReactNode
-	hash: KeyPaths<ObjectValueNotArray<State>> // ECharts配置项哈希值 https://echarts.apache.org/zh/option.html#title.id
+	hash: KeyPaths<ObjectValueNotArray<State>, 3> // ECharts配置项哈希值 https://echarts.apache.org/zh/option.html#title.id
 }
 
 type Props = (Base & Partial<TitleProps>) | (TitleProps & Base);

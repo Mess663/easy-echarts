@@ -12,11 +12,13 @@ import { OptionFormProps } from "../type";
 import { EchartsRich, XAxis, YAxis } from "../../types/biz/option";
 import FormItem from "../../base/FormItem";
 import { Select, Space, Switch } from "antd";
-import { AxisNameLocation, AxisPosition, AxisTypeEnum } from "../../config/axis";
+import { AxisPosition, AxisTypeEnum } from "../../config/axis";
 import Input from "../../base/Input";
 import RichTextEditor from "../../components/RichTextEditor";
 import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
-import { get } from "lodash";
+import { cloneDeep, get, set } from "lodash";
+import ColorPicker from "../../base/ColorPicker";
+import { LineCap, LineType } from "../../config/line";
 
 // 通过数组方式配置，索引代表属性在data中的位置
 enum SymbolArrowIndex { left = 0, right = 1 }
@@ -43,17 +45,27 @@ const yPositionMenu = [
 	{ value: AxisPosition.left, label: AxisPosition.left },
 	{ value: AxisPosition.right, label: AxisPosition.right }
 ];
-export const nameLocationMenu = [
-	{ value: AxisNameLocation.start, label: AxisNameLocation.start },
-	{ value: AxisNameLocation.middle, label: AxisNameLocation.middle },
-	{ value: AxisNameLocation.end, label: AxisNameLocation.end }
+// const nameLocationMenu = [
+// 	{ value: AxisNameLocation.start, label: AxisNameLocation.start },
+// 	{ value: AxisNameLocation.middle, label: AxisNameLocation.middle },
+// 	{ value: AxisNameLocation.end, label: AxisNameLocation.end }
+// ];
+const axisLineTypeMenu = [
+	{ value: LineType.Solid, label: LineType.Solid },
+	{ value: LineType.Dashed, label: LineType.Dashed },
+	{ value: LineType.Dotted, label: LineType.Dotted }
+];
+const axisLineCapMenu = [
+	{ value: LineCap.Butt, label: LineCap.Butt },
+	{ value: LineCap.Round, label: LineCap.Round },
+	{ value: LineCap.Square, label: LineCap.Square }
 ];
 
 const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProps<T> & {isX?: boolean}) => {
 	const onChange = (newData: Partial<XAxis>) => {
 		edit({ ...data, ...newData });
 	};
-	const getHash = (name: keyof XAxis | keyof YAxis | KeyPaths<ObjectValueNotArray<XAxis>>) => {
+	const getHash = (name: keyof XAxis | keyof YAxis | KeyPaths<ObjectValueNotArray<XAxis>, 3>) => {
 		const axisName = isX ? "xAxis" : "yAxis";
 		return `${axisName}.${name}` as FormItemHash;
 	};
@@ -81,6 +93,15 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 		edit({
 			...data,
 			axisLine: { ...data.axisLine, [prop]: newConfigArr }
+		});
+	};
+
+	const onChangeAxisLineStyle = <T,>(prop: keyof NonNullable<NonNullable<XAxis["axisLine"]>["lineStyle"]>, val: T) => {
+		const newAxisLine = cloneDeep(data.axisLine ?? {});
+		set(newAxisLine, "lineStyle." + prop, val);
+		edit({
+			...data,
+			axisLine: newAxisLine
 		});
 	};
 
@@ -307,6 +328,64 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 							onInput={onChangeAxisLineNumber(SymbolArrowIndex.right, "symbolOffset")}
 						/>
 					</Space>
+				</FormItem>
+
+				<FormItem align title={"轴线宽度"} hash={getHash("axisLine.lineStyle.width")}>
+					<Input
+						value={get(data, "axisLine.lineStyle.width") ?? 1}
+						type='number'
+						placeholder="输入数字"
+						onInput={(e) => {
+							const n = Number(e.currentTarget.value);
+							onChangeAxisLineStyle("width", n);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"轴线颜色"} hash={getHash("axisLine.lineStyle.color")}>
+					<ColorPicker
+						color={get(data, "axisLine.lineStyle.color", "#333") as string}
+						onChange={(color) => {
+							onChangeAxisLineStyle("color", color.hex);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"轴线类型"} hash={getHash("axisLine.lineStyle.type")}>
+					<Select
+						defaultValue={LineType.Solid}
+						value={data.axisLine?.lineStyle?.type ?? LineType.Solid}
+						options={axisLineTypeMenu}
+						onChange={(val) => {
+							onChangeAxisLineStyle("type", val);
+						}}
+						style={{ width: 90 }}
+					/>
+				</FormItem>
+
+				<FormItem align title={"设置虚线的偏移量"} hash={getHash("axisLine.lineStyle.dashOffset")}>
+					<Input
+						value={get(data, "axisLine.lineStyle.dashOffset", 0)}
+						type='number'
+						placeholder="输入数字"
+						disabled={get(data, "axisLine.lineStyle.type") !== LineType.Dashed}
+						onInput={(e) => {
+							const n = Number(e.currentTarget.value);
+							onChangeAxisLineStyle("dashOffset", n);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"轴线段末端的绘制方式"} hash={getHash("axisLine.lineStyle.cap")}>
+					<Select
+						defaultValue={LineCap.Butt}
+						value={data.axisLine?.lineStyle?.cap ?? LineCap.Butt}
+						options={axisLineCapMenu}
+						onChange={(val) => {
+							onChangeAxisLineStyle("cap", val);
+						}}
+						style={{ width: 90 }}
+					/>
 				</FormItem>
 			</FormItem.Group>
 		</div>

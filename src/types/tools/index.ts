@@ -14,10 +14,10 @@ type AddOne<T extends number> = Add<T, 1> extends number ? Add<T, 1> : never;
  *
  * @example { a: { b: { c: number } } } => ['a', 'a.b', 'a.b.c']
  */
-export type KeyPaths<Obj, Deps extends number = 0> = Deps extends 2 ? never : Obj extends object
+export type KeyPaths<Obj, PresetDeps = 2, Deps extends number = 0> = Deps extends PresetDeps ? never : Obj extends object
 	? keyof Obj extends infer Key
 		? Key extends string
-			? `${Key}` | `${Key}.${KeyPaths<Obj[Extract<Key, keyof Obj>], AddOne<Deps>>}` : never : never : never;
+			? `${Key}` | `${Key}.${KeyPaths<Obj[Extract<Key, keyof Obj>], PresetDeps, AddOne<Deps>>}` : never : never : never;
 
 /**
  * 去掉对象值中的数组
