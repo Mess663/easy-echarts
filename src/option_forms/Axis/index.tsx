@@ -16,9 +16,11 @@ import { AxisPosition, AxisTypeEnum } from "../../config/axis";
 import Input from "../../base/Input";
 import RichTextEditor from "../../components/RichTextEditor";
 import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
-import { cloneDeep, get, set } from "lodash";
+import { cloneDeep, forIn, get, set } from "lodash";
 import ColorPicker from "../../base/ColorPicker";
 import { LineCap, LineType } from "../../config/line";
+import ShadowPicker from "../../base/ShadowPicker";
+import { Shadow } from "../../types/biz/style";
 
 // 通过数组方式配置，索引代表属性在data中的位置
 enum SymbolArrowIndex { left = 0, right = 1 }
@@ -98,6 +100,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 
 	const onChangeAxisLineStyle = <T,>(prop: keyof NonNullable<NonNullable<XAxis["axisLine"]>["lineStyle"]>, val: T) => {
 		const newAxisLine = cloneDeep(data.axisLine ?? {});
+		console.log("new", newAxisLine);
 		set(newAxisLine, "lineStyle." + prop, val);
 		edit({
 			...data,
@@ -386,6 +389,35 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 						}}
 						style={{ width: 90 }}
 					/>
+				</FormItem>
+
+				<FormItem align title={"轴线阴影"} hash={getHash("axisLine.lineStyle.shadowColor")}>
+					<ShadowPicker
+						shadow={{
+							shadowColor: get(data, "axisLine.lineStyle.shadowColor", "transparent"),
+							shadowBlur: get(data, "axisLine.lineStyle.shadowBlur", 0),
+							shadowOffsetX: get(data, "axisLine.lineStyle.shadowOffsetX", 0),
+							shadowOffsetY: get(data, "axisLine.lineStyle.shadowOffsetY", 0)
+						}}
+						onChange={(shadow) => {
+							const newAxisLine = { ...cloneDeep(data.axisLine) };
+							if (shadow) {
+								set(newAxisLine, "lineStyle", { ...data.axisLine?.lineStyle, ...shadow });
+							}
+							else {
+								delete newAxisLine?.lineStyle?.shadowColor;
+								delete newAxisLine?.lineStyle?.shadowBlur;
+								delete newAxisLine?.lineStyle?.shadowOffsetX;
+								delete newAxisLine?.lineStyle?.shadowOffsetY;
+							}
+							edit({
+								...data,
+								axisLine: newAxisLine
+							});
+						}}
+					>
+						<div className={css.rect} style={{ backgroundColor: get(data, "axisLine.lineStyle.shadowColor") }}/>
+					</ShadowPicker>
 				</FormItem>
 			</FormItem.Group>
 		</div>
