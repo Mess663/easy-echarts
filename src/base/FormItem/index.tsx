@@ -69,7 +69,7 @@ function FormItem ({ title, className, children, align = false, hash, desc }: Pr
 	);
 }
 
-const Group = ({ children, title }: {children: React.ReactElement[], title: string}) => {
+const Group = ({ children, title }: {children: React.ReactElement[] | React.ReactElement, title: string}) => {
 	return (
 		<div className={css.group}>
 			<div className={css.gropuTitle}>{title}</div>

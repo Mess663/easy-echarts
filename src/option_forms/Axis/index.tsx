@@ -16,7 +16,7 @@ import { AxisPosition, AxisTypeEnum } from "../../config/axis";
 import Input from "../../base/Input";
 import RichTextEditor from "../../components/RichTextEditor";
 import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
-import { get } from "lodash";
+import { cloneDeep, get, set } from "lodash";
 import LineStyleForm from "../../components/LineStyleForm";
 
 // 通过数组方式配置，索引代表属性在data中的位置
@@ -80,6 +80,16 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 		edit({
 			...data,
 			axisLine: { ...data.axisLine, [prop]: newConfigArr }
+		});
+	};
+
+	const onChangeAxisTick = <T,>(key: (keyof NonNullable<XAxis["axisTick"]>) | "alignWithLabel", val: T) => {
+		edit({
+			...data,
+			axisTick: {
+				...data.axisTick,
+				[key]: val
+			}
 		});
 	};
 
@@ -319,6 +329,55 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 								lineStyle
 							}
 						});
+					}}
+				/>
+			</FormItem.Group>
+
+			<FormItem.Group title="坐标轴刻度">
+				<FormItem align title={"是否展示"} hash={getHash("axisTick.show")}>
+					<Switch
+						checked={Boolean(data.axisTick?.show ?? true)}
+						onChange={(bool) => {
+							onChangeAxisTick("show", bool);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"刻度线和标签对齐"} hash={getHash("axisTick.alignWithLabel")}>
+					<Switch
+						checked={get(data, "axisTick.alignWithLabel", true) as boolean}
+						onChange={(bool) => {
+							onChangeAxisTick("alignWithLabel", bool);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"刻度是否朝内"} hash={getHash("axisTick.inside")}>
+					<Switch
+						checked={get(data, "axisTick.inside", false)}
+						onChange={(bool) => {
+							onChangeAxisTick("inside", bool);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem title={"刻度线的长度"} hash={getHash("axisTick.length")}>
+					<Input
+						value={get(data, "axisTick.length", 5)}
+						type='number'
+						placeholder="输入数字"
+						onInput={(e) => {
+							const n = Number(e.currentTarget.value);
+							onChangeAxisTick("length", n);
+						}}
+					/>
+				</FormItem>
+
+				<LineStyleForm
+					data={data.axisTick?.lineStyle}
+					hashPrefix={(isX ? "xAxis.axisTick" : "yAxis.axisTick")}
+					onChange={(lineStyle) => {
+						onChangeAxisTick("lineStyle", lineStyle);
 					}}
 				/>
 			</FormItem.Group>

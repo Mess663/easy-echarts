@@ -69,7 +69,7 @@ const LineStyleForm = ({ data, onChange, hashPrefix }: Props) => {
 				/>
 			</FormItem>
 
-			<FormItem align title={"设置虚线的偏移量"} hash={getHash("dashOffset")}>
+			<FormItem title={"设置虚线的偏移量"} hash={getHash("dashOffset")}>
 				<Input
 					value={get(data, "dashOffset", 0)}
 					type='number'
