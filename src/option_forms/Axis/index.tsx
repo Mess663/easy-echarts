@@ -226,7 +226,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					/>
 				</FormItem>
 
-				<FormItem title={"坐标轴名字旋转的角度值"} hash={getHash("nameRotate")}>
+				<FormItem title={"旋转的角度值"} hash={getHash("nameRotate")}>
 					<Input
 						value={data.nameRotate ?? ""}
 						type='number'
@@ -238,7 +238,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					/>
 				</FormItem>
 
-				<FormItem align title={"坐标轴名称显示位置"} hash={getHash("nameLocation")}>
+				<FormItem align title={"显示位置"} hash={getHash("nameLocation")}>
 					<Select
 						defaultValue={defaultPosition}
 						value={data.position ?? defaultPosition}
