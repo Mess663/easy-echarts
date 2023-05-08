@@ -1,5 +1,7 @@
+import { XAxis } from "./option";
+
 /**
- * echarts内的阴影属性
+ * eCharts内的阴影属性
  */
 export type Shadow = {
     shadowColor: string;
@@ -7,3 +9,8 @@ export type Shadow = {
     shadowOffsetX: number;
     shadowOffsetY: number;
 }
+
+/**
+ * eCharts内的线条样式
+ */
+export type LineStyle = NonNullable<NonNullable<XAxis["axisLine"]>["lineStyle"]>

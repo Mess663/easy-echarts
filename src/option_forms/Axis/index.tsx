@@ -1,5 +1,5 @@
 /**
- * TODO 暂未支持的配置：
+ * TODO: 暂未支持的配置：
  * 1.boundaryGap 通过表单不好配置
  * 2.min/max 功能不完整
  * 3.scale ts没推导出这个属性，很奇怪，暂时不搞
@@ -8,7 +8,7 @@
 
 import React, { useMemo } from "react";
 import css from "./index.module.less";
-import { OptionFormProps } from "../type";
+import { FormItemHash, OptionFormProps } from "../type";
 import { EchartsRich, XAxis, YAxis } from "../../types/biz/option";
 import FormItem from "../../base/FormItem";
 import { Select, Space, Switch } from "antd";
@@ -16,17 +16,12 @@ import { AxisPosition, AxisTypeEnum } from "../../config/axis";
 import Input from "../../base/Input";
 import RichTextEditor from "../../components/RichTextEditor";
 import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
-import { cloneDeep, forIn, get, set } from "lodash";
-import ColorPicker from "../../base/ColorPicker";
-import { LineCap, LineType } from "../../config/line";
-import ShadowPicker from "../../base/ShadowPicker";
-import { Shadow } from "../../types/biz/style";
+import { get } from "lodash";
+import LineStyleForm from "../../components/LineStyleForm";
 
 // 通过数组方式配置，索引代表属性在data中的位置
 enum SymbolArrowIndex { left = 0, right = 1 }
 enum SymbolSizeIndex { width = 0, height = 1 }
-
-type FormItemHash = React.ComponentProps<typeof FormItem>["hash"]
 
 const subTitleConfig: {wrapText: (t: string) => string, rich: EchartsRich} = {
 	wrapText: (t: string) => `{default|${t}}`,
@@ -52,16 +47,6 @@ const yPositionMenu = [
 // 	{ value: AxisNameLocation.middle, label: AxisNameLocation.middle },
 // 	{ value: AxisNameLocation.end, label: AxisNameLocation.end }
 // ];
-const axisLineTypeMenu = [
-	{ value: LineType.Solid, label: LineType.Solid },
-	{ value: LineType.Dashed, label: LineType.Dashed },
-	{ value: LineType.Dotted, label: LineType.Dotted }
-];
-const axisLineCapMenu = [
-	{ value: LineCap.Butt, label: LineCap.Butt },
-	{ value: LineCap.Round, label: LineCap.Round },
-	{ value: LineCap.Square, label: LineCap.Square }
-];
 
 const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProps<T> & {isX?: boolean}) => {
 	const onChange = (newData: Partial<XAxis>) => {
@@ -95,16 +80,6 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 		edit({
 			...data,
 			axisLine: { ...data.axisLine, [prop]: newConfigArr }
-		});
-	};
-
-	const onChangeAxisLineStyle = <T,>(prop: keyof NonNullable<NonNullable<XAxis["axisLine"]>["lineStyle"]>, val: T) => {
-		const newAxisLine = cloneDeep(data.axisLine ?? {});
-		console.log("new", newAxisLine);
-		set(newAxisLine, "lineStyle." + prop, val);
-		edit({
-			...data,
-			axisLine: newAxisLine
 		});
 	};
 
@@ -333,92 +308,19 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					</Space>
 				</FormItem>
 
-				<FormItem align title={"轴线宽度"} hash={getHash("axisLine.lineStyle.width")}>
-					<Input
-						value={get(data, "axisLine.lineStyle.width") ?? 1}
-						type='number'
-						placeholder="输入数字"
-						onInput={(e) => {
-							const n = Number(e.currentTarget.value);
-							onChangeAxisLineStyle("width", n);
-						}}
-					/>
-				</FormItem>
-
-				<FormItem align title={"轴线颜色"} hash={getHash("axisLine.lineStyle.color")}>
-					<ColorPicker
-						color={get(data, "axisLine.lineStyle.color", "#333") as string}
-						onChange={(color) => {
-							onChangeAxisLineStyle("color", color.hex);
-						}}
-					/>
-				</FormItem>
-
-				<FormItem align title={"轴线类型"} hash={getHash("axisLine.lineStyle.type")}>
-					<Select
-						defaultValue={LineType.Solid}
-						value={data.axisLine?.lineStyle?.type ?? LineType.Solid}
-						options={axisLineTypeMenu}
-						onChange={(val) => {
-							onChangeAxisLineStyle("type", val);
-						}}
-						style={{ width: 90 }}
-					/>
-				</FormItem>
-
-				<FormItem align title={"设置虚线的偏移量"} hash={getHash("axisLine.lineStyle.dashOffset")}>
-					<Input
-						value={get(data, "axisLine.lineStyle.dashOffset", 0)}
-						type='number'
-						placeholder="输入数字"
-						disabled={get(data, "axisLine.lineStyle.type") !== LineType.Dashed}
-						onInput={(e) => {
-							const n = Number(e.currentTarget.value);
-							onChangeAxisLineStyle("dashOffset", n);
-						}}
-					/>
-				</FormItem>
-
-				<FormItem align title={"轴线段末端的绘制方式"} hash={getHash("axisLine.lineStyle.cap")}>
-					<Select
-						defaultValue={LineCap.Butt}
-						value={data.axisLine?.lineStyle?.cap ?? LineCap.Butt}
-						options={axisLineCapMenu}
-						onChange={(val) => {
-							onChangeAxisLineStyle("cap", val);
-						}}
-						style={{ width: 90 }}
-					/>
-				</FormItem>
-
-				<FormItem align title={"轴线阴影"} hash={getHash("axisLine.lineStyle.shadowColor")}>
-					<ShadowPicker
-						shadow={{
-							shadowColor: get(data, "axisLine.lineStyle.shadowColor", "transparent"),
-							shadowBlur: get(data, "axisLine.lineStyle.shadowBlur", 0),
-							shadowOffsetX: get(data, "axisLine.lineStyle.shadowOffsetX", 0),
-							shadowOffsetY: get(data, "axisLine.lineStyle.shadowOffsetY", 0)
-						}}
-						onChange={(shadow) => {
-							const newAxisLine = { ...cloneDeep(data.axisLine) };
-							if (shadow) {
-								set(newAxisLine, "lineStyle", { ...data.axisLine?.lineStyle, ...shadow });
+				<LineStyleForm
+					data={data.axisLine?.lineStyle}
+					hashPrefix={(isX ? "xAxis.axisLine" : "yAxis.axisLine")}
+					onChange={(lineStyle) => {
+						edit({
+							...data,
+							axisLine: {
+								...data.axisLine,
+								lineStyle
 							}
-							else {
-								delete newAxisLine?.lineStyle?.shadowColor;
-								delete newAxisLine?.lineStyle?.shadowBlur;
-								delete newAxisLine?.lineStyle?.shadowOffsetX;
-								delete newAxisLine?.lineStyle?.shadowOffsetY;
-							}
-							edit({
-								...data,
-								axisLine: newAxisLine
-							});
-						}}
-					>
-						<div className={css.rect} style={{ backgroundColor: get(data, "axisLine.lineStyle.shadowColor") }}/>
-					</ShadowPicker>
-				</FormItem>
+						});
+					}}
+				/>
 			</FormItem.Group>
 		</div>
 	);

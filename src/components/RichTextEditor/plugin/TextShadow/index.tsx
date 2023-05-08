@@ -28,7 +28,7 @@ const TextShadow: ToolPlugin = ({ marks, editor }: PluginProps) => {
 		const newShadow = { ...shadow, ...e };
 		editor.addMark("textShadow", toCssStyle(newShadow));
 	};
-	
+
 	return (
 		<ShadowPicker
 			shadow={{
