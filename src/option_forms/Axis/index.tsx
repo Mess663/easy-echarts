@@ -52,9 +52,6 @@ const yPositionMenu = [
 // ];
 
 const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProps<T> & {isX?: boolean}) => {
-	const onChange = (newData: Partial<XAxis>) => {
-		edit({ ...data, ...newData });
-	};
 	const getHash = (name: keyof XAxis | keyof YAxis | KeyPaths<ObjectValueNotArray<XAxis>, 3>) => {
 		const axisName = isX ? "xAxis" : "yAxis";
 		return `${axisName}.${name}` as FormItemHash;
@@ -75,6 +72,10 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 		}
 		return RichTextEditor.transformToSchema(subTitleConfig.wrapText(get(data, "axisLabel.formatter", defaultStr) as string), subTitleConfig.rich);
 	}, [data]);
+
+	const onChange = (newData: Partial<XAxis>) => {
+		edit({ ...data, ...newData });
+	};
 
 	const onChangeSymbol = (index: SymbolArrowIndex) => (flag: boolean) => {
 		const newSymbol = [...data.axisLine?.symbol ?? []];
@@ -203,6 +204,30 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					onInput={(e) => {
 						const n = Number(e.currentTarget.value);
 						onChange({ max: n > 0 ? n : undefined });
+					}}
+				/>
+			</FormItem>
+
+			<FormItem align title={"图形层级"} hash={getHash("z")}>
+				<Input
+					value={data.z ?? ""}
+					type='number'
+					placeholder="输入数字"
+					onInput={(e) => {
+						const n = Number(e.currentTarget.value);
+						onChange({ z: n > 0 ? n : undefined });
+					}}
+				/>
+			</FormItem>
+
+			<FormItem align title={"Canvas层级"} hash={getHash("zlevel")}>
+				<Input
+					value={data.zlevel ?? ""}
+					type='number'
+					placeholder="输入数字"
+					onInput={(e) => {
+						const n = Number(e.currentTarget.value);
+						onChange({ zlevel: n > 0 ? n : undefined });
 					}}
 				/>
 			</FormItem>
@@ -375,7 +400,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					/>
 				</FormItem>
 
-				<FormItem align title={"刻度是否朝内"} hash={getHash("axisTick.inside")}>
+				<FormItem align title={"刻度朝内"} hash={getHash("axisTick.inside")}>
 					<Switch
 						checked={get(data, "axisTick.inside", false)}
 						onChange={(bool) => {
@@ -440,7 +465,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					/>
 				</FormItem>
 
-				<FormItem align title={"标签是否朝内"} hash={getHash("axisLabel.inside")}>
+				<FormItem align title={"标签朝内"} hash={getHash("axisLabel.inside")}>
 					<Switch
 						checked={data.axisLabel?.inside ?? false}
 						onChange={(bool) => {
@@ -449,7 +474,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					/>
 				</FormItem>
 
-				<FormItem align title={"是否隐藏重叠的标签"} hash={getHash("axisLabel.hideOverlap")}>
+				<FormItem align title={"隐藏重叠的标签"} hash={getHash("axisLabel.hideOverlap")}>
 					<Switch
 						checked={data.axisLabel?.hideOverlap}
 						onChange={(bool) => {
@@ -490,6 +515,37 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 						}}
 					/>
 				</FormItem>
+			</FormItem.Group>
+
+			<FormItem.Group title="分隔线">
+				<FormItem align title={"显示分隔线"} hash={getHash("splitLine.show")}>
+					<Switch
+						checked={data.splitLine?.show}
+						onChange={(bool) => {
+							edit({
+								...data,
+								splitLine: {
+									...data.splitLine,
+									show: bool
+								}
+							});
+						}}
+					/>
+				</FormItem>
+
+				<LineStyleForm
+					data={data.splitLine?.lineStyle}
+					hashPrefix={(isX ? "xAxis.splitLine" : "yAxis.splitLine")}
+					onChange={(lineStyle) => {
+						edit({
+							...data,
+							splitLine: {
+								...data.splitLine,
+								lineStyle
+							}
+						});
+					}}
+				/>
 			</FormItem.Group>
 		</div>
 	);
