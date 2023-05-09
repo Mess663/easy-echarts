@@ -28,7 +28,6 @@ export const richPaddingToCss = (padding: RichStyle["padding"]) => {
 export const parseRich = (rich: string) => {
 	const pattern = /({(\w+)\|([^{}]+)}|([^{}]+))/g;
 	const result = [];
-
 	let match;
 	while ((match = pattern.exec(rich)) !== null) {
 		if (match[2] && match[3]) {

@@ -4,6 +4,7 @@
  * 2.min/max 功能不完整
  * 3.scale ts没推导出这个属性，很奇怪，暂时不搞
  * 4.axisLine.symbolSize 有两个属性共同作用，单一配置时，另一个属性由于没默认值会导致显示不达预期
+ * 5.所有interval属性都暂时不支持，因为这个配置过于复杂，用户可能不需要
  */
 
 import React, { useMemo } from "react";
@@ -11,13 +12,15 @@ import css from "./index.module.less";
 import { FormItemHash, OptionFormProps } from "../type";
 import { EchartsRich, XAxis, YAxis } from "../../types/biz/option";
 import FormItem from "../../base/FormItem";
-import { Select, Space, Switch } from "antd";
+import { Button, Select, Space, Switch, Typography, message } from "antd";
 import { AxisPosition, AxisTypeEnum } from "../../config/axis";
 import Input from "../../base/Input";
 import RichTextEditor from "../../components/RichTextEditor";
 import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
-import { cloneDeep, get, set } from "lodash";
+import { cloneDeep, get, mapValues, omit, set } from "lodash";
+import { omit as fpOmit } from "lodash/fp";
 import LineStyleForm from "../../components/LineStyleForm";
+import { LeftValueSign, RightValueSign, unifyString } from "../../config/text";
 
 // 通过数组方式配置，索引代表属性在data中的位置
 enum SymbolArrowIndex { left = 0, right = 1 }
@@ -58,12 +61,21 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 	};
 	const defaultPosition = isX ? AxisPosition.bottom : AxisPosition.left;
 	const defaultType = isX ? AxisTypeEnum.Category.code : AxisTypeEnum.Value.code;
+
 	const name = useMemo(() => {
 		if (data.nameTextStyle?.rich) {
 			return RichTextEditor.transformToSchema(data.name ?? "", data.nameTextStyle.rich);
 		}
 		return RichTextEditor.transformToSchema(subTitleConfig.wrapText(data.name ?? "坐标轴名称"), subTitleConfig.rich);
 	}, [data.name, data.nameTextStyle?.rich]);
+	const label = useMemo(() => {
+		const defaultStr = unifyString("value");
+		if (data.axisLabel?.rich) {
+			return RichTextEditor.transformToSchema(get(data, "axisLabel.formatter", defaultStr) as string, data.axisLabel.rich);
+		}
+		return RichTextEditor.transformToSchema(subTitleConfig.wrapText(get(data, "axisLabel.formatter", defaultStr) as string), subTitleConfig.rich);
+	}, [data]);
+
 	const onChangeSymbol = (index: SymbolArrowIndex) => (flag: boolean) => {
 		const newSymbol = [...data.axisLine?.symbol ?? []];
 		newSymbol[index] = flag ? "arrow" : "none";
@@ -72,6 +84,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 			axisLine: { ...data.axisLine, symbol: newSymbol }
 		});
 	};
+
 	// 处理axisline内的数字数组配置
 	const onChangeAxisLineNumber = (index: number, prop: keyof NonNullable<XAxis["axisLine"]>) => (e: React.FormEvent<HTMLInputElement>) => {
 		const n = Number(e.currentTarget.value);
@@ -88,6 +101,16 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 			...data,
 			axisTick: {
 				...data.axisTick,
+				[key]: val
+			}
+		});
+	};
+
+	const onChangeAxisLabel = <T,>(key: (keyof NonNullable<XAxis["axisLabel"]>) | "formatter", val: T) => {
+		edit({
+			...data,
+			axisLabel: {
+				...data.axisLabel,
 				[key]: val
 			}
 		});
@@ -380,6 +403,107 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 						onChangeAxisTick("lineStyle", lineStyle);
 					}}
 				/>
+			</FormItem.Group>
+
+			<FormItem.Group title="坐标轴刻度标签">
+				<FormItem align title={"是否展示"} hash={getHash("axisLabel.show")}>
+					<Switch
+						checked={data.axisLabel?.show ?? true}
+						onChange={(bool) => {
+							onChangeAxisLabel("show", bool);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem title={(
+					<div>
+					标签内容<Typography.Text type="secondary"> ($-value-$为标签内容占位符)</Typography.Text>
+					</div>
+				)}
+				hash={getHash("axisLabel")}
+				>
+					<RichTextEditor
+						initialValue={label}
+						key={data.id}
+						placeholder="请输入"
+						onChange={(e) => {
+							const op = RichTextEditor.transformToRich(e);
+							console.log({
+								...data.axisLabel,
+								fommatter: op.text.replace(LeftValueSign, "{").replace(RightValueSign, "}"),
+								rich: mapValues(op.style, fpOmit("text")),
+							});
+							console.log({
+								...data.axisLabel,
+								fommatter: "{a|{value}haha}",
+								rich: {
+									a: {
+										color: "red"
+									}
+								}
+							});
+							edit({
+								...data,
+								axisLabel: {
+									...data.axisLabel,
+									formatter: op.text.replace(LeftValueSign, "{").replace(RightValueSign, "}"),
+									rich: mapValues(op.style, fpOmit("text")),
+								}
+							});
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"标签是否朝内"} hash={getHash("axisLabel.inside")}>
+					<Switch
+						checked={data.axisLabel?.inside ?? false}
+						onChange={(bool) => {
+							onChangeAxisLabel("inside", bool);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"是否隐藏重叠的标签"} hash={getHash("axisLabel.hideOverlap")}>
+					<Switch
+						checked={data.axisLabel?.hideOverlap}
+						onChange={(bool) => {
+							onChangeAxisLabel("hideOverlap", bool);
+						}}
+					/>
+				</FormItem>
+
+				<FormItem align title={"标签旋转的角度"} hash={getHash("axisLabel.rotate")}>
+					<Space>
+						<Input
+							value={data.axisLabel?.rotate ?? 0}
+							type="range"
+							placeholder="输入数字"
+							min={-90}
+							max={90}
+							style={{ padding: 0 }}
+							onInput={(e) => {
+								const n = Number(e.currentTarget.value);
+								onChangeAxisLabel("rotate", n);
+							}}
+						/>
+						<Button onClick={() => {
+							onChangeAxisLabel("rotate", 0);
+						}}
+						>重置</Button>
+					</Space>
+				</FormItem>
+
+				<FormItem title={"标签与轴线距离"} hash={getHash("axisLabel.margin")}>
+					<Input
+						value={data.axisLabel?.margin ?? 8}
+						type='number'
+						placeholder="输入数字"
+						onInput={(e) => {
+							const n = Number(e.currentTarget.value);
+							onChangeAxisLabel("margin", n);
+						}}
+					/>
+				</FormItem>
 			</FormItem.Group>
 		</div>
 	);
