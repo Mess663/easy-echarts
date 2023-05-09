@@ -9,7 +9,8 @@ import { getInitOption } from "../../logic/init_option";
 import SeriesForm from "../../option_forms/Series";
 import GridForm from "../../option_forms/Grid";
 import OptionsBar from "../../components/OptionsBar";
-import { message } from "antd";
+import { Select, message } from "antd";
+import { State } from "../../models/option_view";
 
 const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -25,6 +26,50 @@ const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLB
 };
 
 type OptionForm = RootState["options"]
+type IndexSelectorProps = {index: number, length: number, onSelect: (i: number) => void}
+
+const IndexSelector = ({ index, length, onSelect }: IndexSelectorProps) => {
+	return (
+		<span className={css.indexSelector}>
+			<Select
+				defaultValue={0}
+				value={index}
+				onChange={(i) => {
+					onSelect(i);
+				}}
+				options={new Array(length).fill(0).map((_, i) => {
+					return ({ label: i + 1, value: i });
+				})}
+			/>
+			{" "}/{" "}{length}
+		</span>
+	);
+};
+
+const OptionBarWrap = (
+	{
+		index, length, remove, optionKey
+	}: { remove: () => void, optionKey: keyof State } & Omit<IndexSelectorProps, "onSelect">
+) => {
+	const dispatch = useDispatch<Dispatch>();
+	return (
+		<OptionsBar
+			remove={length > 1 ? remove : undefined}
+			tips={(
+				<IndexSelector
+					index={index}
+					length={length}
+					onSelect={(index) => {
+						dispatch.optionView.select({
+							name: optionKey,
+							index
+						});
+					}}
+				/>
+			)}
+		/>
+	);
+};
 
 /**
  * 统一管理配置项，将所有下属组件需要props统一封装
@@ -65,7 +110,7 @@ const useOption = <N extends keyof OptionForm>(name: N) => {
 				message.error("配置项删除失败，请重新选择");
 			}
 		},
-		index: optionArr.indexOf(selected || optionArr[0]) + 1 ,
+		index: optionArr.indexOf(selected || optionArr[0]),
 	}, optionArr] as const;
 };
 
@@ -112,9 +157,11 @@ function OptionsForm() {
 				defaultOpen
 				extra={getAddBtn("series")}
 			>
-				<OptionsBar
-					remove={seriesArr.length > 1 ? seriesProps.remove : undefined}
-					tips={`预览区点击图形可编辑：${seriesProps.index}/${seriesArr.length}`}
+				<OptionBarWrap
+					remove={seriesProps.remove}
+					index={seriesProps.index}
+					length={seriesArr.length}
+					optionKey="series"
 				/>
 				<SeriesForm {...seriesProps} />
 			</Drawer>
@@ -130,9 +177,11 @@ function OptionsForm() {
 				{
 					titleArr.length ? (
 						<>
-							<OptionsBar
+							<OptionBarWrap
 								remove={titleProps.remove}
-								tips={`预览区点击标题可编辑：${titleProps.index}/${titleArr.length}`}
+								index={titleProps.index}
+								length={titleArr.length}
+								optionKey="title"
 							/>
 							<TitleForm {...titleProps} />
 						</>
@@ -145,9 +194,11 @@ function OptionsForm() {
 				title="X轴"
 				extra={getAddBtn("xAxis")}
 			>
-				<OptionsBar
-					remove={xAxisArr.length > 1 ? xAxisProps.remove : undefined}
-					tips={`预览区点击维度标签可编辑：${xAxisProps.index}/${xAxisArr.length}`}
+				<OptionBarWrap
+					remove={xAxisProps.remove}
+					index={xAxisProps.index}
+					length={xAxisArr.length}
+					optionKey="xAxis"
 				/>
 				<AxisForm isX {...xAxisProps} />
 			</Drawer>
@@ -155,9 +206,11 @@ function OptionsForm() {
 				title="Y轴"
 				extra={getAddBtn("yAxis")}
 			>
-				<OptionsBar
-					remove={yAxisArr.length > 1 ? yAxisProps.remove : undefined}
-					tips={`预览区点击维度标签可编辑：${yAxisProps.index}/${yAxisArr.length}`}
+				<OptionBarWrap
+					remove={yAxisProps.remove}
+					index={yAxisProps.index}
+					length={yAxisArr.length}
+					optionKey="yAxis"
 				/>
 				<AxisForm {...yAxisProps} />
 			</Drawer>

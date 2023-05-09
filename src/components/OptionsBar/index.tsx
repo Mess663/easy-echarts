@@ -7,7 +7,7 @@ interface Props {
 	remove?: () => void;
 
 	// 组件索引选择引导
-	tips?: string;
+	tips?: React.ReactNode;
 }
 
 /**
