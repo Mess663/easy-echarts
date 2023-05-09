@@ -14,3 +14,8 @@ export type Shadow = {
  * eCharts内的线条样式
  */
 export type LineStyle = NonNullable<NonNullable<XAxis["axisLine"]>["lineStyle"]> | NonNullable<NonNullable<XAxis["splitLine"]>["lineStyle"]>
+
+/**
+ * eCharts内的分隔区样式
+ */
+export type AreaStyle = NonNullable<NonNullable<XAxis["splitArea"]>["areaStyle"]>

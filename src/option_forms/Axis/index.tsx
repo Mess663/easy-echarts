@@ -21,6 +21,7 @@ import { cloneDeep, get, mapValues, omit, set } from "lodash";
 import { omit as fpOmit } from "lodash/fp";
 import LineStyleForm from "../../components/LineStyleForm";
 import { LeftValueSign, RightValueSign, unifyString } from "../../config/text";
+import AreaStyleForm from "../../components/AreaStyleForm";
 
 // 通过数组方式配置，索引代表属性在data中的位置
 enum SymbolArrowIndex { left = 0, right = 1 }
@@ -517,7 +518,7 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 				</FormItem>
 			</FormItem.Group>
 
-			<FormItem.Group title="分隔线">
+			<FormItem.Group title="坐标轴在 grid 区域中的分隔线">
 				<FormItem align title={"显示分隔线"} hash={getHash("splitLine.show")}>
 					<Switch
 						checked={data.splitLine?.show}
@@ -542,6 +543,38 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 							splitLine: {
 								...data.splitLine,
 								lineStyle
+							}
+						});
+					}}
+				/>
+			</FormItem.Group>
+
+			<FormItem.Group title="坐标轴在 grid 区域中的分隔区域">
+				<FormItem align title={"显示分隔区域"} hash={getHash("splitArea.show")}>
+					<Switch
+						checked={data.splitArea?.show}
+						onChange={(bool) => {
+							edit({
+								...data,
+								splitArea: {
+									...data.splitLine,
+									show: bool
+								}
+							});
+						}}
+					/>
+				</FormItem>
+
+				<AreaStyleForm
+					data={data.splitArea?.areaStyle}
+					hashPrefix={(isX ? "xAxis.splitArea" : "yAxis.splitArea")}
+					onChange={(areaStyle) => {
+						console.log("===", areaStyle);
+						edit({
+							...data,
+							splitArea: {
+								...data.splitArea,
+								areaStyle
 							}
 						});
 					}}

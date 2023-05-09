@@ -36,7 +36,7 @@ const LineStyleForm = ({ data, onChange, hashPrefix }: Props) => {
 
 	return (
 		<>
-			<FormItem align title={"轴线颜色"} hash={getHash("color")}>
+			<FormItem align title={"线颜色"} hash={getHash("color")}>
 				<ColorPicker
 					color={get(data, "color", "#333") as string}
 					onChange={(color) => {
@@ -45,7 +45,7 @@ const LineStyleForm = ({ data, onChange, hashPrefix }: Props) => {
 				/>
 			</FormItem>
 
-			<FormItem align title={"轴线宽度"} hash={getHash("width")}>
+			<FormItem align title={"线宽度"} hash={getHash("width")}>
 				<Input
 					value={get(data, "width") ?? 1}
 					type='number'
@@ -57,7 +57,7 @@ const LineStyleForm = ({ data, onChange, hashPrefix }: Props) => {
 				/>
 			</FormItem>
 
-			<FormItem align title={"轴线类型"} hash={getHash("type")}>
+			<FormItem align title={"线类型"} hash={getHash("type")}>
 				<Select
 					defaultValue={LineType.Solid}
 					value={data?.type ?? LineType.Solid}
@@ -82,7 +82,7 @@ const LineStyleForm = ({ data, onChange, hashPrefix }: Props) => {
 				/>
 			</FormItem>
 
-			<FormItem align title={"轴线段末端的绘制方式"} hash={getHash("cap")}>
+			<FormItem align title={"线段末端的绘制方式"} hash={getHash("cap")}>
 				<Select
 					defaultValue={LineCap.Butt}
 					value={data?.cap ?? LineCap.Butt}
@@ -94,7 +94,7 @@ const LineStyleForm = ({ data, onChange, hashPrefix }: Props) => {
 				/>
 			</FormItem>
 
-			<FormItem align title={"轴线阴影"} hash={getHash("shadowColor")}>
+			<FormItem align title={"阴影"} hash={getHash("shadowColor")}>
 				<ShadowPicker
 					shadow={{
 						shadowColor: get(data, "shadowColor", "transparent"),
@@ -103,17 +103,17 @@ const LineStyleForm = ({ data, onChange, hashPrefix }: Props) => {
 						shadowOffsetY: get(data, "shadowOffsetY", 0)
 					}}
 					onChange={(shadow) => {
-						const newLineStyle = { ...data };
+						const newStyle = { ...data } as Partial<LineStyle>;
 						if (shadow) {
 							onChange(shadow);
 						}
 						else {
-							delete newLineStyle.shadowColor;
-							delete newLineStyle.shadowBlur;
-							delete newLineStyle.shadowOffsetX;
-							delete newLineStyle.shadowOffsetY;
+							delete newStyle.shadowColor;
+							delete newStyle.shadowBlur;
+							delete newStyle.shadowOffsetX;
+							delete newStyle.shadowOffsetY;
+							onChange(newStyle);
 						}
-						onChange(newLineStyle);
 					}}
 				>
 					<div className={css.rect} style={{ backgroundColor: get(data, "shadowColor") }}/>
