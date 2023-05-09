@@ -428,20 +428,6 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 						placeholder="请输入"
 						onChange={(e) => {
 							const op = RichTextEditor.transformToRich(e);
-							console.log({
-								...data.axisLabel,
-								fommatter: op.text.replace(LeftValueSign, "{").replace(RightValueSign, "}"),
-								rich: mapValues(op.style, fpOmit("text")),
-							});
-							console.log({
-								...data.axisLabel,
-								fommatter: "{a|{value}haha}",
-								rich: {
-									a: {
-										color: "red"
-									}
-								}
-							});
 							edit({
 								...data,
 								axisLabel: {
