@@ -569,7 +569,6 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 					data={data.splitArea?.areaStyle}
 					hashPrefix={(isX ? "xAxis.splitArea" : "yAxis.splitArea")}
 					onChange={(areaStyle) => {
-						console.log("===", areaStyle);
 						edit({
 							...data,
 							splitArea: {
