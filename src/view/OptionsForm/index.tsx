@@ -154,7 +154,7 @@ function OptionsForm() {
 	return (
 		<div className={css.container}>
 			<Drawer
-				title="图形"
+				title="图形（系列设置）"
 				defaultOpen
 				extra={getAddBtn("series")}
 			>
@@ -164,7 +164,11 @@ function OptionsForm() {
 					length={seriesArr.length}
 					optionKey="series"
 				/>
-				<SeriesForm {...seriesProps} />
+				<SeriesForm
+					{...seriesProps}
+					xAxisLength={xAxisArr.length}
+					yAxisLength={yAxisArr.length}
+				/>
 			</Drawer>
 			<Drawer
 				title="布局"

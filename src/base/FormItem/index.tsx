@@ -3,6 +3,7 @@ import React from "react";
 import { State } from "../../models/options";
 import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
 import css from "./index.module.less";
+import { Chart } from "../../types/biz/chart";
 
 interface Base {
 	children: React.ReactNode | React.ReactNode[]
@@ -11,9 +12,11 @@ interface Base {
 	desc?: string // 备注信息
 }
 
+
+type SeriesTypeHash = Chart extends infer U ? U extends string ? `series-${U}.type` : never : never;
 type TitleProps = {
 	title: string | React.ReactNode
-	hash: KeyPaths<ObjectValueNotArray<State>, 3> // ECharts配置项哈希值 https://echarts.apache.org/zh/option.html#title.id
+	hash: KeyPaths<ObjectValueNotArray<State>, 3> | SeriesTypeHash // ECharts配置项哈希值 https://echarts.apache.org/zh/option.html#title.id
 }
 
 type Props = (Base & Partial<TitleProps>) | (TitleProps & Base);

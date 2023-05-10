@@ -16,8 +16,10 @@ export type RichStyle = EchartsRich[keyof EchartsRich]
 
 // 图表选择对象（转换成series）
 export type Series = {
-    name: string  // 图表中文名
     type: Chart // series type
+    name?: string  // 系列名称
+    xAxisIndex?: number
+    yAxisIndex?: number
 } & OptionForm;
 
 export type Title = WrapCommonOption<echarts.TitleComponentOption>
