@@ -8,6 +8,7 @@ import ShadowPicker from "../../base/ShadowPicker";
 import { cloneDeep, get } from "lodash";
 import { Button, Space } from "antd";
 import Input from "../../base/Input";
+import ColorListPicker from "../../base/ColorListPicker";
 
 interface Props {
 	data?: AreaStyle
@@ -25,27 +26,12 @@ const AreaStyleForm = ({ data, hashPrefix, onChange }: Props) => {
 	return (
 		<>
 			<FormItem align title={"区域颜色"} hash={getHash("color")}>
-				<Space>
-					{
-						data?.color?.map((c, i) => {
-							return (
-								<ColorPicker
-									color={c as string}
-									key={i}
-									onChange={(color) => {
-										const newColor = cloneDeep(data.color) || [];
-										newColor[i] = color.hex;
-										modify({ "color": newColor });
-									}}
-								/>
-							);
-						})
-					}
-					<Button onClick={() => {
-						modify({ "color": [...get(data, "color", []), "transparent"] });
+				<ColorListPicker
+					colors={data?.color}
+					onChange={(colors) => {
+						modify({ color: colors });
 					}}
-					>添加</Button>
-				</Space>
+				/>
 			</FormItem>
 
 			<FormItem align title={"区域阴影"} hash={getHash("shadowColor")}>
