@@ -5,7 +5,9 @@ import { Series } from "../../types/biz/option";
 import { OptionFormProps } from "../type";
 import css from "./index.module.less";
 import Input from "../../base/Input";
-import { Select } from "antd";
+import { Select, Switch } from "antd";
+import ColorListPicker from "../../base/ColorListPicker";
+import ColorPicker from "../../base/ColorPicker";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
 
@@ -19,7 +21,7 @@ const SeriesForm  = ({ data, edit, xAxisLength, yAxisLength }: Props) => {
 	const onChange = <K extends keyof Series>(key: K, value: Series[K]) => {
 		edit({
 			...data,
-			[key]: value
+			[key]: value,
 		});
 	};
 	return (
@@ -59,6 +61,57 @@ const SeriesForm  = ({ data, edit, xAxisLength, yAxisLength }: Props) => {
 					options={Array.from({ length: yAxisLength }, (_, index) => ({
 						label: index + 1, value: index
 					}))}
+				/>
+			</FormItem>
+
+			<FormItem align title={"图形层级"} hash="series.z">
+				<Input
+					value={data.z ?? ""}
+					type='number'
+					placeholder="输入数字"
+					onInput={(e) => {
+						const n = Number(e.currentTarget.value);
+						onChange("z", n > 0 ? n : undefined );
+					}}
+				/>
+			</FormItem>
+
+			<FormItem align title={"Canvas层级"} hash="series.zlevel">
+				<Input
+					value={data.zlevel ?? ""}
+					type='number'
+					placeholder="输入数字"
+					onInput={(e) => {
+						const n = Number(e.currentTarget.value);
+						onChange("zlevel", n > 0 ? n : undefined);
+					}}
+				/>
+			</FormItem>
+
+			<FormItem align title={"图形颜色"} hash="series.itemStyle.color">
+				<ColorPicker
+					color={String(data.itemStyle?.color) ?? "transparent"}
+					onChange={(color) => {
+						onChange("itemStyle", { ...data.itemStyle, color: color.hex });
+					}}
+				/>
+			</FormItem>
+
+			<FormItem align title={"不响应和触发鼠标事件"} hash="series.silent">
+				<Switch
+					checked={data.silent ?? false}
+					onChange={(checked) => {
+						onChange("silent", checked);
+					}}
+				/>
+			</FormItem>
+			
+			<FormItem align title={"开启动画"} hash="series.animation">
+				<Switch
+					checked={data.animation ?? true}
+					onChange={(checked) => {
+						onChange("animation", checked);
+					}}
 				/>
 			</FormItem>
 		</div>
