@@ -52,6 +52,7 @@ const OptionBarWrap = (
 	}: { remove: () => void, optionKey: keyof State } & Omit<IndexSelectorProps, "onSelect">
 ) => {
 	const dispatch = useDispatch<Dispatch>();
+	if (length < 2) return <></>;
 	return (
 		<OptionsBar
 			remove={length > 1 ? remove : undefined}
