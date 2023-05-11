@@ -20,7 +20,7 @@ export type Series = {
     name?: string  // 系列名称
     xAxisIndex?: number
     yAxisIndex?: number
-} & Omit<echarts.SeriesOption, "type"> & OptionForm;
+} & OptionForm & echarts.SeriesOption;
 
 export type Title = WrapCommonOption<echarts.TitleComponentOption>
 

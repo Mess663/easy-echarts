@@ -7,7 +7,6 @@ import css from "./index.module.less";
 import Input from "../../base/Input";
 import { Select, Switch } from "antd";
 import ColorPicker from "../../base/ColorPicker";
-import { ChartEnumify } from "../../types/biz/chart";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
 

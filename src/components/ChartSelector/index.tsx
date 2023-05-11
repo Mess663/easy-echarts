@@ -6,7 +6,7 @@ import { Series } from "../../types/biz/option";
 
 interface Props {
 	data: Series
-	onChange: (d: Props["data"]) => void
+	onChange: (d: Series) => void
 }
 
 const ChartSelector = ({ data, onChange }: Props) => {
@@ -22,7 +22,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 									className={css.menuItem}
 									onMouseDown={() => {
 										// 没有名字默认取图表名
-										onChange({ name: o.val.name, ...data,  type: o.code });
+										onChange({ name: o.val.name, ...data, type: o.code });
 									}}
 									role="button"
 								>{o.val.name}</div>
