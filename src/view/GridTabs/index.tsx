@@ -15,14 +15,16 @@ const GridTabs = () => {
 		<div className={css.container}>
 			<Button
 				type="primary"
+				className={css.add}
 				onClick={() => {
 					dispatch.options.addGrid();
 				}}
-			>添加</Button>
+				title="添加布局"
+			>+</Button>
 			{
 				grid.map((item, i) => {
 					return (
-						<Button
+						<div
 							key={item.id}
 							className={classNames(css.item, {
 								[css.selected]: item.id === selectedId
@@ -42,7 +44,7 @@ const GridTabs = () => {
 									dispatch.optionView.selectGrid(restGrid[0].id);
 								}}
 							>X</span>
-						</Button>
+						</div>
 					);
 				})
 			}

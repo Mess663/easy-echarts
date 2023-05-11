@@ -49,14 +49,14 @@ export function getInitOption<T extends keyof OptionFormState>(name: T, data?: {
 	return ret;
 }
 
-export const mockAxis = () => mock({
-	["value|10"]: [() => Random.cname()]
+export const mockAxis = (count = 4) => mock({
+	["value|" + count ]: [() => Random.cname()]
 }).value;
-export const mockSeries = () => mock({
-	["value|10"]: ["@natural(20, 90)"]
+export const mockSeries = (count = 4) => mock({
+	["value|" + count]: ["@natural(20, 90)"]
 }).value;
-export const mockPieSeries = () => mock({
-	["value|10"]: [{
+export const mockPieSeries = (count = 4) => mock({
+	["value|" + count]: [{
 		value: "@natural(20, 90)",
 		name: () => Random.cname()
 	}]
