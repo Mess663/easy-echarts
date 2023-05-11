@@ -3,7 +3,7 @@ import { isNumber, pick } from "lodash";
 import { RootModel } from ".";
 import { keys } from "../tools/type";
 import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
-import { getInitOption, mockAxis, mockSeries } from "../logic/init_option";
+import { getInitOption, mockAxis, mockPieSeries, mockSeries } from "../logic/init_option";
 
 export interface State {
 	series: Series[]
@@ -129,5 +129,17 @@ export const options = createModel<RootModel>()({
 				state[k] = (state[k] as OptionArray<N>).filter(item => item.gridId !== id) as State[N];
 			});
 		},
+
+		/** 调整数据量，更新mock数据 */
+		updateDataCount(state: State,  count: number) {
+			state.series = state.series.map(o => ({
+				...o,
+				data: o.type === "pie" ? mockPieSeries(count) : mockSeries(count)
+			}));
+			state.xAxis = state.xAxis.map(o => ({
+				...o,
+				data: mockAxis(count)
+			}));
+		}
 	},
 });
