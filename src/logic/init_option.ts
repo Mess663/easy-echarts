@@ -2,6 +2,7 @@ import { uniqueId } from "lodash";
 import { State as OptionFormState } from "../models/options";
 import { ChartEnumify } from "../types/biz/chart";
 import { getUniqueNum } from "../tools/number";
+import { Random, mock } from "mockjs";
 
 // 这里定义ECharts option的初始化配置
 const genOption = () => {
@@ -47,3 +48,16 @@ export function getInitOption<T extends keyof OptionFormState>(name: T, data?: {
 	if (name in option) return { ...option[name], ...ret };
 	return ret;
 }
+
+export const mockAxis = () => mock({
+	["value|10"]: [() => Random.cname()]
+}).value;
+export const mockSeries = () => mock({
+	["value|10"]: ["@natural(20, 90)"]
+}).value;
+export const mockPieSeries = () => mock({
+	["value|10"]: [{
+		value: "@natural(20, 90)",
+		name: () => Random.cname()
+	}]
+}).value;

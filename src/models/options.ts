@@ -1,10 +1,9 @@
 import { createModel } from "@rematch/core";
-import { isNumber } from "lodash";
+import { isNumber, pick } from "lodash";
 import { RootModel } from ".";
 import { keys } from "../tools/type";
 import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
-import { getInitOption } from "../logic/init_option";
-import { Random, mock } from "mockjs";
+import { getInitOption, mockAxis, mockSeries } from "../logic/init_option";
 
 export interface State {
 	series: Series[]
@@ -15,12 +14,6 @@ export interface State {
 	// tooltip: Tooltip[]
 }
 
-const axisMock = () => mock({
-	["value|10"]: [() => Random.cname()]
-}).value;
-const seriesMock = () => mock({
-	["value|10"]: ["@natural(20, 90)"]
-}).value;
 
 const getDefaultOpton = (): State => {
 	const grid = getInitOption("grid");
@@ -29,9 +22,9 @@ const getDefaultOpton = (): State => {
 	const series = getInitOption("series", { gridId: grid.id, xAxisId: xAxis.id, yAxisId: yAxis.id });
 	// const tooltip = getInitOption("tooltip", { gridId: grid.id });
 	return {
-		series: [{ ...series, data: seriesMock() }],
+		series: [{ ...series, data: mockSeries() }],
 		title: [],
-		xAxis: [{ ...xAxis, data: axisMock() }],
+		xAxis: [{ ...xAxis, data: mockAxis() }],
 		yAxis: [yAxis],
 		grid: [grid],
 		// tooltip: [tooltip]
@@ -49,10 +42,10 @@ export const options = createModel<RootModel>()({
 		add<N extends keyof State>(state: State, payload: { name: N, data: Partial<State[N][number]> }) {
 			const newOption = (() => {
 				if (payload.name === "series") {
-					return { ...payload.data, data: seriesMock() };
+					return { ...payload.data, data: mockSeries() };
 				}
 				else if (payload.name === "xAxis") {
-					return { ...payload.data, data: axisMock() };
+					return { ...payload.data, data: mockAxis() };
 				}
 				else {
 					return payload.data;
@@ -107,6 +100,27 @@ export const options = createModel<RootModel>()({
 					target.push(...source);
 				}
 			});
+		},
+
+		/**
+		 * 当修改grid的位置和宽高时，需要特别处理一下饼图
+		 */
+		modifyGridRect(state: State, payload: Grid) {
+			const { id, ...rest } = payload;
+			const index = state.grid.findIndex(item => item.id === id);
+			if (isNumber(index)) {
+				state.grid[index] = { ...state.grid[index], ...rest };
+				state.series = state.series.map(item => {
+					if (item.type === "pie") {
+						return {
+							...item,
+							...pick(payload, ["left", "top", "right", "bottom"])
+						};
+					}
+
+					return item;
+				});
+			}
 		},
 
 		removeGrid(state: State, id: string) {

@@ -2,7 +2,7 @@ import Drawer from "../../base/Drawer";
 import css from "./index.module.less";
 import { Dispatch, RootState } from "../../models";
 import { useSelector, useDispatch } from "react-redux";
-import { HTMLAttributes, useEffect, useMemo } from "react";
+import { HTMLAttributes, useMemo } from "react";
 import TitleForm from "../../option_forms/Title";
 import AxisForm from "../../option_forms/Axis";
 import { getInitOption } from "../../logic/init_option";
@@ -11,8 +11,6 @@ import GridForm from "../../option_forms/Grid";
 import OptionsBar from "../../components/OptionsBar";
 import { Select, message } from "antd";
 import { State } from "../../models/option_view";
-import { useWhyDidYouUpdate } from "ahooks";
-import { XAxis } from "../../types/biz/option";
 
 const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -82,18 +80,18 @@ const OptionBarWrap = (
 const useOption = <N extends keyof OptionForm>(name: N) => {
 	type Data = OptionForm[N][number]
 	const gridId = useSelector((state: RootState) => state.optionView.grid.selectedId ?? state.options.grid[0].id);
-	const optionArrAll: Data[] = useSelector((state: RootState) => state.options[name]);
-	const optionArr: Array<Data> = useMemo(() => name === "grid"
-		? optionArrAll
-		: optionArrAll.filter(o => {
+	const allOptions: Data[] = useSelector((state: RootState) => state.options[name]);
+	const curOption: Array<Data> = useMemo(() => name === "grid"
+		? allOptions
+		: allOptions.filter(o => {
 			return o?.gridId === gridId;
-		}),[gridId, name, optionArrAll]) ;
+		}),[gridId, name, allOptions]) ;
 	const selectedId = useSelector((state: RootState) => state.optionView[name].selectedId);
-	const selected = useMemo(() => optionArr.find((o) => o.id === selectedId), [optionArr, selectedId]);
+	const selected = useMemo(() => curOption.find((o) => o.id === selectedId), [curOption, selectedId]);
 	const dispatch = useDispatch<Dispatch>();
 
 	return useMemo(() => [{
-		data: selected || optionArr[0],
+		data: selected || curOption[0],
 		edit(newData: Data)  {
 			dispatch.options.modify({
 				name,
@@ -111,8 +109,8 @@ const useOption = <N extends keyof OptionForm>(name: N) => {
 				message.error("配置项删除失败，请重新选择");
 			}
 		},
-		index: optionArr.indexOf(selected || optionArr[0]),
-	}, optionArr] as const, [dispatch.options, name, optionArr, selected, selectedId]);
+		index: curOption.indexOf(selected || curOption[0]),
+	}, curOption] as const, [dispatch.options, name, curOption, selected, selectedId]);
 };
 
 /**

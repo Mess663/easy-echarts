@@ -21,8 +21,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 								<div
 									className={css.menuItem}
 									onMouseDown={() => {
-										// 没有名字默认取图表名
-										onChange({ name: o.val.name, ...data, type: o.code });
+										onChange({ ...data, type: o.code } as Series);
 									}}
 									role="button"
 								>{o.val.name}</div>

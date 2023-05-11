@@ -13,7 +13,6 @@ import { findGrid, initGraphicOption } from "./tools/grid";
 import useGridDragEvent from "./hooks/useGridDragEvent";
 import useGrapicDragEvent from "./hooks/useGrapicDragEvent";
 import { eachInvoke, onEvent } from "./tools/event";
-import Mock, { Random } from "mockjs";
 
 const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
 	return options.map((o, i) => ({
@@ -22,10 +21,6 @@ const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?:
 		...(isFunction(forCallback) ? forCallback(o, i) : {}),
 	}));
 };
-
-console.log(Mock.mock({
-	["value|10"]: [() => Random.cname()]
-}));
 
 const ChartPreview = () => {
 	const options = useSelector((state: RootState) => state.options);
@@ -71,21 +66,17 @@ const ChartPreview = () => {
 		dispatch.ui.setGraphic(newGraphic);
 		if (size && gridView.selectedId) {
 			const { width = 0, height = 0 } = size;
-			dispatch.options.modify({
-				name: "grid",
-				data: {
-					id: gridView.selectedId,
-					gridId: gridView.selectedId,
-					right: width - output.x,
-					bottom: height - output.y,
-				}
+			dispatch.options.modifyGridRect({
+				id: gridView.selectedId,
+				gridId: gridView.selectedId,
+				right: width - output.x,
+				bottom: height - output.y,
 			});
 		}
 	});
 	const gridDragSubs = useGridDragEvent(size, (output) => {
-		dispatch.options.modify({
-			name: "grid",
-			data: { id: output.gridId, ...output }
+		dispatch.options.modifyGridRect({
+			id: output.gridId, ...output
 		});
 		
 		initGraphic(echartObjRef.current, output.gridId);

@@ -8,6 +8,7 @@ import Input from "../../base/Input";
 import { Select, Switch } from "antd";
 import ColorPicker from "../../base/ColorPicker";
 import { map } from "lodash";
+import { mockPieSeries, mockSeries } from "../../logic/init_option";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
 
@@ -27,14 +28,20 @@ const SeriesForm  = ({ data, edit, xAxis, yAxis }: Props) => {
 	return (
 		<div className={css.container}>
 			<FormItem align title="图形类型：" hash={hash}>
-				<ChartSelector data={data}
-					onChange={edit}
+				<ChartSelector
+					data={data}
+					onChange={(d) => {
+						edit({
+							...d,
+							data: d.type === "pie" ? mockPieSeries() : mockSeries()
+						});
+					}}
 				/>
 			</FormItem>
 
 			<FormItem align title="系列名称：" hash="series.name">
 				<Input
-					value={data.name}
+					value={data.name ?? ""}
 					placeholder="请输入系列名称"
 					onInput={(e) => {
 						onChange("name", e.currentTarget.value);
