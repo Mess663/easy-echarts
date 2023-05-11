@@ -6,8 +6,8 @@ import { OptionFormProps } from "../type";
 import css from "./index.module.less";
 import Input from "../../base/Input";
 import { Select, Switch } from "antd";
-import ColorListPicker from "../../base/ColorListPicker";
 import ColorPicker from "../../base/ColorPicker";
+import { ChartEnumify } from "../../types/biz/chart";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
 
@@ -27,7 +27,9 @@ const SeriesForm  = ({ data, edit, xAxisLength, yAxisLength }: Props) => {
 	return (
 		<div className={css.container}>
 			<FormItem align title="图形类型：" hash={hash}>
-				<ChartSelector data={data} onChange={edit} />
+				<ChartSelector data={data}
+					onChange={edit}
+				/>
 			</FormItem>
 
 			<FormItem align title="系列名称：" hash="series.name">

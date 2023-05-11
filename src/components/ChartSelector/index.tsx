@@ -2,7 +2,6 @@ import React from "react";
 import css from "./index.module.less";
 import { Menu } from "@headlessui/react";
 import { ChartEnumify } from "../../types/biz/chart";
-import { uniqueId } from "lodash";
 import { Series } from "../../types/biz/option";
 
 interface Props {
@@ -22,7 +21,8 @@ const ChartSelector = ({ data, onChange }: Props) => {
 								<div
 									className={css.menuItem}
 									onMouseDown={() => {
-										onChange({ ...data, name: o.val.name, type: o.code });
+										// 没有名字默认取图表名
+										onChange({ name: o.val.name, ...data,  type: o.code });
 									}}
 									role="button"
 								>{o.val.name}</div>

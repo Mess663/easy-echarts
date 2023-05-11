@@ -12,7 +12,7 @@ import { isOptionViewKey } from "../../models/option_view";
 import { findGrid, initGraphicOption } from "./tools/grid";
 import useGridDragEvent from "./hooks/useGridDragEvent";
 import useGrapicDragEvent from "./hooks/useGrapicDragEvent";
-import { eachInvoke, isMousedownValveClose, onEvent } from "./tools/event";
+import { eachInvoke, onEvent } from "./tools/event";
 
 const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
 	return options.map((o, i) => ({
