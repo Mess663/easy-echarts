@@ -1,0 +1,29 @@
+@import url(../../style/tool.less);
+@import url(../../style/variable.less);
+
+.panel {
+    display: flex;
+
+    .item {
+        display: inline-flex;
+        align-items: center;
+        word-break: keep-all;
+
+        & + .item {
+            margin-left: 12px;
+        }
+
+        >input {
+            width: 40px;
+            margin-right: 4px;
+        }
+
+        .px {
+            color: @subText;
+        }
+    }
+
+    .clear {
+        outline: none;
+    }
+}

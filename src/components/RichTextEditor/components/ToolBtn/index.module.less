@@ -1,0 +1,31 @@
+@import url(../../../../style/variable.less);
+
+.btn {
+    cursor: pointer;
+    opacity: @inactiveOpacity;
+    padding: 2px 6px;
+    border-radius: 2px;
+    height: 24px;
+
+    &:hover {
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    >img {
+        width: 18px;
+        height: 18px; 
+    }
+
+    &.active {
+        opacity: 1;
+    }
+
+    &.disabled {
+        cursor: not-allowed;
+        opacity: @diabledOpacity;
+
+        &:hover {
+            box-shadow: none;
+        }
+    }
+}

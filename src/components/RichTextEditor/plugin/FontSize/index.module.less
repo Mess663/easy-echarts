@@ -1,0 +1,63 @@
+@import url(../../../../style/tool.less);
+@import url(../../../../style/variable.less);
+
+.listbox {
+    position: relative;
+
+    .btn {
+        .resetBtn;
+
+        svg {
+            font-size: 18px;
+        }
+    }
+
+    .options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        .dropbox;
+
+        .option {
+            
+            svg {
+                font-size: 18px;
+            }
+        }
+    }
+
+    .diyOption {
+        word-break: keep-all;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        padding-left: 4px;
+
+        >input {
+            width: 70px;
+            margin-left: 4px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+            padding: 4px 2px;
+
+            &:focus {
+                border: 1px solid #949494;
+            }
+        }
+
+        .px {
+            color: @subText;
+            margin-left: 4px;
+        }
+    }
+
+    .diyFontSizeIcon {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+    }
+}

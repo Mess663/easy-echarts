@@ -1,0 +1,66 @@
+@import url(../../style/tool.less);
+@import url(../../style/variable.less);
+
+.container {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    &.align {
+        align-items: center;
+        flex-direction: row;
+
+        .title {
+            margin-bottom: 0;
+            margin-right: 10px;
+        }
+    }
+
+    &.haveDesc {
+        padding-bottom: 6px;
+    }
+
+    .title {
+        .fontFmaily;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        color: @mainText;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.desc {
+    font-size: 14px;
+    color: @tipText;
+}
+
+.group {
+    padding: 14px 10px 2px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin: 10px 0;
+    position: relative;
+
+    .gropuTitle {
+        position: absolute;
+        top: -6px;
+        left: 10px;
+        background-color: #fff;
+        color: @subText;
+        font-size: 14px;
+    }
+}
