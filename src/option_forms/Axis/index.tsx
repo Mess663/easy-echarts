@@ -12,12 +12,12 @@ import css from "./index.module.less";
 import { FormItemHash, OptionFormProps } from "../type";
 import { EchartsRich, XAxis, YAxis } from "../../types/biz/option";
 import FormItem from "../../base/FormItem";
-import { Button, Select, Space, Switch, Typography, message } from "antd";
+import { Button, Select, Space, Switch, Typography } from "antd";
 import { AxisPosition, AxisTypeEnum } from "../../config/axis";
 import Input from "../../base/Input";
 import RichTextEditor from "../../components/RichTextEditor";
 import { KeyPaths, ObjectValueNotArray } from "../../types/tools";
-import { cloneDeep, get, mapValues, omit, set } from "lodash";
+import { get, mapValues } from "lodash";
 import { omit as fpOmit } from "lodash/fp";
 import LineStyleForm from "../../components/LineStyleForm";
 import { LeftValueSign, RightValueSign, unifyString } from "../../config/text";
@@ -52,7 +52,9 @@ const yPositionMenu = [
 // 	{ value: AxisNameLocation.end, label: AxisNameLocation.end }
 // ];
 
-const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProps<T> & {isX?: boolean}) => {
+type Props<T> = OptionFormProps<T> & {isX?: boolean}
+
+const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: Props<T>) => {
 	const getHash = (name: keyof XAxis | keyof YAxis | KeyPaths<ObjectValueNotArray<XAxis>, 3>) => {
 		const axisName = isX ? "xAxis" : "yAxis";
 		return `${axisName}.${name}` as FormItemHash;
@@ -583,4 +585,5 @@ const AxisForm = <T extends (XAxis | YAxis)>({ data, edit, isX }: OptionFormProp
 	);
 };
 
-export default AxisForm;
+export default React.memo(AxisForm) as typeof AxisForm;
+// export default AxisForm;

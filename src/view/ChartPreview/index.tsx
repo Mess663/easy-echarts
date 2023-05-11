@@ -99,7 +99,7 @@ const ChartPreview = () => {
 
 	const echartsOption = useMemo(() => {
 		const { title, series, xAxis, yAxis, grid } = options;
-		console.log(options);
+		// console.log(options);
 		return {
 			title: addCommonOption(title),
 			xAxis: addCommonOption(xAxis).map(o => ({

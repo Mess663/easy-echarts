@@ -8,7 +8,7 @@ import { Switch } from "antd";
 import ColorPicker from "../../base/ColorPicker";
 import { isColorString } from "../../tools/color";
 
-const GridForm  = ({ edit, remove, data }: OptionFormProps<Grid>) => {
+const GridForm  = ({ edit, data }: OptionFormProps<Grid>) => {
 	const onChange = (newData: Partial<Grid>) => {
 		edit({ ...data, ...newData });
 	};
@@ -101,4 +101,4 @@ const GridForm  = ({ edit, remove, data }: OptionFormProps<Grid>) => {
 };
 
 
-export default GridForm;
+export default React.memo(GridForm);

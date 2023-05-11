@@ -2,7 +2,7 @@ import Drawer from "../../base/Drawer";
 import css from "./index.module.less";
 import { Dispatch, RootState } from "../../models";
 import { useSelector, useDispatch } from "react-redux";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, useEffect, useMemo } from "react";
 import TitleForm from "../../option_forms/Title";
 import AxisForm from "../../option_forms/Axis";
 import { getInitOption } from "../../logic/init_option";
@@ -11,6 +11,8 @@ import GridForm from "../../option_forms/Grid";
 import OptionsBar from "../../components/OptionsBar";
 import { Select, message } from "antd";
 import { State } from "../../models/option_view";
+import { useWhyDidYouUpdate } from "ahooks";
+import { XAxis } from "../../types/biz/option";
 
 const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -80,19 +82,17 @@ const OptionBarWrap = (
 const useOption = <N extends keyof OptionForm>(name: N) => {
 	type Data = OptionForm[N][number]
 	const gridId = useSelector((state: RootState) => state.optionView.grid.selectedId ?? state.options.grid[0].id);
-	const optionArr: Array<Data> = useSelector(
-		(state: RootState) => {
-			return name === "grid"
-				? state.options[name]
-				: (state.options[name] as Data[]).filter(o => {
-					return o?.gridId === gridId;
-				});
-		}
-	);
+	const optionArrAll: Data[] = useSelector((state: RootState) => state.options[name]);
+	const optionArr: Array<Data> = useMemo(() => name === "grid"
+		? optionArrAll
+		: optionArrAll.filter(o => {
+			return o?.gridId === gridId;
+		}),[gridId, name, optionArrAll]) ;
 	const selectedId = useSelector((state: RootState) => state.optionView[name].selectedId);
-	const selected = optionArr.find((o) => o.id === selectedId);
+	const selected = useMemo(() => optionArr.find((o) => o.id === selectedId), [optionArr, selectedId]);
 	const dispatch = useDispatch<Dispatch>();
-	return [{
+
+	return useMemo(() => [{
 		data: selected || optionArr[0],
 		edit(newData: Data)  {
 			dispatch.options.modify({
@@ -112,7 +112,7 @@ const useOption = <N extends keyof OptionForm>(name: N) => {
 			}
 		},
 		index: optionArr.indexOf(selected || optionArr[0]),
-	}, optionArr] as const;
+	}, optionArr] as const, [dispatch.options, name, optionArr, selected, selectedId]);
 };
 
 /**
@@ -224,3 +224,4 @@ function OptionsForm() {
 }
 
 export default OptionsForm;
+

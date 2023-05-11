@@ -120,4 +120,4 @@ const SeriesForm  = ({ data, edit, xAxis, yAxis }: Props) => {
 	);
 };
 
-export default SeriesForm;
+export default React.memo(SeriesForm);
