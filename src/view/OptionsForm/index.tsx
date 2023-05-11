@@ -166,8 +166,8 @@ function OptionsForm() {
 				/>
 				<SeriesForm
 					{...seriesProps}
-					xAxisLength={xAxisArr.length}
-					yAxisLength={yAxisArr.length}
+					xAxis={xAxisArr}
+					yAxis={yAxisArr}
 				/>
 			</Drawer>
 			<Drawer

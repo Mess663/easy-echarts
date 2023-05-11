@@ -20,11 +20,13 @@ export type Series = {
     name?: string  // 系列名称
     xAxisIndex?: number
     yAxisIndex?: number
+    xAxisId?: string
+    yAxisId?: string
 } & OptionForm & echarts.SeriesOption;
 
 export type Title = WrapCommonOption<echarts.TitleComponentOption>
 
-export type XAxis = WrapCommonOption<echarts.XAXisComponentOption>
+export type XAxis = WrapCommonOption<echarts.XAXisComponentOption> & { data: (string|number)[] }
 
 export type YAxis = WrapCommonOption<echarts.YAXisComponentOption>
 

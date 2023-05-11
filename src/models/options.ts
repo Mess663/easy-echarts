@@ -4,6 +4,7 @@ import { RootModel } from ".";
 import { keys } from "../tools/type";
 import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
 import { getInitOption } from "../logic/init_option";
+import { Random, mock } from "mockjs";
 
 export interface State {
 	series: Series[]
@@ -14,15 +15,23 @@ export interface State {
 	// tooltip: Tooltip[]
 }
 
+const axisMock = () => mock({
+	["value|10"]: [() => Random.cname()]
+}).value;
+const seriesMock = () => mock({
+	["value|10"]: ["@natural(20, 90)"]
+}).value;
+
 const getDefaultOpton = (): State => {
 	const grid = getInitOption("grid");
 	const xAxis = getInitOption("xAxis", { gridId: grid.id });
 	const yAxis = getInitOption("yAxis", { gridId: grid.id });
+	const series = getInitOption("series", { gridId: grid.id, xAxisId: xAxis.id, yAxisId: yAxis.id });
 	// const tooltip = getInitOption("tooltip", { gridId: grid.id });
 	return {
-		series: [getInitOption("series", { gridId: grid.id, xAxisId: xAxis.id, yAxisId: yAxis.id })],
+		series: [{ ...series, data: seriesMock() }],
 		title: [],
-		xAxis: [xAxis],
+		xAxis: [{ ...xAxis, data: axisMock() }],
 		yAxis: [yAxis],
 		grid: [grid],
 		// tooltip: [tooltip]
@@ -32,12 +41,25 @@ const getDefaultOpton = (): State => {
 // 用于ts无法正确推导option的数组类型
 type OptionArray<N extends keyof State> = Array<State[N][number]>;
 
+
 export const options = createModel<RootModel>()({
 	state: getDefaultOpton() as State,
 
 	reducers: {
 		add<N extends keyof State>(state: State, payload: { name: N, data: Partial<State[N][number]> }) {
-			(state[payload.name] as OptionArray<N>).push(payload.data as State[N][number]);
+			const newOption = (() => {
+				if (payload.name === "series") {
+					return { ...payload.data, data: seriesMock() };
+				}
+				else if (payload.name === "xAxis") {
+					return { ...payload.data, data: axisMock() };
+				}
+				else {
+					return payload.data;
+				}
+
+			})();
+			(state[payload.name] as OptionArray<N>).push(newOption as State[N][number]);
 		},
 
 		remove<N extends keyof State>(state: State, payload: { name: N, id: string }) {

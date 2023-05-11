@@ -13,6 +13,7 @@ import { findGrid, initGraphicOption } from "./tools/grid";
 import useGridDragEvent from "./hooks/useGridDragEvent";
 import useGrapicDragEvent from "./hooks/useGrapicDragEvent";
 import { eachInvoke, onEvent } from "./tools/event";
+import Mock, { Random } from "mockjs";
 
 const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
 	return options.map((o, i) => ({
@@ -21,6 +22,10 @@ const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?:
 		...(isFunction(forCallback) ? forCallback(o, i) : {}),
 	}));
 };
+
+console.log(Mock.mock({
+	["value|10"]: [() => Random.cname()]
+}));
 
 const ChartPreview = () => {
 	const options = useSelector((state: RootState) => state.options);
@@ -94,32 +99,18 @@ const ChartPreview = () => {
 
 	const echartsOption = useMemo(() => {
 		const { title, series, xAxis, yAxis, grid } = options;
-		// console.log(options);
+		console.log(options);
 		return {
 			title: addCommonOption(title),
-			xAxis: addCommonOption(xAxis),
+			xAxis: addCommonOption(xAxis).map(o => ({
+				...o,
+			})),
 			yAxis: addCommonOption(yAxis),
 			grid: addCommonOption(grid),
-			series: addCommonOption(series),
+			series: addCommonOption(series).map(o => ({
+				...o,
+			})),
 			tooltip: {},
-			dataset: [
-				{
-					source: [
-						["product", "2012", "2013", "2014", "2015"],
-						["Matcha Latte", 41.1, 30.4, 65.1, 53.3],
-						["Milk Tea", 86.5, 92.1, 85.7, 83.1],
-						["Cheese Cocoa", 24.1, 67.2, 79.5, 86.4]
-					]
-				},
-				{
-					source: [
-						["product", "dog", "cat", "mouse"],
-						["Matcha Latte", 241, 30, 65.1],
-						["Milk Tea", 286, 92, 85.7],
-						["Cheese Cocoa", 324, 67, 79.5]
-					]
-				}
-			],
 			animation: false,
 		} as echarts.EChartsOption;
 	}, [options]);

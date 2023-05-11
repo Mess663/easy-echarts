@@ -1,21 +1,22 @@
 import React from "react";
 import FormItem from "../../base/FormItem";
 import ChartSelector from "../../components/ChartSelector";
-import { Series } from "../../types/biz/option";
+import { Series, XAxis, YAxis } from "../../types/biz/option";
 import { OptionFormProps } from "../type";
 import css from "./index.module.less";
 import Input from "../../base/Input";
 import { Select, Switch } from "antd";
 import ColorPicker from "../../base/ColorPicker";
+import { map } from "lodash";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
 
 interface Props extends OptionFormProps<Series> {
-	xAxisLength: number,
-	yAxisLength: number
+	xAxis: XAxis[]
+	yAxis: YAxis[]
 }
 
-const SeriesForm  = ({ data, edit, xAxisLength, yAxisLength }: Props) => {
+const SeriesForm  = ({ data, edit, xAxis, yAxis }: Props) => {
 	const hash = "series-" + data.type + ".type" as Hash;
 	const onChange = <K extends keyof Series>(key: K, value: Series[K]) => {
 		edit({
@@ -43,11 +44,11 @@ const SeriesForm  = ({ data, edit, xAxisLength, yAxisLength }: Props) => {
 
 			<FormItem align title="使用的 x 轴" hash="series.xAxisIndex">
 				<Select
-					value={data.xAxisIndex ?? 0}
-					onChange={(value) => {
-						onChange("xAxisIndex", value);
+					value={data.xAxisId ? map(xAxis, "id").indexOf(data.xAxisId) : 0}
+					onChange={(index) => {
+						onChange("xAxisId", xAxis[index].id);
 					}}
-					options={Array.from({ length: xAxisLength }, (_, index) => ({
+					options={Array.from({ length: xAxis.length }, (_, index) => ({
 						label: index + 1, value: index
 					}))}
 				/>
@@ -55,11 +56,11 @@ const SeriesForm  = ({ data, edit, xAxisLength, yAxisLength }: Props) => {
 
 			<FormItem align title="使用的 y 轴" hash="series.yAxisIndex">
 				<Select
-					value={data.yAxisIndex ?? 0}
-					onChange={(value) => {
-						onChange("yAxisIndex", value);
+					value={data.yAxisId ? map(yAxis, "id").indexOf(data.yAxisId) : 0}
+					onChange={(index) => {
+						onChange("yAxisId", yAxis[index].id);
 					}}
-					options={Array.from({ length: yAxisLength }, (_, index) => ({
+					options={Array.from({ length: yAxis.length }, (_, index) => ({
 						label: index + 1, value: index
 					}))}
 				/>
