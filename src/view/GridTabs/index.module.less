@@ -19,14 +19,17 @@
         position: relative;
         border-top-right-radius: 60px;
         border-bottom-right-radius: 60px;
-        padding-right: 30px;
+        padding-right: 34px;
         padding: 10px 20px 10px 10px;
         cursor: pointer;
         background-color: rgb(91, 92, 110);
         color: #fff;
-        min-width: 80px;
         opacity: .5;
         transition: opacity .3s ease-in-out;
+        word-break: keep-all;
+        max-width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         &:hover {
             opacity: .9;
