@@ -145,16 +145,17 @@ const ChartPreview = () => {
 							eachInvoke(titleDragSubs.onMouseup, gridDragSubs.onMouseup, graphicDragSubs.onMouseup)
 						);
 						echart.getZr().on("mousedown", (e) => {
-							if (e.target) return; // 点击空白处才进行操作
 							const { offsetX, offsetY } = e;
 							const grid = findGrid(echart, offsetX, offsetY);
 							if (grid && isString(grid.id)) {
+								dispatch.optionView.selectGrid(grid.id);
+
+								if (e.target) return; // 点击空白处才进行操作
 								gridDragSubs.onMousedown({
 									...e,
 									grid
 								});
 
-								dispatch.optionView.selectGrid(grid.id);
 								initGraphic(echart, grid.id);
 							}
 						});

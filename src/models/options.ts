@@ -111,7 +111,7 @@ export const options = createModel<RootModel>()({
 			if (isNumber(index)) {
 				state.grid[index] = { ...state.grid[index], ...rest };
 				state.series = state.series.map(item => {
-					if (item.type === "pie") {
+					if (item.type === "pie" && item.gridId === payload.id) {
 						return {
 							...item,
 							...pick(payload, ["left", "top", "right", "bottom"])
