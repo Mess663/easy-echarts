@@ -166,6 +166,7 @@ function OptionsForm() {
 					{...seriesProps}
 					xAxis={xAxisArr}
 					yAxis={yAxisArr}
+					grid={gridProps.data}
 				/>
 			</Drawer>
 			<Drawer

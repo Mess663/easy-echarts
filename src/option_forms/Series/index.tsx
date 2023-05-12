@@ -1,13 +1,13 @@
 import React from "react";
 import FormItem from "../../base/FormItem";
 import ChartSelector from "../../components/ChartSelector";
-import { Series, XAxis, YAxis } from "../../types/biz/option";
+import { Grid, Series, XAxis, YAxis } from "../../types/biz/option";
 import { OptionFormProps } from "../type";
 import css from "./index.module.less";
 import Input from "../../base/Input";
 import { Select, Switch } from "antd";
 import ColorPicker from "../../base/ColorPicker";
-import { map } from "lodash";
+import { map, pick } from "lodash";
 import { mockPieSeries, mockSeries } from "../../logic/init_option";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
@@ -15,9 +15,10 @@ type Hash = React.ComponentProps<typeof FormItem>["hash"]
 interface Props extends OptionFormProps<Series> {
 	xAxis: XAxis[]
 	yAxis: YAxis[]
+	grid: Grid
 }
 
-const SeriesForm  = ({ data, edit, xAxis, yAxis }: Props) => {
+const SeriesForm  = ({ data, edit, xAxis, yAxis, grid }: Props) => {
 	const hash = "series-" + data.type + ".type" as Hash;
 	const onChange = <K extends keyof Series>(key: K, value: Series[K]) => {
 		edit({
@@ -31,9 +32,16 @@ const SeriesForm  = ({ data, edit, xAxis, yAxis }: Props) => {
 				<ChartSelector
 					data={data}
 					onChange={(d) => {
+						const pieOption = {
+							data: mockPieSeries(),
+							...pick(grid, ["left", "top", "right", "bottom"])
+						};
+						const normalOption = {
+							data: mockSeries()
+						};
 						edit({
 							...d,
-							data: d.type === "pie" ? mockPieSeries() : mockSeries()
+							...(d.type === "pie" ? pieOption : normalOption)
 						});
 					}}
 				/>
