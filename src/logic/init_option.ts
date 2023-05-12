@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash";
 import { State as OptionFormState } from "../models/options";
-import { ChartEnumify } from "../types/biz/chart";
+import { Chart, ChartEnumify } from "../types/biz/chart";
 import { getUniqueNum } from "../tools/number";
 import { Random, mock } from "mockjs";
 
@@ -52,12 +52,16 @@ export function getInitOption<T extends keyof OptionFormState>(name: T, data?: {
 export const mockAxis = (count = 4) => mock({
 	["value|" + count ]: [() => Random.cname()]
 }).value;
-export const mockSeries = (count = 4) => mock({
-	["value|" + count]: ["@natural(20, 90)"]
-}).value;
-export const mockPieSeries = (count = 4) => mock({
+const mockObjectSeriesData = (count = 4) => mock({
 	["value|" + count]: [{
 		value: "@natural(20, 90)",
 		name: () => Random.cname()
 	}]
 }).value;
+export const mockSeries = (count = 4, type: Chart = ChartEnumify.Line.code) => {
+	return 	ChartEnumify.$getEnumVal(type).isObjectData
+		? mockObjectSeriesData()
+		: mock({
+			["value|" + count]: ["@natural(20, 90)"]
+		}).value;
+};

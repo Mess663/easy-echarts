@@ -8,7 +8,8 @@ import Input from "../../base/Input";
 import { Select, Switch } from "antd";
 import ColorPicker from "../../base/ColorPicker";
 import { map, pick } from "lodash";
-import { mockPieSeries, mockSeries } from "../../logic/init_option";
+import { mockSeries } from "../../logic/init_option";
+import { ChartEnumify } from "../../types/biz/chart";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
 
@@ -16,9 +17,10 @@ interface Props extends OptionFormProps<Series> {
 	xAxis: XAxis[]
 	yAxis: YAxis[]
 	grid: Grid
+	dataCount: number // 数据量
 }
 
-const SeriesForm  = ({ data, edit, xAxis, yAxis, grid }: Props) => {
+const SeriesForm  = ({ data, edit, xAxis, yAxis, grid, dataCount }: Props) => {
 	const hash = "series-" + data.type + ".type" as Hash;
 	const onChange = <K extends keyof Series>(key: K, value: Series[K]) => {
 		edit({
@@ -32,16 +34,13 @@ const SeriesForm  = ({ data, edit, xAxis, yAxis, grid }: Props) => {
 				<ChartSelector
 					data={data}
 					onChange={(d) => {
-						const pieOption = {
-							data: mockPieSeries(),
+						const sizeOption = {
 							...pick(grid, ["left", "top", "right", "bottom"])
-						};
-						const normalOption = {
-							data: mockSeries()
 						};
 						edit({
 							...d,
-							...(d.type === "pie" ? pieOption : normalOption)
+							data: mockSeries(dataCount, d.type),
+							...(ChartEnumify.$getEnumVal(d.type).isObjectData ? sizeOption : {})
 						});
 					}}
 				/>

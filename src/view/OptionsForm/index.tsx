@@ -123,6 +123,7 @@ function OptionsForm() {
 	const [yAxisProps, yAxisArr] = useOption("yAxis");
 	const [gridProps] = useOption("grid");
 	const dispatch = useDispatch<Dispatch>();
+	const dataCount = useSelector((state: RootState) => state.ui.dataCount);
 
 	const getAddBtn = <T extends keyof Omit<OptionForm, "grid">>(name: T) => {
 		const data = (() => {
@@ -167,6 +168,7 @@ function OptionsForm() {
 					xAxis={xAxisArr}
 					yAxis={yAxisArr}
 					grid={gridProps.data}
+					dataCount={dataCount}
 				/>
 			</Drawer>
 			<Drawer

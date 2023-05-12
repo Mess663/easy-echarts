@@ -3,7 +3,8 @@ import { isNumber, pick } from "lodash";
 import { RootModel } from ".";
 import { keys } from "../tools/type";
 import { Grid, Series, Title, XAxis, YAxis } from "../types/biz/option";
-import { getInitOption, mockAxis, mockPieSeries, mockSeries } from "../logic/init_option";
+import { getInitOption, mockAxis, mockSeries } from "../logic/init_option";
+import { ChartEnumify } from "../types/biz/chart";
 
 export interface State {
 	series: Series[]
@@ -111,7 +112,7 @@ export const options = createModel<RootModel>()({
 			if (isNumber(index)) {
 				state.grid[index] = { ...state.grid[index], ...rest };
 				state.series = state.series.map(item => {
-					if (item.type === "pie" && item.gridId === payload.id) {
+					if (ChartEnumify.$getEnumVal(item.type).isObjectData && item.gridId === payload.id) {
 						return {
 							...item,
 							...pick(payload, ["left", "top", "right", "bottom"])
@@ -134,7 +135,7 @@ export const options = createModel<RootModel>()({
 		updateDataCount(state: State,  count: number) {
 			state.series = state.series.map(o => ({
 				...o,
-				data: o.type === "pie" ? mockPieSeries(count) : mockSeries(count)
+				data: mockSeries(count, o.type)
 			}));
 			state.xAxis = state.xAxis.map(o => ({
 				...o,
