@@ -14,6 +14,14 @@ export type EchartsRich = NonNullable<NonNullable<echarts.TitleComponentOption["
 /** ECharts自己的通用样式 */
 export type RichStyle = EchartsRich[keyof EchartsRich]
 
+/**
+ * 通用全局配置
+ */
+export interface CommonOption {
+	color: echarts.Color[] | undefined
+	tooltip: Tooltip
+}
+
 // 图表选择对象（转换成series）
 export type Series = {
     type: Chart // series type
@@ -34,4 +42,12 @@ export type Grid = WrapCommonOption<echarts.GridComponentOption>;
 
 export type Graphic = WrapCommonOption<echarts.GraphicComponentOption>;
 
-export type Tooltip = WrapCommonOption<echarts.TooltipComponentOption>;
+export type Tooltip = echarts.TooltipComponentOption;
+
+export interface ComponentOption {
+    series: Series[]
+	title: Title[]
+	xAxis: XAxis[]
+	yAxis: YAxis[]
+	grid: Grid[]
+}

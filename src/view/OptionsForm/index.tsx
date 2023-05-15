@@ -1,16 +1,21 @@
-import Drawer from "../../base/Drawer";
 import css from "./index.module.less";
 import { Dispatch, RootState } from "../../models";
 import { useSelector, useDispatch } from "react-redux";
 import { HTMLAttributes, useMemo } from "react";
+import { getInitOption } from "../../logic/init_option";
+import { Select, message } from "antd";
+import { State } from "../../models/option_view";
+import { CommonOption, ComponentOption } from "../../types/biz/option";
+import { keys, pick } from "lodash";
+
+import Drawer from "../../base/Drawer";
 import TitleForm from "../../option_forms/Title";
 import AxisForm from "../../option_forms/Axis";
-import { getInitOption } from "../../logic/init_option";
 import SeriesForm from "../../option_forms/Series";
 import GridForm from "../../option_forms/Grid";
 import OptionsBar from "../../components/OptionsBar";
-import { Select, message } from "antd";
-import { State } from "../../models/option_view";
+import CommonOptionForm from "../../option_forms/CommonOption";
+import { getCommonOption } from "../../models/options";
 
 const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -25,7 +30,6 @@ const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLB
 	);
 };
 
-type OptionForm = RootState["options"]
 type IndexSelectorProps = {index: number, length: number, onSelect: (i: number) => void}
 
 const IndexSelector = ({ index, length, onSelect }: IndexSelectorProps) => {
@@ -77,8 +81,8 @@ const OptionBarWrap = (
  * @param name 配置项名称
  * @returns [当前配置项的选中数据及其增删改查操作，该配置项所有数据]
  */
-const useOption = <N extends keyof OptionForm>(name: N) => {
-	type Data = OptionForm[N][number]
+const useOption = <N extends keyof ComponentOption>(name: N) => {
+	type Data = ComponentOption[N][number]
 	const gridId = useSelector((state: RootState) => state.optionView.grid.selectedId ?? state.options.grid[0].id);
 	const allOptions: Data[] = useSelector((state: RootState) => state.options[name]);
 	const curOption: Array<Data> = useMemo(() => name === "grid"
@@ -124,8 +128,9 @@ function OptionsForm() {
 	const [gridProps] = useOption("grid");
 	const dispatch = useDispatch<Dispatch>();
 	const dataCount = useSelector((state: RootState) => state.ui.dataCount);
+	const commonOption = useSelector<RootState, CommonOption>(((state) => pick(state.options, keys(getCommonOption())) as CommonOption));
 
-	const getAddBtn = <T extends keyof Omit<OptionForm, "grid">>(name: T) => {
+	const getAddBtn = <T extends keyof Omit<ComponentOption, "grid">>(name: T) => {
 		const data = (() => {
 			if (name === "series") return getInitOption(name, {
 				gridId: gridProps.data.id,
@@ -152,6 +157,16 @@ function OptionsForm() {
 
 	return (
 		<div className={css.container}>
+			<Drawer
+				title="通用配置"
+			>
+				<CommonOptionForm
+					data={commonOption}
+					edit={(data) => {
+						dispatch.options.update(data);
+					}}
+				/>
+			</Drawer>
 			<Drawer
 				title="图形（系列设置）"
 				defaultOpen

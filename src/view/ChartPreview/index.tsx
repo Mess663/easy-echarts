@@ -6,15 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
-import { State } from "../../models/options";
-import { isArray, isFunction, isString } from "lodash";
+import { isArray, isFunction, isString, isUndefined } from "lodash";
 import { isOptionViewKey } from "../../models/option_view";
 import { findGrid, initGraphicOption } from "./tools/grid";
 import useGridDragEvent from "./hooks/useGridDragEvent";
 import useGrapicDragEvent from "./hooks/useGrapicDragEvent";
 import { eachInvoke, onEvent } from "./tools/event";
+import { ComponentOption } from "../../types/biz/option";
 
-const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
+const addCommonOption = <T extends ComponentOption[keyof ComponentOption]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
 	return options.map((o, i) => ({
 		...o,
 		triggerEvent: true,
@@ -89,9 +89,13 @@ const ChartPreview = () => {
 	}, [echartObjRef, size]);
 
 	const echartsOption = useMemo(() => {
-		const { title, series, xAxis, yAxis, grid } = options;
+		const { title, series, xAxis, yAxis, grid, ...common } = options;
+		
+		if (isUndefined(common.color)) delete common.color;
+
 		console.log(options);
 		return {
+			...common,
 			title: addCommonOption(title),
 			xAxis: addCommonOption(xAxis).map(o => ({
 				...o,
@@ -101,7 +105,6 @@ const ChartPreview = () => {
 			series: addCommonOption(series).map(o => ({
 				...o,
 			})),
-			tooltip: {},
 			animation: false,
 		} as echarts.EChartsOption;
 	}, [options]);
@@ -112,7 +115,7 @@ const ChartPreview = () => {
 			graphic: {
 				elements: graphic
 			},
-			...echartsOption
+			...echartsOption,
 		}, true);
 	}, [echartsOption, graphic]);
 

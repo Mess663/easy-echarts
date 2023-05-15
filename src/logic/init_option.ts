@@ -1,12 +1,12 @@
 import { uniqueId } from "lodash";
-import { State as OptionFormState } from "../models/options";
 import { Chart, ChartEnumify } from "../types/biz/chart";
 import { getUniqueNum } from "../tools/number";
 import { Random, mock } from "mockjs";
+import { ComponentOption } from "../types/biz/option";
 
 // 这里定义ECharts option的初始化配置
 const genOption = () => {
-	const option: Partial<Record<keyof OptionFormState, Record<string, unknown>>> = {
+	const option: Partial<Record<keyof ComponentOption, Record<string, unknown>>> = {
 		title: {
 			text: "标题",
 		},
@@ -24,14 +24,14 @@ const genOption = () => {
 	return option;
 };
 
-export function getInitOption(name: "series", data: { gridId: string, xAxisId: string, yAxisId: string }): OptionFormState["series"][number];
-export function getInitOption<T extends keyof Omit<OptionFormState, "series">>(name: T, data: { gridId: string}): OptionFormState[T][number];
-export function getInitOption(name: "grid"): OptionFormState["grid"][number];
-export function getInitOption<T extends keyof OptionFormState>(name: T, data?: {
+export function getInitOption(name: "series", data: { gridId: string, xAxisId: string, yAxisId: string }): ComponentOption["series"][number];
+export function getInitOption<T extends keyof Omit<ComponentOption, "series">>(name: T, data: { gridId: string}): ComponentOption[T][number];
+export function getInitOption(name: "grid"): ComponentOption["grid"][number];
+export function getInitOption<T extends keyof ComponentOption>(name: T, data?: {
 	gridId?: string;
 	xAxisId?: string;
 	yAxisId?: string;
-}): OptionFormState[T][number] {
+}): ComponentOption[T][number] {
 	const id = uniqueId();
 	const ret = (() => {
 		if (name === "grid") {
