@@ -6,6 +6,7 @@ import GridTabs from "./GridTabs";
 import OperateBar from "./ OperateBar";
 import { useSelector } from "react-redux";
 import { RootState } from "../models";
+import CodeSpace from "./CodeSpace";
 
 const App = () => {
 	const gridMode = useSelector((state: RootState) => state.ui.gridMode);
@@ -41,6 +42,8 @@ const App = () => {
 			<GridTabs />
 
 			{middlePart}
+
+			<CodeSpace />
 		</div>
 	);
 };
