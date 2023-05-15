@@ -1,8 +1,8 @@
 import css from "./index.module.less";
 import { Dispatch, RootState } from "../../models";
 import { useSelector, useDispatch } from "react-redux";
-import { HTMLAttributes, useMemo } from "react";
-import { getInitOption } from "../../logic/init_option";
+import { HTMLAttributes, useCallback, useMemo } from "react";
+import { getInitOption, mockRadarOption, mockSeries } from "../../logic/init_option";
 import { Select, message } from "antd";
 import { State } from "../../models/option_view";
 import { CommonOption, ComponentOption } from "../../types/biz/option";
@@ -16,6 +16,9 @@ import GridForm from "../../option_forms/Grid";
 import OptionsBar from "../../components/OptionsBar";
 import CommonOptionForm from "../../option_forms/CommonOption";
 import { getCommonOption } from "../../models/options";
+import { Chart, ChartEnumify } from "../../types/biz/chart";
+
+console.log(mockRadarOption());
 
 const AddBtn = ({ onClick, children = "添加", ...props }: HTMLAttributes<HTMLButtonElement>) => {
 	return (
@@ -153,6 +156,34 @@ function OptionsForm() {
 		);
 	};
 
+	const onChangeSerieType = useCallback((type: Chart) => {
+		const sizeOption = {
+			...pick(gridProps.data, ["left", "top", "right", "bottom"])
+		};
+		seriesProps.edit({
+			...seriesProps.data,
+			...(ChartEnumify.$getEnumVal(type).isObjectData ? sizeOption : {}),
+			data: mockSeries(dataCount, type),
+			type,
+		});
+
+		const isShowAxis = ChartEnumify.$getEnumVal(type).showAxis;
+		if (isShowAxis) {
+			xAxisProps.edit({ ...xAxisProps.data, show: true });
+		}
+		else {
+			xAxisProps.edit({ ...xAxisProps.data, show: false });
+		}
+
+		if (ChartEnumify.Radar.$eq(type)) {
+			dispatch.options.update({
+				radar: {
+					indicator: mockRadarOption(dataCount)
+				}
+			});
+		}
+	}, [dataCount, dispatch.options, gridProps.data, seriesProps, xAxisProps]);
+
 	const addTitleBtn = getAddBtn("title");
 
 	return (
@@ -182,8 +213,7 @@ function OptionsForm() {
 					{...seriesProps}
 					xAxis={xAxisArr}
 					yAxis={yAxisArr}
-					grid={gridProps.data}
-					dataCount={dataCount}
+					onChangeSerieType={onChangeSerieType}
 				/>
 			</Drawer>
 			<Drawer

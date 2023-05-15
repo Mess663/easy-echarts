@@ -105,6 +105,7 @@ const ChartPreview = () => {
 			series: addCommonOption(series).map(o => ({
 				...o,
 			})),
+			legend: {},
 			animation: false,
 		} as echarts.EChartsOption;
 	}, [options]);

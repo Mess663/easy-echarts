@@ -1,26 +1,24 @@
 import React from "react";
 import FormItem from "../../base/FormItem";
 import ChartSelector from "../../components/ChartSelector";
-import { Grid, Series, XAxis, YAxis } from "../../types/biz/option";
+import { Series, XAxis, YAxis } from "../../types/biz/option";
 import { OptionFormProps } from "../type";
 import css from "./index.module.less";
 import Input from "../../base/Input";
 import { Select, Switch } from "antd";
 import ColorPicker from "../../base/ColorPicker";
-import { map, pick } from "lodash";
-import { mockSeries } from "../../logic/init_option";
-import { ChartEnumify } from "../../types/biz/chart";
+import { map } from "lodash";
+import { Chart } from "../../types/biz/chart";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
 
 interface Props extends OptionFormProps<Series> {
 	xAxis: XAxis[]
 	yAxis: YAxis[]
-	grid: Grid
-	dataCount: number // 数据量
+	onChangeSerieType: (type: Chart) => void
 }
 
-const SeriesForm  = ({ data, edit, xAxis, yAxis, grid, dataCount }: Props) => {
+const SeriesForm  = ({ data, edit, xAxis, yAxis, onChangeSerieType }: Props) => {
 	const hash = "series-" + data.type + ".type" as Hash;
 	const onChange = <K extends keyof Series>(key: K, value: Series[K]) => {
 		edit({
@@ -32,17 +30,8 @@ const SeriesForm  = ({ data, edit, xAxis, yAxis, grid, dataCount }: Props) => {
 		<div className={css.container}>
 			<FormItem align title="图形类型：" hash={hash}>
 				<ChartSelector
-					data={data}
-					onChange={(d) => {
-						const sizeOption = {
-							...pick(grid, ["left", "top", "right", "bottom"])
-						};
-						edit({
-							...d,
-							data: mockSeries(dataCount, d.type),
-							...(ChartEnumify.$getEnumVal(d.type).isObjectData ? sizeOption : {})
-						});
-					}}
+					data={data.type}
+					onChange={onChangeSerieType}
 				/>
 			</FormItem>
 

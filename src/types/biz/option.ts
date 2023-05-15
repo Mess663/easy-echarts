@@ -18,8 +18,9 @@ export type RichStyle = EchartsRich[keyof EchartsRich]
  * 通用全局配置
  */
 export interface CommonOption {
-	color: echarts.Color[] | undefined
+	color?: echarts.Color[]
 	tooltip: Tooltip
+    radar: echarts.RadarComponentOption | undefined
 }
 
 // 图表选择对象（转换成series）

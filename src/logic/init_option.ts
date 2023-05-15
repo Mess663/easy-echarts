@@ -49,19 +49,45 @@ export function getInitOption<T extends keyof ComponentOption>(name: T, data?: {
 	return ret;
 }
 
-export const mockAxis = (count = 4) => mock({
+const DEFAULT_COUNT = 4;
+export const mockAxis = (count = DEFAULT_COUNT) => mock({
 	["value|" + count ]: [() => Random.cname()]
 }).value;
-const mockObjectSeriesData = (count = 4) => mock({
+export const mockRadarOption = (count = DEFAULT_COUNT) => mock({
+	["value|" + count ]: [{
+		max: 100,
+		name: () => Random.cname()
+	}] }).value;
+const mockRadarData = (count = DEFAULT_COUNT) => mock({
+	["value|" + count ]: [{
+		["value|" + count]: ["@natural(20, 90)"],
+		name: () => Random.cname()
+	}]
+}).value;
+const mockPieData = (count = DEFAULT_COUNT) => mock(
+	{
+		["value|" + count ]: [{
+			value: "@natural(20, 90)",
+			name: () => Random.cname()
+		}]
+	}).value;
+const mockObjectSeriesData = (count = DEFAULT_COUNT) => mock({
 	["value|" + count]: [{
 		value: "@natural(20, 90)",
 		name: () => Random.cname()
 	}]
 }).value;
-export const mockSeries = (count = 4, type: Chart = ChartEnumify.Line.code) => {
+const mockCommonSeriesData = (count = DEFAULT_COUNT) => mock({
+	["value|" + count]: ["@natural(20, 90)"]
+}).value;
+export const mockSeries = (count = DEFAULT_COUNT, type: Chart = ChartEnumify.Line.code) => {
+	if (ChartEnumify.Pie.$eq(type)) {
+		return mockPieData(count);
+	}
+	if (ChartEnumify.Radar.$eq(type)) {
+		return mockRadarData(count);
+	}
 	return 	ChartEnumify.$getEnumVal(type).isObjectData
-		? mockObjectSeriesData()
-		: mock({
-			["value|" + count]: ["@natural(20, 90)"]
-		}).value;
+		? mockObjectSeriesData(count)
+		: mockCommonSeriesData(count);
 };

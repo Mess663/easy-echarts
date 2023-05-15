@@ -3,7 +3,7 @@ import { isNumber, pick } from "lodash";
 import { RootModel } from ".";
 import { keys } from "../tools/type";
 import { CommonOption, ComponentOption, Grid } from "../types/biz/option";
-import { getInitOption, mockAxis, mockSeries } from "../logic/init_option";
+import { getInitOption, mockAxis, mockRadarOption, mockSeries } from "../logic/init_option";
 import { ChartEnumify } from "../types/biz/chart";
 
 export interface State extends ComponentOption, CommonOption {}
@@ -24,8 +24,9 @@ const getDefaultComponentOpton = (): ComponentOption => {
 };
 
 export const getCommonOption = (): CommonOption => ({
-	color: undefined,
-	tooltip: {}
+	// color: undefined, 这个undefined会导致默认颜色失效
+	tooltip: {},
+	radar: undefined
 });
 
 // 用于ts无法正确推导option的数组类型
@@ -147,6 +148,10 @@ export const options = createModel<RootModel>()({
 				...o,
 				data: mockAxis(count)
 			}));
+			
+			if (state.radar) {
+				state.radar.indicator = mockRadarOption(count);
+			}
 		}
 	},
 });
