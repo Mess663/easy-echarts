@@ -175,11 +175,17 @@ function OptionsForm() {
 			xAxisProps.edit({ ...xAxisProps.data, show: false });
 		}
 
+		const usedToBeRadar = ChartEnumify.Radar.$eq(seriesProps.data.type);
 		if (ChartEnumify.Radar.$eq(type)) {
 			dispatch.options.update({
 				radar: {
 					indicator: mockRadarOption(dataCount)
 				}
+			});
+		}
+		else if (usedToBeRadar ) {
+			dispatch.options.update({
+				radar: undefined
 			});
 		}
 	}, [dataCount, dispatch.options, gridProps.data, seriesProps, xAxisProps]);
