@@ -67,5 +67,7 @@ module.exports = {
 		// ts解析支持jsx，不需要在jsx中引入react
 		"react/jsx-uses-react": "off",
 		"react/react-in-jsx-scope": "off",
+
+		"@typescript-eslint/ban-ts-comment": "off",
 	}
 };

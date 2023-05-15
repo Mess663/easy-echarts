@@ -6,6 +6,7 @@ import { Dispatch, RootState } from "../../models";
 import { Button, Modal, Space, message } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import JSONInput from "react-json-editor-ajrm";
+// @ts-ignore
 import locale from "react-json-editor-ajrm/locale/zh-cn";
 
 const CodeEditor = ({ onChange }: {onChange: (e: string) => void}) => {
