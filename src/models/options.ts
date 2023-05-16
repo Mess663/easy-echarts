@@ -26,7 +26,8 @@ const getDefaultComponentOpton = (): ComponentOption => {
 export const getCommonOption = (): CommonOption => ({
 	// color: undefined, 这个undefined会导致默认颜色失效
 	tooltip: {},
-	radar: undefined
+	radar: undefined,
+	legend: {}
 });
 
 // 用于ts无法正确推导option的数组类型

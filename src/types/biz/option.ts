@@ -19,6 +19,7 @@ export type RichStyle = EchartsRich[keyof EchartsRich]
  */
 export interface CommonOption {
 	color?: echarts.Color[]
+    legend: echarts.LegendComponentOption
 	tooltip: Tooltip
     radar: echarts.RadarComponentOption | undefined
 }

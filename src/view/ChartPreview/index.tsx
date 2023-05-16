@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
-import { isArray, isFunction, isString, isUndefined } from "lodash";
+import { isArray, isFunction, isString, isUndefined, mapValues, round } from "lodash";
 import { isOptionViewKey } from "../../models/option_view";
 import { findGrid, initGraphicOption } from "./tools/grid";
 import useGridDragEvent from "./hooks/useGridDragEvent";
@@ -60,8 +60,8 @@ const ChartPreview = () => {
 		const newGraphic = [...graphic];
 		newGraphic[output.index] = {
 			...newGraphic[output.index],
-			x: output.x,
-			y: output.y
+			x: round(output.x, 2),
+			y: round(output.y, 2)
 		};
 		dispatch.ui.setGraphic(newGraphic);
 		if (size && gridView.selectedId) {
@@ -69,14 +69,15 @@ const ChartPreview = () => {
 			dispatch.options.modifyGridRect({
 				id: gridView.selectedId,
 				gridId: gridView.selectedId,
-				right: width - output.x,
-				bottom: height - output.y,
+				right: round(width - output.x, 2),
+				bottom: round(height - output.y, 2),
 			});
 		}
 	});
 	const gridDragSubs = useGridDragEvent(size, (output) => {
+		const { gridId, ...rect } = output;
 		dispatch.options.modifyGridRect({
-			id: output.gridId, ...output
+			id: gridId, gridId, ...mapValues(rect, o => round(o, 2))
 		});
 		
 		initGraphic(echartObjRef.current, output.gridId);
@@ -93,7 +94,6 @@ const ChartPreview = () => {
 		
 		if (isUndefined(common.color)) delete common.color;
 
-		console.log(options);
 		return {
 			...common,
 			title: addCommonOption(title),
@@ -105,7 +105,6 @@ const ChartPreview = () => {
 			series: addCommonOption(series).map(o => ({
 				...o,
 			})),
-			legend: {},
 			animation: false,
 		} as echarts.EChartsOption;
 	}, [options]);

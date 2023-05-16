@@ -8,6 +8,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import JSONInput from "react-json-editor-ajrm";
 // @ts-ignore
 import locale from "react-json-editor-ajrm/locale/zh-cn";
+import { useThrottle } from "ahooks";
 
 const CodeEditor = ({ onChange }: {onChange: (e: string) => void}) => {
 	return (
@@ -31,6 +32,7 @@ const CodeEditor = ({ onChange }: {onChange: (e: string) => void}) => {
 
 const CodeSpace = () => {
 	const options = useSelector((state: RootState) => state.options);
+	const throttledOptions = useThrottle(options, { wait: 500 });
 	const codeRef = useRef("");
 	const dispatch = useDispatch<Dispatch>();
 
@@ -86,7 +88,7 @@ const CodeSpace = () => {
 						fontSize: 18,
 					}}
 					theme="monokai"
-					src={options}
+					src={throttledOptions}
 					collapsed={3}
 					quotesOnKeys={false}
 					displayDataTypes={false}
