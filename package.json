@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "check": "tsc",
     "preview": "vite preview"
   },
   "dependencies": {
