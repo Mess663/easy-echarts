@@ -1,5 +1,5 @@
+import React, { Suspense } from "react";
 import css from "./app.module.less";
-import ChartPreview from "./ChartPreview";
 import OptionsForm from "./OptionsForm";
 import { ErrorBoundary } from "react-error-boundary";
 import GridTabs from "./GridTabs";
@@ -7,6 +7,8 @@ import OperateBar from "./ OperateBar";
 import { useSelector } from "react-redux";
 import { RootState } from "../models";
 import CodeSpace from "./CodeSpace";
+
+const ChartPreview = React.lazy(() => import("./ChartPreview"));
 
 const App = () => {
 	const gridMode = useSelector((state: RootState) => state.ui.gridMode);
@@ -41,7 +43,12 @@ const App = () => {
 
 			<GridTabs />
 
-			{middlePart}
+			<Suspense fallback={
+				<div className={css.chartPreview} />
+			}
+			>
+				{middlePart}
+			</Suspense>
 
 			<CodeSpace />
 		</div>
