@@ -1,12 +1,12 @@
 import { uniqueId } from "lodash";
-import { State as OptionFormState } from "../models/options";
-import { ChartEnumify } from "../types/biz/chart";
+import { Chart, ChartEnumify } from "../types/biz/chart";
 import { getUniqueNum } from "../tools/number";
 import { Random, mock } from "mockjs";
+import { ComponentOption } from "../types/biz/option";
 
 // 这里定义ECharts option的初始化配置
 const genOption = () => {
-	const option: Partial<Record<keyof OptionFormState, Record<string, unknown>>> = {
+	const option: Partial<Record<keyof ComponentOption, Record<string, unknown>>> = {
 		title: {
 			text: "标题",
 		},
@@ -24,14 +24,14 @@ const genOption = () => {
 	return option;
 };
 
-export function getInitOption(name: "series", data: { gridId: string, xAxisId: string, yAxisId: string }): OptionFormState["series"][number];
-export function getInitOption<T extends keyof Omit<OptionFormState, "series">>(name: T, data: { gridId: string}): OptionFormState[T][number];
-export function getInitOption(name: "grid"): OptionFormState["grid"][number];
-export function getInitOption<T extends keyof OptionFormState>(name: T, data?: {
+export function getInitOption(name: "series", data: { gridId: string, xAxisId: string, yAxisId: string }): ComponentOption["series"][number];
+export function getInitOption<T extends keyof Omit<ComponentOption, "series">>(name: T, data: { gridId: string}): ComponentOption[T][number];
+export function getInitOption(name: "grid"): ComponentOption["grid"][number];
+export function getInitOption<T extends keyof ComponentOption>(name: T, data?: {
 	gridId?: string;
 	xAxisId?: string;
 	yAxisId?: string;
-}): OptionFormState[T][number] {
+}): ComponentOption[T][number] {
 	const id = uniqueId();
 	const ret = (() => {
 		if (name === "grid") {
@@ -49,15 +49,45 @@ export function getInitOption<T extends keyof OptionFormState>(name: T, data?: {
 	return ret;
 }
 
-export const mockAxis = (count = 4) => mock({
+const DEFAULT_COUNT = 4;
+export const mockAxis = (count = DEFAULT_COUNT) => mock({
 	["value|" + count ]: [() => Random.cname()]
 }).value;
-export const mockSeries = (count = 4) => mock({
-	["value|" + count]: ["@natural(20, 90)"]
+export const mockRadarOption = (count = DEFAULT_COUNT) => mock({
+	["value|" + count ]: [{
+		max: 100,
+		name: () => Random.cname()
+	}] }).value;
+const mockRadarData = (count = DEFAULT_COUNT) => mock({
+	["value|" + count ]: [{
+		["value|" + count]: ["@natural(20, 90)"],
+		name: () => Random.cname()
+	}]
 }).value;
-export const mockPieSeries = (count = 4) => mock({
+const mockPieData = (count = DEFAULT_COUNT) => mock(
+	{
+		["value|" + count ]: [{
+			value: "@natural(20, 90)",
+			name: () => Random.cname()
+		}]
+	}).value;
+const mockObjectSeriesData = (count = DEFAULT_COUNT) => mock({
 	["value|" + count]: [{
 		value: "@natural(20, 90)",
 		name: () => Random.cname()
 	}]
 }).value;
+const mockCommonSeriesData = (count = DEFAULT_COUNT) => mock({
+	["value|" + count]: ["@natural(20, 90)"]
+}).value;
+export const mockSeries = (count = DEFAULT_COUNT, type: Chart = ChartEnumify.Line.code) => {
+	if (ChartEnumify.Pie.$eq(type)) {
+		return mockPieData(count);
+	}
+	if (ChartEnumify.Radar.$eq(type)) {
+		return mockRadarData(count);
+	}
+	return 	ChartEnumify.$getEnumVal(type).isObjectData
+		? mockObjectSeriesData(count)
+		: mockCommonSeriesData(count);
+};

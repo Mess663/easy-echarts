@@ -6,15 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dispatch, RootState } from "../../models";
 import { ComponentType } from "../../types/biz/compont";
 import useTitleDragEvent from "./hooks/useTitleDragEvent";
-import { State } from "../../models/options";
-import { isArray, isFunction, isString } from "lodash";
+import { isArray, isFunction, isString, isUndefined, mapValues, round } from "lodash";
 import { isOptionViewKey } from "../../models/option_view";
 import { findGrid, initGraphicOption } from "./tools/grid";
 import useGridDragEvent from "./hooks/useGridDragEvent";
 import useGrapicDragEvent from "./hooks/useGrapicDragEvent";
 import { eachInvoke, onEvent } from "./tools/event";
+import { ComponentOption } from "../../types/biz/option";
 
-const addCommonOption = <T extends State[keyof State]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
+const addCommonOption = <T extends ComponentOption[keyof ComponentOption]>(options: T, forCallback?: (o: T[number], i: number) => Partial<T[number]> ) => {
 	return options.map((o, i) => ({
 		...o,
 		triggerEvent: true,
@@ -60,8 +60,8 @@ const ChartPreview = () => {
 		const newGraphic = [...graphic];
 		newGraphic[output.index] = {
 			...newGraphic[output.index],
-			x: output.x,
-			y: output.y
+			x: round(output.x, 2),
+			y: round(output.y, 2)
 		};
 		dispatch.ui.setGraphic(newGraphic);
 		if (size && gridView.selectedId) {
@@ -69,14 +69,15 @@ const ChartPreview = () => {
 			dispatch.options.modifyGridRect({
 				id: gridView.selectedId,
 				gridId: gridView.selectedId,
-				right: width - output.x,
-				bottom: height - output.y,
+				right: round(width - output.x, 2),
+				bottom: round(height - output.y, 2),
 			});
 		}
 	});
 	const gridDragSubs = useGridDragEvent(size, (output) => {
+		const { gridId, ...rect } = output;
 		dispatch.options.modifyGridRect({
-			id: output.gridId, ...output
+			id: gridId, gridId, ...mapValues(rect, o => round(o, 2))
 		});
 		
 		initGraphic(echartObjRef.current, output.gridId);
@@ -89,9 +90,12 @@ const ChartPreview = () => {
 	}, [echartObjRef, size]);
 
 	const echartsOption = useMemo(() => {
-		const { title, series, xAxis, yAxis, grid } = options;
-		// console.log(options);
+		const { title, series, xAxis, yAxis, grid, ...common } = options;
+		
+		if (isUndefined(common.color)) delete common.color;
+
 		return {
+			...common,
 			title: addCommonOption(title),
 			xAxis: addCommonOption(xAxis).map(o => ({
 				...o,
@@ -101,7 +105,6 @@ const ChartPreview = () => {
 			series: addCommonOption(series).map(o => ({
 				...o,
 			})),
-			tooltip: {},
 			animation: false,
 		} as echarts.EChartsOption;
 	}, [options]);
@@ -112,7 +115,7 @@ const ChartPreview = () => {
 			graphic: {
 				elements: graphic
 			},
-			...echartsOption
+			...echartsOption,
 		}, true);
 	}, [echartsOption, graphic]);
 
@@ -145,16 +148,17 @@ const ChartPreview = () => {
 							eachInvoke(titleDragSubs.onMouseup, gridDragSubs.onMouseup, graphicDragSubs.onMouseup)
 						);
 						echart.getZr().on("mousedown", (e) => {
-							if (e.target) return; // 点击空白处才进行操作
 							const { offsetX, offsetY } = e;
 							const grid = findGrid(echart, offsetX, offsetY);
 							if (grid && isString(grid.id)) {
+								dispatch.optionView.selectGrid(grid.id);
+
+								if (e.target) return; // 点击空白处才进行操作
 								gridDragSubs.onMousedown({
 									...e,
 									grid
 								});
 
-								dispatch.optionView.selectGrid(grid.id);
 								initGraphic(echart, grid.id);
 							}
 						});

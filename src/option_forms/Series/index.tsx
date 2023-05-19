@@ -8,16 +8,17 @@ import Input from "../../base/Input";
 import { Select, Switch } from "antd";
 import ColorPicker from "../../base/ColorPicker";
 import { map } from "lodash";
-import { mockPieSeries, mockSeries } from "../../logic/init_option";
+import { Chart } from "../../types/biz/chart";
 
 type Hash = React.ComponentProps<typeof FormItem>["hash"]
 
 interface Props extends OptionFormProps<Series> {
 	xAxis: XAxis[]
 	yAxis: YAxis[]
+	onChangeSerieType: (type: Chart) => void
 }
 
-const SeriesForm  = ({ data, edit, xAxis, yAxis }: Props) => {
+const SeriesForm  = ({ data, edit, xAxis, yAxis, onChangeSerieType }: Props) => {
 	const hash = "series-" + data.type + ".type" as Hash;
 	const onChange = <K extends keyof Series>(key: K, value: Series[K]) => {
 		edit({
@@ -29,13 +30,8 @@ const SeriesForm  = ({ data, edit, xAxis, yAxis }: Props) => {
 		<div className={css.container}>
 			<FormItem align title="图形类型：" hash={hash}>
 				<ChartSelector
-					data={data}
-					onChange={(d) => {
-						edit({
-							...d,
-							data: d.type === "pie" ? mockPieSeries() : mockSeries()
-						});
-					}}
+					data={data.type}
+					onChange={onChangeSerieType}
 				/>
 			</FormItem>
 

@@ -1,0 +1,26 @@
+@import url(../../style/tool.less);
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.bar {
+    padding: 10px 0;
+}
+
+.code {
+    padding: 20px;
+    background-color: rgb(39, 40, 34);
+    overflow: overlay;
+    .scrollbarBeautify;
+    flex: 1;
+}
+
+.modal {
+    :global {
+        .ant-modal-confirm-body .ant-modal-confirm-title +.ant-modal-confirm-content {
+            max-width: 100%;
+        }
+    }
+}

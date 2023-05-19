@@ -1,19 +1,18 @@
 import React from "react";
 import css from "./index.module.less";
 import { Menu } from "@headlessui/react";
-import { ChartEnumify } from "../../types/biz/chart";
-import { Series } from "../../types/biz/option";
+import { Chart, ChartEnumify } from "../../types/biz/chart";
 
 interface Props {
-	data: Series
-	onChange: (d: Series) => void
+	data: Chart
+	onChange: (type: Chart) => void
 }
 
 const ChartSelector = ({ data, onChange }: Props) => {
 	return (
 		<>
 			<Menu>
-				<Menu.Button className={css.btn}>{ChartEnumify.$getEnumVal(data.type || ChartEnumify.Line.code).name}</Menu.Button>
+				<Menu.Button className={css.btn}>{ChartEnumify.$getEnumVal(data || ChartEnumify.Line.code).name}</Menu.Button>
 				<Menu.Items className={css.menuWrap}>
 					{
 						ChartEnumify.$map(o => (
@@ -21,7 +20,7 @@ const ChartSelector = ({ data, onChange }: Props) => {
 								<div
 									className={css.menuItem}
 									onMouseDown={() => {
-										onChange({ ...data, type: o.code } as Series);
+										onChange(o.code);
 									}}
 									role="button"
 								>{o.val.name}</div>

@@ -22,7 +22,7 @@ const GridTabs = () => {
 				title="添加布局"
 			>+</Button>
 			{
-				grid.map((item) => {
+				grid.map((item, index) => {
 					return (
 						<div
 							key={item.id}
@@ -34,7 +34,7 @@ const GridTabs = () => {
 								dispatch.optionView.selectGrid(item.id);
 							}}
 						>
-							布局{item.id}
+							布局{index + 1}
 							<span
 								className={css.delete}
 								onClick={(e) => {
