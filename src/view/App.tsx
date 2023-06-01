@@ -36,6 +36,7 @@ const App = () => {
 	return (
 		<div className={css.page}>
 			<div className={css.left}>
+				<h1 className={css.title} title="Easy Echarts 可视化配置Echarts">Easy Echarts</h1>
 				<ErrorBoundary fallback={<></>}>
 					<OptionsForm />
 				</ErrorBoundary>
