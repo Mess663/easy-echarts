@@ -5,8 +5,6 @@
     <img src="./src/static/imgs/title.png" />
 </p>
 
-# Easy ECharts
-
 🚀访问地址：https://mess663.github.io/easy-echarts/
 
 ### 介绍
