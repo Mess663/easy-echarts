@@ -80,6 +80,14 @@ const CodeSpace = () => {
 					</CopyToClipboard>
 					<Button onClick={onImportClick}>导入配置</Button>
 				</Space>
+
+				<a
+					className={css.github}
+					title="github源码"
+					target="_blank"
+					href="https://github.com/Mess663/easy-echarts"
+					rel="noreferrer"
+				/>
 			</div>
 			<div className={css.code}>
 				<ReactJson
