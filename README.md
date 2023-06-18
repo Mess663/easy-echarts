@@ -1,6 +1,7 @@
 ![](https://img.shields.io/badge/Version-0.2.0-green.svg)
 ![](https://img.shields.io/badge/Status-Developing-red.svg)
 
+<h1 style="color: transparent;height: 0;">Easy ECharts</h1>
 <p align="center">
     <img src="./src/static/imgs/title.png" />
 </p>
